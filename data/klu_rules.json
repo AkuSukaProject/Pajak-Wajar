@@ -1,0 +1,6 @@
+{
+  "$schema": "./klu_rules.schema.json",
+  "status": "DRAFT_MENUNGGU_VERIFIKASI",
+  "sumberTerakhirDiverifikasi": null,
+  "rules": []
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Aturan KLU PajakWajar",
+  "type": "object",
+  "required": ["status", "rules"],
+  "properties": {
+    "status": { "type": "string" },
+    "sumberTerakhirDiverifikasi": { "type": ["string", "null"], "format": "date" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kluKode", "nama", "alias", "kategori", "dasarHukum"],
+        "properties": {
+          "kluKode": { "type": "string" },
+          "nama": { "type": "string" },
+          "alias": { "type": "array", "items": { "type": "string" } },
+          "kategori": { "enum": ["PEKERJAAN_BEBAS", "USAHA", "PERLU_VERIFIKASI"] },
+          "dasarHukum": { "type": "string" }
+        }
+      }
+    }
+  }
+}
