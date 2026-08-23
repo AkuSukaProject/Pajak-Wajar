@@ -1,6 +1,203 @@
 {
-  "$schema": "./klu_rules.schema.json",
-  "status": "DRAFT_MENUNGGU_VERIFIKASI",
-  "sumberTerakhirDiverifikasi": null,
-  "rules": []
+  "versiRegulasi": "PP-20-2026",
+  "statusDokumen": "Dalam review (Granular per Aturan)",
+  "tahunPajakDidukung": [2025, 2026],
+  "lingkupWajibPajak": "ORANG_PRIBADI",
+  "parameterPajak": {
+    "pphFinal": {
+      "tarif": {
+        "nilai": 0.005,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP No. 20 Tahun 2026",
+            "pasalAtauLampiran": "Pasal 56 ayat (2)",
+            "fungsi": "Penetapan tarif PPh Final 0,5%",
+            "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "ambangOmzet": {
+        "nilai": 4800000000,
+        "operator": "LTE",
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP No. 20 Tahun 2026",
+            "pasalAtauLampiran": "Pasal 57 ayat (1)",
+            "fungsi": "Ambang peredaran bruto fasilitas PPh Final (tidak melebihi)",
+            "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "pembebasanOmzetOp": {
+        "nilai": 500000000,
+        "statusVerifikasi": "DALAM_REVIEW",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP No. 55 Tahun 2022 jo. PP No. 20 Tahun 2026",
+            "pasalAtauLampiran": "Pasal 60",
+            "fungsi": "Dasar pembebasan omzet Rp 500 Juta bagi WP OP",
+            "url": "https://jdih.kemenkeu.go.id/dok/pp-55-tahun-2022",
+            "statusVerifikasi": "DALAM_REVIEW"
+          }
+        ]
+      }
+    },
+    "nppn": {
+      "ambangOmzet": {
+        "nilai": 4800000000,
+        "operator": "LT",
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PER-17/PJ/2015",
+            "pasalAtauLampiran": "Pasal 1 dan Pasal 2 ayat (1)",
+            "fungsi": "Ambang peredaran bruto NPPN tahun berjalan (kurang dari)",
+            "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "batasPemberitahuanBulan": {
+        "nilai": 3,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PER-17/PJ/2015",
+            "pasalAtauLampiran": "Pasal 2 ayat (1)",
+            "fungsi": "Batas waktu pemberitahuan NPPN (3 bulan pertama tahun pajak)",
+            "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      }
+    },
+    "tarifProgresif": {
+      "lapisan": [
+        { "batasBawah": 0, "batasAtas": 60000000, "tarif": 0.05 },
+        { "batasBawah": 60000000, "batasAtas": 250000000, "tarif": 0.15 },
+        { "batasBawah": 250000000, "batasAtas": 500000000, "tarif": 0.25 },
+        { "batasBawah": 500000000, "batasAtas": 5000000000, "tarif": 0.30 },
+        { "batasBawah": 5000000000, "batasAtas": null, "tarif": 0.35 }
+      ],
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "UU No. 7 Tahun 2021 (UU HPP)",
+          "pasalAtauLampiran": "Pasal 17 ayat (1) huruf a",
+          "fungsi": "Tarif progresif PPh Orang Pribadi",
+          "url": "https://jdih.kemenkeu.go.id/download/c12be04a-670f-4dae-8b52-13f30d24a8c6/2021uu007.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "ptkp": {
+      "nilai": {
+        "TK/0": 54000000, "TK/1": 58500000, "TK/2": 63000000, "TK/3": 67500000,
+        "K/0": 58500000, "K/1": 63000000, "K/2": 67500000, "K/3": 72000000
+      },
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "UU No. 7 Tahun 2021 (UU HPP)",
+          "pasalAtauLampiran": "Pasal 7 ayat (1)",
+          "fungsi": "Penghasilan Tidak Kena Pajak",
+          "url": "https://jdih.kemenkeu.go.id/download/c12be04a-670f-4dae-8b52-13f30d24a8c6/2021uu007.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    }
+  },
+  "aturanKelayakan": {
+    "pekerjaanBebas": {
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (3) huruf a jo. ayat (4)",
+          "fungsi": "Pengecualian pekerjaan bebas dari PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "ambangKonsolidasi": {
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 57 ayat (1) dan ayat (2) huruf e",
+          "fungsi": "Subjek, ambang Rp 4,8 M, dan pengecualian omzet keseluruhan",
+          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 58 ayat (1)–(3)",
+          "fungsi": "Definisi peredaran bruto tahun sebelumnya dan penggabungan suami-istri-perseroan",
+          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "pilihanTarifUmum": {
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 57 ayat (3) dan ayat (4)",
+          "fungsi": "Pintu satu arah — WP yang memilih tarif umum tidak dapat kembali ke PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "administrasiNppn": {
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Pasal 2 ayat (1)",
+          "fungsi": "Kewajiban pemberitahuan NPPN sebelum akhir bulan ketiga tahun pajak",
+          "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "ketentuanPeralihan": {
+      "statusVerifikasi": "DALAM_REVIEW",
+      "catatanReview": "Sheva perlu mengekstrak PP 20/2026 Pasal II: angka 1 huruf a butir 1-2, huruf c (surat keterangan), huruf f (WP OP), angka 2 (tanggal berlaku).",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal II (Ketentuan Peralihan)",
+          "fungsi": "Ketentuan peralihan Tahun Pajak 2025–2026",
+          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "statusVerifikasi": "DALAM_REVIEW"
+        }
+      ]
+    }
+  },
+  "kelompokWilayah": {
+    "kelompok1": { "nama": "10 Ibukota Provinsi", "deskripsi": "Medan, Palembang, Jakarta, Bandung, Semarang, Surabaya, Denpasar, Manado, Makassar, Pontianak" },
+    "kelompok2": { "nama": "Ibukota Provinsi Lainnya", "deskripsi": "Ibukota provinsi selain 10 kota di atas" },
+    "kelompok3": { "nama": "Daerah Lainnya", "deskripsi": "Seluruh kabupaten/kota non-ibukota provinsi" }
+  },
+  "klu": [
+    {
+      "kluKode": "74201",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
+          "pasalAtauLampiran": "Daftar Persentase Norma",
+          "fungsi": "Persentase norma perhitungan penghasilan neto",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    }
+  ]
 }
