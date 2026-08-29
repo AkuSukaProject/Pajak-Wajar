@@ -2,12 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
+:root {
+  color-scheme: light;
+  --paper: #f4f6f8;
+  --ink: #14202e;
+  --blue: #17497d;
+  --stamp: #a32e28;
+  --pending: #7a5c15;
+  --margin: #5e6b7a;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: #f4f7fb; color: #172033; font-family: Arial, Helvetica, sans-serif; }
+[id] { scroll-margin-top: 88px; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
 button, input, select { font: inherit; }
-:focus-visible { outline: 3px solid #2457c5; outline-offset: 3px; }
+button, summary, select { -webkit-tap-highlight-color: transparent; }
+button { touch-action: manipulation; }
+::selection { background: #dce8f3; color: var(--ink); }
+:focus-visible { outline: 3px solid #2e6ca7; outline-offset: 3px; }
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button { appearance: none; margin: 0; }
+input[type='number'] { appearance: textfield; }
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes step-next {
+  from { opacity: 0; transform: translateX(24px); filter: blur(2px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+@keyframes step-back {
+  from { opacity: 0; transform: translateX(-24px); filter: blur(2px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+@keyframes result-enter {
+  from { opacity: 0; transform: translateY(20px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes status-mark {
+  0% { opacity: 0; transform: scale(.45) rotate(-12deg); }
+  70% { transform: scale(1.12) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes document-enter {
+  from { opacity: 0; transform: translateY(28px) rotate(1.5deg) scale(.97); }
+  to { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
+}
+
+.motion-page { animation: page-enter 520ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-step-next { animation: step-next 360ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-step-back { animation: step-back 360ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-result { animation: result-enter 500ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-status { animation: status-mark 460ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-progress { transform-origin: left; animation: progress-grow 420ms cubic-bezier(.22, 1, .36, 1) both; }
+.motion-document { animation: document-enter 700ms 160ms cubic-bezier(.22, 1, .36, 1) both; }
+.pressable { transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms cubic-bezier(.22, 1, .36, 1); }
+.pressable:hover { transform: translateY(-2px); }
+.pressable:active { transform: translateY(0) scale(.985); }
+.choice-control { transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, transform 200ms cubic-bezier(.22, 1, .36, 1); }
+.choice-control:hover { transform: translateX(3px); }
+.choice-control:has(input:checked) { transform: translateX(5px); }
+.detail-panel[open] > div { animation: page-enter 240ms ease-out both; }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .pressable:hover,
+  .pressable:active,
+  .choice-control:hover,
+  .choice-control:has(input:checked) { transform: none !important; }
 }
