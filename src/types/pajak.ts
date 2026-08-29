@@ -198,3 +198,30 @@ export interface HasilAuditPajakLengkap {
   skema: HasilSkema[];
   peringatanTaxLeakage?: string[];
 }
+
+export type JenisBupot = 'PPH_21' | 'PPH_23';
+export type SumberBupot = 'manual' | 'ocr';
+export type StatusRekonsiliasi = 'KURANG_BAYAR' | 'NIHIL' | 'LEBIH_BAYAR';
+
+export interface BuktiPotong {
+  id: string;
+  nomorBupot: string;
+  npwpPemotong: string;
+  namaPemotong: string;
+  jenisPph: JenisBupot;
+  dpp: number;           // Dasar Pengenaan Pajak
+  pphDipotong: number;   // PPh yang dipotong
+  masaPajak: string;     // format MM-YYYY atau keterangan masa
+  sumber: SumberBupot;   // transparansi sumber data
+}
+
+export interface HasilRekonsiliasiBupot {
+  pajakTerutangDasar: number;
+  totalDpp: number;
+  totalKreditBupot: number;
+  sisaPajak: number; // nilai selisih absolut untuk display
+  status: StatusRekonsiliasi;
+  konsekuensiHukum: string;
+  daftarBupot: BuktiPotong[];
+}
+
