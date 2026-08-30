@@ -1,14 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// In-memory rate limiting tracker (IP -> { count, lastReset })
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const MAX_REQUESTS_PER_MINUTE = 5;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 menit
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  if (!record || now - record.lastReset > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(ip, { count: 1, lastReset: now });
+    return false;
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_MINUTE) {
+    return true;
+  }
+
+  record.count += 1;
+  return false;
+}
+
 /**
  * Route Handler untuk ekstraksi data Bukti Potong (PPh 21 / PPh 23) via Gemini API.
- * Sesuai prinsip privasi PajakWajar:
- * 1. Berkas hanya diproses dalam memori dan TIDAK disimpan ke server/disk (Zero Retention).
- * 2. Kunci API (GEMINI_API_KEY) tersimpan aman di server, tidak terekspos ke browser.
- * 3. Wajib ada persetujuan eksplisit (consent) dari pengguna.
+ * Sesuai prinsip privasi & keamanan PajakWajar:
+ * 1. Proteksi kuota & billing: Rate Limiting berbasis IP (maks 5 req/menit).
+ * 2. Berkas hanya diproses dalam memori dan TIDAK disimpan ke server/disk (Zero Retention).
+ * 3. Kunci API (GEMINI_API_KEY) tersimpan aman di server, tidak terekspos ke browser.
+ * 4. Wajib ada persetujuan eksplisit (consent) dari pengguna.
  */
 export async function POST(req: NextRequest) {
   try {
+    // 1. Dapatkan IP klien untuk pembatasan laju
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1';
+
+    if (isRateLimited(clientIp)) {
+      return NextResponse.json(
+        {
+          error:
+            'Batas frekuensi permintaan tercapai (maksimal 5 kali per menit). Demi penghematan kuota, silakan tunggu sebentar atau gunakan input manual.',
+        },
+        { status: 429 }
+      );
+    }
+
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
     const consent = formData.get('consent');
@@ -27,6 +64,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Berkas bukti potong tidak ditemukan dalam permintaan.' },
         { status: 400 }
+      );
+    }
+
+    // Validasi ukuran berkas di sisi server (maks 4MB)
+    if (file.size > 4 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'Ukuran berkas melebihi batas 4MB. Silakan kompres foto atau gunakan input manual.' },
+        { status: 413 }
       );
     }
 
