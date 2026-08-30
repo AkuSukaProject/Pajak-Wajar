@@ -5,6 +5,7 @@ import type {
   BentukKegiatan,
   DatabaseRegulasi,
   HasilAuditPajakLengkap,
+  HasilRekonsiliasiBupot,
   KelompokWilayahKey,
   ProfilWajibPajak,
   StatusPerpajakanPasangan,
@@ -15,6 +16,7 @@ import { auditPajakMandiri } from '@/lib/index';
 import kluRulesData from '../../../data/klu_rules.json';
 import { KartuVonis } from './KartuVonis';
 import { ModulBupot } from '../bupot';
+import { TombolUnduhPdf } from '../pdf';
 
 type JawabanKepatuhan = boolean | 'tidak_yakin';
 
@@ -255,6 +257,8 @@ export function AlurKelayakan() {
     }
   };
 
+  const [rekonsiliasi, setRekonsiliasi] = useState<HasilRekonsiliasiBupot | null>(null);
+
   if (hasilAudit) {
     // Cari skema yang BOLEH dan kalkulasinya TERSEDIA untuk menjadi dasar pemotongan kredit bupot
     let pajakTerutangDasar = 0;
@@ -271,8 +275,30 @@ export function AlurKelayakan() {
 
         {/* Modul Rekonsiliasi Bukti Potong */}
         <div className="rounded-2xl border border-line bg-white p-5 sm:p-7 shadow-sheet">
-          <ModulBupot pajakTerutangDasar={pajakTerutangDasar} />
+          <ModulBupot
+            pajakTerutangDasar={pajakTerutangDasar}
+            onHasilChange={setRekonsiliasi}
+          />
         </div>
+
+        {/* Bagian Unduh Kertas Kerja PDF */}
+        {rekonsiliasi && (
+          <div className="rounded-2xl border border-line bg-white p-6 shadow-sheet flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="font-display text-lg font-bold text-ink">
+                Dokumen Kertas Kerja Siap Diunduh
+              </h3>
+              <p className="text-xs text-margin mt-1">
+                Bawa ringkasan vonis, perhitungan, dan rekonsiliasi bukti potong ini sebagai panduan saat mengisi SPT di Coretax DJP.
+              </p>
+            </div>
+            <TombolUnduhPdf
+              profil={profil}
+              hasilAudit={hasilAudit}
+              rekonsiliasi={rekonsiliasi}
+            />
+          </div>
+        )}
 
         <button
           type="button"
