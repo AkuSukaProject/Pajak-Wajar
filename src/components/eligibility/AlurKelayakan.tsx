@@ -14,6 +14,7 @@ import type {
 import { auditPajakMandiri } from '@/lib/index';
 import kluRulesData from '../../../data/klu_rules.json';
 import { KartuVonis } from './KartuVonis';
+import { ModulBupot } from '../bupot';
 
 type JawabanKepatuhan = boolean | 'tidak_yakin';
 
@@ -255,15 +256,30 @@ export function AlurKelayakan() {
   };
 
   if (hasilAudit) {
+    // Cari skema yang BOLEH dan kalkulasinya TERSEDIA untuk menjadi dasar pemotongan kredit bupot
+    let pajakTerutangDasar = 0;
+    for (const skema of hasilAudit.skema) {
+      if (skema.statusKelayakan === 'BOLEH' && skema.statusKalkulasi === 'TERSEDIA') {
+        pajakTerutangDasar = skema.pajakTerutang;
+        break;
+      }
+    }
+
     return (
-      <div className="motion-result space-y-5">
+      <div className="motion-result space-y-8">
         <KartuVonis hasil={hasilAudit} />
+
+        {/* Modul Rekonsiliasi Bukti Potong */}
+        <div className="rounded-2xl border border-line bg-white p-5 sm:p-7 shadow-sheet">
+          <ModulBupot pajakTerutangDasar={pajakTerutangDasar} />
+        </div>
+
         <button
           type="button"
-          className="pressable w-full rounded-xl border border-line bg-white px-5 py-3.5 text-sm font-semibold hover:border-blue transition text-ink"
+          className="pressable w-full rounded-xl border border-line bg-white px-5 py-3.5 text-sm font-semibold hover:border-blue transition text-ink shadow-sm"
           onClick={() => setHasilAudit(null)}
         >
-          ← Ubah Jawaban Simulasi
+          ← Ubah Jawaban Simulasi Kelayakan
         </button>
       </div>
     );
