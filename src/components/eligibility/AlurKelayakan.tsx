@@ -13,10 +13,27 @@ import type {
   TahunPajak,
 } from '@/types/pajak';
 import { auditPajakMandiri } from '@/lib/index';
+import dynamic from 'next/dynamic';
 import kluRulesData from '../../../data/klu_rules.json';
 import { KartuVonis } from './KartuVonis';
 import { ModulBupot } from '../bupot';
-import { TombolUnduhPdf } from '../pdf';
+
+const TombolUnduhPdf = dynamic(
+  () => import('../pdf').then((mod) => mod.TombolUnduhPdf),
+  {
+    ssr: false,
+    loading: () => (
+      <button
+        type="button"
+        disabled
+        className="inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-6 py-3.5 text-sm font-bold text-white shadow-sm opacity-70"
+      >
+        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        <span>Memuat Modul PDF...</span>
+      </button>
+    ),
+  }
+);
 
 type JawabanKepatuhan = boolean | 'tidak_yakin';
 

@@ -65,7 +65,7 @@ Sesuai dengan ketentuan transparansi teknologi kompetisi:
 | **Tailwind CSS** | Menyediakan tata letak desain yang responsif, modern, dan aksesibel sesuai standar aksesibilitas WCAG. |
 | **@react-pdf/renderer** | Menghasilkan dokumen lembar kerja pra-lapor A4 berstruktur formal secara instan di peramban pengguna. |
 | **Vitest** | Kerangka pengujian unit otomatis untuk memverifikasi logika aturan hukum pajak dan formula tarif progresif. |
-| **Google Gemini API (Vision)** | Membantu ekstraksi teks bukti potong secara cepat dengan prinsip *Zero Data Retention* (foto tidak disimpan di server). |
+| **Google Gemini API (Vision)** | Membantu ekstraksi teks bukti potong secara cepat melalui relay serverless dengan persetujuan eksplisit pengguna (foto tidak disimpan di server aplikasi). |
 
 ---
 

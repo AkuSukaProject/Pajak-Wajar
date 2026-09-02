@@ -110,10 +110,10 @@ export function UploadBupotModal({
         {/* Notifikasi Transparansi & Privasi */}
         <div className="mt-4 rounded-xl border border-blue/20 bg-blue/5 p-4 text-xs leading-relaxed text-slate-700">
           <p className="font-bold text-blue flex items-center gap-1.5 mb-1">
-            🔒 Prinsip Privasi & Penggunaan AI:
+            🔒 Prinsip Transparansi Privasi:
           </p>
           <p>
-            Foto bukti potong dikirim ke layanan AI (Google Gemini) untuk membaca angka secara otomatis. <strong>Berkas tidak disimpan di server kami</strong> (Zero Retention). Hasil ekstraksi dapat Anda tinjau dan edit sebelum disimpan.
+            Aplikasi PajakWajar <strong>tidak menyimpan foto bukti potong Anda di server kami</strong>. Namun, foto dikirim langsung ke penyedia OCR AI (Google Gemini) untuk membaca angka secara otomatis setelah Anda memberikan persetujuan. Hasil pembacaan dapat Anda periksa dan ubah sebelum disimpan.
           </p>
         </div>
 
@@ -178,7 +178,7 @@ export function UploadBupotModal({
                   Klik untuk memilih foto / seret berkas ke sini
                 </p>
                 <p className="text-xs text-margin mt-1">
-                  Mendukung foto formulir Bukti Potong PPh 21 / PPh 23 (JPG, PNG, PDF max 5MB)
+                  Mendukung foto formulir Bukti Potong PPh 21 / PPh 23 (JPG, PNG, WebP, PDF max 5MB)
                 </p>
               </div>
             )}
@@ -193,7 +193,7 @@ export function UploadBupotModal({
               className="mt-0.5 h-4 w-4 accent-blue"
             />
             <span className="text-xs leading-relaxed text-ink">
-              Saya menyetujui pengiriman foto bukti potong ini ke model AI untuk diekstraksi secara instan dan memahami bahwa data tidak disimpan.
+              Saya menyetujui pengiriman foto bukti potong ini ke penyedia OCR (Google Gemini) untuk ekstraksi data, dan memahami bahwa aplikasi PajakWajar tidak menyimpan foto ini di server.
             </span>
           </label>
         </div>

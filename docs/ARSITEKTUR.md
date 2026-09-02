@@ -33,5 +33,5 @@ PajakWajar menerapkan prinsip alur 4 tahap:
 ## 3. Aspek Keamanan & Privasi
 
 * **Client-Side Computation:** Seluruh penghitungan pajak dan input finansial berjalan di memori peramban pengguna.
-* **Serverless OCR Relay:** Foto bukti potong hanya dikirim ke route handler setelah *consent* aktif, diproses langsung ke Gemini API tanpa disimpan di disk (*Zero Data Retention*).
-* **Rate Limiting:** IP-based in-memory limiter (maks 5 request/menit) mencegah eksploitasi kuota API.
+* **Serverless OCR Relay:** Foto bukti potong hanya dikirim ke route handler setelah *consent* aktif dari pengguna, diteruskan langsung ke Gemini API tanpa disimpan di database/server aplikasi.
+* **Bounded Rate Limiting:** IP-based bounded in-memory limiter (maks 5 request/menit) dengan pembersihan otomatis untuk mencegah eksploitasi kuota API dan kebocoran memori.
