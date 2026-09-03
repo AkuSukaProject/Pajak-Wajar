@@ -7,16 +7,16 @@ export const metadata: Metadata = {
 };
 
 const proses = [
-  { nomor: '01', judul: 'Cek yang boleh dipakai', isi: 'Jawab pertanyaan sederhana tentang pekerjaan dan uang masuk dari usaha.' },
-  { nomor: '02', judul: 'Lihat perkiraan pajak', isi: 'Kami menghitung hanya dengan cara yang mungkin boleh Anda pakai.' },
-  { nomor: '03', judul: 'Pahami akibat pilihan', isi: 'Lihat apa yang terjadi jika Anda memilih satu cara menghitung pajak.' },
-  { nomor: '04', judul: 'Simpan panduan', isi: 'Bawa ringkasan hasil saat mengisi laporan pajak tahunan.' }
+  { nomor: '01', judul: 'Isi Profil & Omzet', isi: 'Pilih jenis profesi/pekerjaan bebas, domisili, dan omzet tahunan tanpa perlu membuat akun.' },
+  { nomor: '02', judul: 'Dapatkan Vonis Skema', isi: 'Sistem memvalidasi skema mana yang sah secara hukum (Norma/NPPN, Pembukuan, atau Tarif Umum).' },
+  { nomor: '03', judul: 'Rekonsiliasi Bukti Potong', isi: 'Unggah foto bukti potong (PPh 21/23) via AI OCR atau ketik manual untuk menghitung kredit pajak.' },
+  { nomor: '04', judul: 'Unduh Kertas Kerja (PDF)', isi: 'Unduh lembar kerja PDF siap pakai sebagai panduan saat mengisi SPT Tahunan di portal Coretax DJP.' }
 ] as const;
 
 const pembeda = [
-  { nomor: 'A', judul: 'Mengikuti aturan, bukan menebak', isi: 'Hak Anda ditentukan dengan aturan yang tertulis jelas. AI tidak dipakai untuk memutuskan hak pajak.' },
-  { nomor: 'B', judul: 'Alasannya tidak disembunyikan', isi: 'Cara yang tidak boleh dipakai tetap terlihat. Kami menjelaskan kenapa dan menunjukkan aturan resminya.' },
-  { nomor: 'C', judul: 'Tidak tahu? Tidak perlu menebak', isi: 'Anda boleh memilih “Tidak yakin”. Hasilnya akan meminta Anda mengecek, bukan memberi jawaban palsu.' }
+  { nomor: 'A', judul: 'Berdasarkan Regulasi Hukum, Bukan Asumsi', isi: 'Kalkulator biasa langsung menghitung tanpa mengecek izin hukum. PajakWajar memvalidasi syarat regulasi DJP terlebih dahulu sebelum menentukan skema yang sah bagi Anda.' },
+  { nomor: 'B', judul: 'Transparan Menunjukkan Skema yang Dilarang', isi: 'Kami tidak menyembunyikan aturan. Jika Anda dilarang menggunakan suatu skema (misal: pekerja bebas dilarang pakai tarif 0,5% PPh Final), kami tampilkan alasan dan pasal resminya agar Anda terhindar dari denda.' },
+  { nomor: 'C', judul: 'Jawaban "Tidak Yakin" yang Aman', isi: 'Jika Anda ragu dengan status administrasi (seperti sudah memberitahukan formulir Norma atau belum), sistem tidak memaksakan asumsi palsu, melainkan memandu langkah verifikasi yang benar.' }
 ] as const;
 
 function Logo() {
@@ -87,7 +87,7 @@ export default function Home() {
         <div className="border-white/15 px-5 py-16 sm:px-8 sm:py-24 lg:border-r lg:pr-16">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">Mengapa PajakWajar</p>
           <h2 className="mt-5 max-w-lg font-display text-4xl font-medium leading-tight tracking-tight sm:text-5xl">Alat lain mulai dari <em className="text-white/50">angka.</em><br />Kami mulai dari <em className="text-white/50">aturannya.</em></h2>
-          <p className="mt-7 max-w-md text-base leading-8 text-white/65">Hasil hitungan bisa terlihat benar, tetapi tetap bermasalah jika cara menghitungnya tidak boleh Anda pakai. Jadi, kami mengeceknya lebih dulu.</p>
+          <p className="mt-7 max-w-md text-base leading-8 text-white/65">Hasil hitungan bisa terlihat rapi, tetapi berisiko denda jika cara menghitungnya dilarang untuk profesi Anda. PajakWajar memastikan keabsahan hukumnya terlebih dahulu.</p>
         </div>
         <div className="divide-y divide-white/15 border-t border-white/15 lg:border-t-0">
           {pembeda.map((item) => <article key={item.nomor} className="group grid gap-5 px-5 py-9 transition-colors hover:bg-white/[0.04] sm:grid-cols-[48px_1fr] sm:px-10 sm:py-10"><span className="font-mono text-xs text-white/40">{item.nomor}</span><div><h3 className="font-display text-2xl font-semibold">{item.judul}</h3><p className="mt-3 max-w-xl text-sm leading-7 text-white/60">{item.isi}</p></div></article>)}
@@ -98,8 +98,8 @@ export default function Home() {
     <section id="cara-kerja" className="border-b border-line bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-blue">Empat langkah sederhana</p><h2 className="mt-4 max-w-2xl font-display text-4xl font-medium leading-tight tracking-tight sm:text-6xl">Dari cek aturan sampai ringkasan siap dibawa.</h2></div>
-          <p className="max-w-sm text-sm leading-7 text-margin">Kami menjelaskan kenapa setiap pertanyaan perlu dijawab. Anda tidak harus paham pajak lebih dulu.</p>
+          <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-blue">Empat langkah praktis</p><h2 className="mt-4 max-w-2xl font-display text-4xl font-medium leading-tight tracking-tight sm:text-6xl">Dari verifikasi aturan sampai kertas kerja siap lapor.</h2></div>
+          <p className="max-w-sm text-sm leading-7 text-margin">Alur terstruktur yang memandu Anda langkah demi langkah tanpa perlu latar belakang perpajakan.</p>
         </div>
         <ol className="mt-14 grid border-l border-t border-line sm:grid-cols-2 lg:grid-cols-4 lg:border-l-0">
           {proses.map((item, index) => <li key={item.nomor} className="group relative border-b border-r border-line p-6 sm:p-8 lg:min-h-[290px]"><span className="font-mono text-xs font-bold text-blue">{item.nomor}</span><div className="mt-14 h-px w-8 bg-blue transition-all duration-300 group-hover:w-16" aria-hidden="true" /><h3 className="mt-5 font-display text-2xl font-semibold">{item.judul}</h3><p className="mt-3 text-sm leading-7 text-margin">{item.isi}</p>{index < proses.length - 1 && <span className="absolute -right-3 top-7 z-10 hidden h-6 w-6 place-items-center bg-white font-mono text-margin lg:grid" aria-hidden="true">→</span>}</li>)}
@@ -114,12 +114,12 @@ export default function Home() {
             <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-blue">Kamus mini</p><h2 id="judul-kamus" className="mt-4 font-display text-3xl font-semibold sm:text-4xl">Istilah pajak, dalam bahasa sehari-hari.</h2></div>
             <dl className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2">
               {[
-                ['SPT', 'Laporan pajak yang biasanya diisi setiap tahun.'],
-                ['Omzet', 'Semua uang masuk dari usaha, sebelum dipotong biaya.'],
-                ['PTKP', 'Bagian penghasilan yang tidak dikenai pajak.'],
-                ['Skema pajak', 'Cara yang dipakai untuk menghitung pajak.'],
-                ['NPPN / Norma', 'Cara memperkirakan penghasilan bersih dengan persentase resmi.'],
-                ['DJP', 'Direktorat Jenderal Pajak, yaitu pihak pemerintah yang mengurus pajak.']
+                ['SPT', 'Laporan pajak tahunan yang wajib disampaikan ke DJP.'],
+                ['Omzet', 'Total seluruh uang masuk dari pekerjaan/usaha kotor setahun.'],
+                ['PTKP', 'Batas penghasilan minimal yang bebas dari pengenaan pajak.'],
+                ['Bukti Potong', 'Dokumen resmi bukti pajak Anda sudah dicicil/dipotong klien.'],
+                ['NPPN / Norma', 'Persentase resmi DJP untuk menentukan laba bersih tanpa pembukuan.'],
+                ['Coretax DJP', 'Portal sistem perpajakan terpadu generasi baru dari pemerintah.']
               ].map(([istilah, arti]) => <div key={istilah} className="bg-white p-5"><dt className="font-mono text-xs font-bold text-blue">{istilah}</dt><dd className="mt-2 text-sm leading-6 text-margin">{arti}</dd></div>)}
             </dl>
           </div>
@@ -130,17 +130,25 @@ export default function Home() {
     <section id="privasi" className="bg-paper py-20 sm:py-28">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue">Privasi sejak rancangan</p>
-          <h2 className="mt-4 max-w-xl font-display text-4xl font-medium leading-tight tracking-tight sm:text-6xl">Data pajak Anda bukan bahan bakar produk kami.</h2>
-          <p className="mt-6 max-w-xl text-base leading-8 text-margin">Pengecekan dan penghitungan berjalan langsung di browser pada HP atau laptop Anda. Tidak perlu membuat akun dan jawaban formulir tidak disimpan di server.</p>
-          <p className="mt-4 max-w-xl text-xs leading-6 text-margin">Jika fitur pembaca foto bukti potong (OCR) digunakan nanti, foto hanya dikirim setelah Anda setuju. Anda juga tetap bisa mengetik datanya sendiri.</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue">Privasi & Keamanan Data</p>
+          <h2 className="mt-4 max-w-xl font-display text-4xl font-medium leading-tight tracking-tight sm:text-6xl">Data finansial Anda tidak disimpan di server kami.</h2>
+          <p className="mt-6 max-w-xl text-base leading-8 text-margin">
+            Seluruh simulasi kelayakan, perhitungan tarif progresif, dan rekonsiliasi berjalan <strong>100% di memori peramban (browser)</strong> perangkat Anda. Tidak ada pendaftaran akun dan tidak ada data keuangan yang disimpan ke database kami.
+          </p>
+          <p className="mt-4 max-w-xl text-xs leading-6 text-margin border-l-2 border-blue/40 pl-3.5">
+            <strong>Transparansi Fitur Scan Bukti Potong (OCR):</strong> Foto bukti potong hanya dikirim ke penyedia AI (Google Gemini) jika Anda memberikan persetujuan eksplisit, semata-mata untuk membaca teks secara otomatis tanpa disimpan di server kami. Anda selalu bebas memilih input manual tanpa mengunggah foto.
+          </p>
         </div>
         <div className="border border-line bg-white p-6 shadow-sheet sm:p-8">
-          <div className="flex items-center justify-between border-b border-line pb-5"><span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-margin">Alur data</span><span className="h-2.5 w-2.5 rounded-full bg-blue" aria-hidden="true" /></div>
+          <div className="flex items-center justify-between border-b border-line pb-5"><span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-margin">Alur Pemrosesan Data</span><span className="h-2.5 w-2.5 rounded-full bg-blue" aria-hidden="true" /></div>
           <div className="space-y-7 py-7">
-            {[['01', 'Anda mengisi', 'Jawaban masuk melalui formulir di HP atau laptop.'], ['02', 'Browser menghitung', 'Aturan dijalankan langsung di perangkat Anda.'], ['03', 'Anda membawa hasil', 'Gunakan hasil sebagai bahan untuk mengecek kembali ke kantor pajak atau DJP.']].map(([nomor, judul, isi]) => <div key={nomor} className="grid grid-cols-[36px_1fr] gap-4"><span className="font-mono text-xs text-blue">{nomor}</span><div><strong className="block text-sm">{judul}</strong><span className="mt-1 block text-xs leading-5 text-margin">{isi}</span></div></div>)}
+            {[
+              ['01', 'Input di Perangkat Lokal', 'Jawaban formulir dan angka omzet diproses di browser HP/laptop tanpa dikirim ke database.'],
+              ['02', 'Validasi Aturan & Komputasi', 'Rumus PTKP, tarif progresif Pasal 17, dan norma dihitung langsung di perangkat Anda.'],
+              ['03', 'Unduh Kertas Kerja Mandiri', 'Hasil audit siap diunduh dalam format PDF resmi untuk panduan lapor SPT di Coretax DJP.']
+            ].map(([nomor, judul, isi]) => <div key={nomor} className="grid grid-cols-[36px_1fr] gap-4"><span className="font-mono text-xs text-blue">{nomor}</span><div><strong className="block text-sm">{judul}</strong><span className="mt-1 block text-xs leading-5 text-margin">{isi}</span></div></div>)}
           </div>
-          <div className="border-t border-line pt-5 text-xs font-semibold text-blue">Perangkat Anda → hasil Anda</div>
+          <div className="border-t border-line pt-5 text-xs font-semibold text-blue">Perangkat Anda → Hasil Anda (Privat & Mandiri)</div>
         </div>
       </div>
     </section>
