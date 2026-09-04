@@ -107,11 +107,31 @@ Sesuai dengan ketentuan transparansi teknologi kompetisi:
 
 ---
 
-## 🔒 Privasi & Keamanan Data
+## 🌐 Tautan Live Demo & Repositori
+
+* **Live Demo Web:** [https://pajak-wajar.vercel.app](https://pajak-wajar.vercel.app) *(atau jalankan lokal di port 3000)*
+* **Repositori Resmi:** [https://github.com/AkuSukaProject/Pajak-Wajar](https://github.com/AkuSukaProject/Pajak-Wajar)
+
+---
+
+## 📸 Tangkapan Layar Aplikasi (*Screenshots*)
+
+Sesuai panduan ITechno Cup 2026, berikut visualisasi 3 fitur utama antarmuka sistem:
+
+| 1. Kartu Vonis & Sitasi Regulasi | 2. Panel Rekonsiliasi & Bupot | 3. Lembar Kerja Coretax (PDF A4) |
+| :---: | :---: | :---: |
+| ![Kartu Vonis](/docs/screenshots/01_kartu_vonis.png) | ![Panel Rekonsiliasi](/docs/screenshots/02_rekonsiliasi_bupot.png) | ![Kertas Kerja PDF](/docs/screenshots/03_kertas_kerja_pdf.png) |
+| *Vonis tegas bersitasi pasal resmi DJP & PP 20/2026.* | *Agregasi kredit pajak bupot PPh 21/23 (Manual & OCR).* | *Ekspor dokumen resmi siap pakai di portal Coretax.* |
+
+---
+
+## 🔒 Privasi, Keamanan & *Security Best Practices*
 
 1. **Client-Side First:** Data profil, nominal omzet, dan rincian penghitungan pajak diproses di dalam browser pengguna dan tidak pernah dikirim ke database mana pun.
-2. **Transparansi OCR:** Foto bukti potong hanya dikirim ke layanan OCR setelah pengguna memberikan persetujuan eksplisit. Berkas hanya diproses di memori dan **tidak pernah disimpan ke disk/server**.
-3. **Perlindungan Kuota & Rate Limiting:** Endpoint server OCR dilindungi *In-Memory IP Rate Limiting* untuk mencegah lonjakan request dan penyalahgunaan.
+2. **Transparansi & Persetujuan OCR:** Foto bukti potong hanya dikirim ke layanan OCR setelah pengguna memberikan persetujuan eksplisit. Berkas hanya diproses di memori dan **tidak pernah disimpan ke disk/server**.
+3. **Validasi Server Berlapis (Magic Bytes & MIME):** Route handler memvalidasi file signature / *magic bytes* (JPEG, PNG, WebP, PDF) untuk mencegah serangan *file extension spoofing* dan *malicious upload*.
+4. **Proteksi Kuota & In-Memory Bounded Rate Limiting:** Endpoint OCR dilindungi mekanisme *rate limiter* berbasis IP dengan batas memori maksimum (*bounded memory map*) untuk mencegah ancaman kebocoran memori (memory exhaustion DoS).
+5. **Ketatnya Validasi Skema AI (Zod Schema):** Output AI divalidasi ketat tanpa *silent fallback* ke nilai palsu. Jika data buram atau meragukan, sistem menandai peringatan `⚠️ Perlu Pemeriksaan Manual` bagi pengguna.
 
 ---
 

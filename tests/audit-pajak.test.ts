@@ -35,8 +35,15 @@ const mockRegulasi: DatabaseRegulasi = {
     administrasiNppn: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
     ketentuanPeralihan: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
   },
-  kelompokWilayah: { kelompok1: { nama: "", deskripsi: "" }, kelompok2: { nama: "", deskripsi: "" }, kelompok3: { nama: "", deskripsi: "" } },
-  klu: [{ kluKode: "74201", dasarHukum: [] }]
+  kelompokWilayah: { kelompok1: { nama: "10 Ibukota", deskripsi: "" }, kelompok2: { nama: "Ibukota Lain", deskripsi: "" }, kelompok3: { nama: "Daerah Lain", deskripsi: "" } },
+  klu: [
+    {
+      kluKode: "74201",
+      nama: "Jasa Konsultasi",
+      persenNorma: { kelompok1: 0.5, kelompok2: 0.5, kelompok3: 0.45 },
+      dasarHukum: []
+    }
+  ]
 };
 
 const baseProfil: ProfilWajibPajak = {
@@ -57,6 +64,37 @@ const baseProfil: ProfilWajibPajak = {
 };
 
 describe('auditPajakMandiri', () => {
+  it('should calculate NPPN correctly using KLU and region specific persenNorma', () => {
+    const input: InputAuditPajak = {
+      profil: { ...baseProfil, wilayah: 'kelompok1' },
+      kreditPajak: []
+    };
+    const result = auditPajakMandiri(input, mockRegulasi);
+    
+    const nppn = result.skema.find(s => s.id === 'NPPN');
+    expect(nppn?.statusKelayakan).toBe('BOLEH');
+    expect(nppn?.statusKalkulasi).toBe('TERSEDIA');
+    if (nppn && nppn.statusKalkulasi === 'TERSEDIA') {
+      expect(nppn.rincianKalkulasi.persenNorma).toBe(0.5);
+      expect(nppn.rincianKalkulasi.penghasilanNeto).toBe(50000000);
+    }
+  });
+
+  it('should set NPPN statusKalkulasi to BELUM_TERSEDIA if KLU data is missing in database', () => {
+    const input: InputAuditPajak = {
+      profil: { ...baseProfil, kluKode: '99999' },
+      kreditPajak: []
+    };
+    const result = auditPajakMandiri(input, mockRegulasi);
+    
+    const nppn = result.skema.find(s => s.id === 'NPPN');
+    expect(nppn?.statusKelayakan).toBe('BOLEH');
+    expect(nppn?.statusKalkulasi).toBe('BELUM_TERSEDIA');
+    if (nppn && nppn.statusKalkulasi === 'BELUM_TERSEDIA') {
+      expect(nppn.alasanKalkulasi).toContain('Data persentase norma untuk KLU 99999');
+    }
+  });
+
   it('should set Tarif Umum statusKalkulasi to BELUM_TERSEDIA if biayaOperasionalRiil is undefined', () => {
     const input: InputAuditPajak = {
       profil: { ...baseProfil, biayaOperasionalRiil: undefined },

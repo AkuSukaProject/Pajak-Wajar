@@ -123,6 +123,16 @@
         "required": ["kluKode", "dasarHukum"],
         "properties": {
           "kluKode": { "type": "string" },
+          "nama": { "type": "string" },
+          "persenNorma": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kelompok1": { "type": "number" },
+              "kelompok2": { "type": "number" },
+              "kelompok3": { "type": "number" }
+            }
+          },
           "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
         }
       }

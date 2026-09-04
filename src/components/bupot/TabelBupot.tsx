@@ -65,15 +65,25 @@ export function TabelBupot({ daftarBupot, onHapusBupot, onEditBupot }: TabelBupo
                   {formatRupiah(b.pphDipotong)}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-                      b.sumber === 'ocr'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}
-                  >
-                    {b.sumber === 'ocr' ? '⚡ OCR' : '✍️ Manual'}
-                  </span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span
+                      className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                        b.sumber === 'ocr'
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {b.sumber === 'ocr' ? '⚡ OCR' : '✍️ Manual'}
+                    </span>
+                    {b.perluPemeriksaanManual && (
+                      <span
+                        className="inline-flex items-center gap-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800"
+                        title="Hasil OCR memerlukan pemeriksaan manual"
+                      >
+                        ⚠️ Cek Ulang
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-right whitespace-nowrap">
                   {onEditBupot && (

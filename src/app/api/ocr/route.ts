@@ -1,170 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-
-// ==========================================
-// 1. In-Memory Bounded Rate Limiting
-// ==========================================
-interface RateLimitRecord {
-  count: number;
-  lastReset: number;
-}
-
-const rateLimitMap = new Map<string, RateLimitRecord>();
-const MAX_REQUESTS_PER_MINUTE = 5;
-const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 menit
-const MAX_TRACKED_IPS = 1000; // Batas maksimum memori untuk mencegah memory leak
-
-function cleanupRateLimitMap(now: number) {
-  // Hapus entri kadaluarsa
-  for (const [ip, record] of rateLimitMap.entries()) {
-    if (now - record.lastReset > RATE_LIMIT_WINDOW_MS) {
-      rateLimitMap.delete(ip);
-    }
-  }
-
-  // Jika masih melebihi kapasitas maksimum, buang entri tertua
-  if (rateLimitMap.size > MAX_TRACKED_IPS) {
-    const excess = rateLimitMap.size - MAX_TRACKED_IPS;
-    let deletedCount = 0;
-    for (const key of rateLimitMap.keys()) {
-      rateLimitMap.delete(key);
-      deletedCount++;
-      if (deletedCount >= excess) break;
-    }
-  }
-}
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  cleanupRateLimitMap(now);
-
-  const record = rateLimitMap.get(ip);
-  if (!record || now - record.lastReset > RATE_LIMIT_WINDOW_MS) {
-    rateLimitMap.set(ip, { count: 1, lastReset: now });
-    return false;
-  }
-
-  if (record.count >= MAX_REQUESTS_PER_MINUTE) {
-    return true;
-  }
-
-  record.count += 1;
-  return false;
-}
-
-// ==========================================
-// 2. Skema Validasi Output AI (Zod)
-// ==========================================
-const ocrGeminiOutputSchema = z.object({
-  nomorBupot: z
-    .string()
-    .max(100)
-    .catch('')
-    .transform((v) => String(v || '').trim()),
-  npwpPemotong: z
-    .string()
-    .max(30)
-    .catch('')
-    .transform((v) => String(v || '').trim()),
-  namaPemotong: z
-    .string()
-    .max(200)
-    .catch('')
-    .transform((v) => String(v || '').trim()),
-  jenisPph: z
-    .enum(['PPH_21', 'PPH_23'])
-    .catch('PPH_21'),
-  dpp: z
-    .union([z.number(), z.string()])
-    .catch(0)
-    .transform((val) => {
-      const num =
-        typeof val === 'number'
-          ? Math.floor(val)
-          : parseInt(String(val).replace(/\D/g, ''), 10);
-      if (isNaN(num) || num < 0) return 0;
-      return Math.min(num, 1_000_000_000_000); // Batas wajar 1 Triliun
-    }),
-  pphDipotong: z
-    .union([z.number(), z.string()])
-    .catch(0)
-    .transform((val) => {
-      const num =
-        typeof val === 'number'
-          ? Math.floor(val)
-          : parseInt(String(val).replace(/\D/g, ''), 10);
-      if (isNaN(num) || num < 0) return 0;
-      return Math.min(num, 1_000_000_000_000);
-    }),
-  masaPajak: z
-    .string()
-    .max(50)
-    .catch('Tahunan')
-    .transform((v) => String(v || 'Tahunan').trim()),
-  perluPemeriksaanManual: z
-    .boolean()
-    .catch(false)
-    .default(false),
-});
-
-// ==========================================
-// 3. Validasi Format & Magic Bytes
-// ==========================================
-const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'application/pdf',
-]);
-
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
-
-function isValidFileSignature(buffer: Buffer, declaredMimeType: string): boolean {
-  if (buffer.length < 4) return false;
-
-  // JPEG: FF D8 FF
-  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
-    return declaredMimeType === 'image/jpeg' || declaredMimeType === 'image/jpg';
-  }
-
-  // PNG: 89 50 4E 47
-  if (
-    buffer[0] === 0x89 &&
-    buffer[1] === 0x50 &&
-    buffer[2] === 0x4e &&
-    buffer[3] === 0x47
-  ) {
-    return declaredMimeType === 'image/png';
-  }
-
-  // WebP: RIFF (bytes 0-3) and WEBP (bytes 8-11)
-  if (
-    buffer.length >= 12 &&
-    buffer[0] === 0x52 &&
-    buffer[1] === 0x49 &&
-    buffer[2] === 0x46 &&
-    buffer[3] === 0x46 &&
-    buffer[8] === 0x57 &&
-    buffer[9] === 0x45 &&
-    buffer[10] === 0x42 &&
-    buffer[11] === 0x50
-  ) {
-    return declaredMimeType === 'image/webp';
-  }
-
-  // PDF: %PDF (0x25 0x50 0x44 0x46)
-  if (
-    buffer[0] === 0x25 &&
-    buffer[1] === 0x50 &&
-    buffer[2] === 0x44 &&
-    buffer[3] === 0x46
-  ) {
-    return declaredMimeType === 'application/pdf';
-  }
-
-  return false;
-}
+import {
+  isRateLimited,
+  ocrGeminiOutputSchema,
+  ALLOWED_MIME_TYPES,
+  MAX_FILE_SIZE_BYTES,
+  isValidFileSignature,
+} from '@/lib/ocr-server';
 
 /**
  * Route Handler untuk ekstraksi data Bukti Pemotongan Pajak via Gemini API.
@@ -174,7 +15,8 @@ function isValidFileSignature(buffer: Buffer, declaredMimeType: string): boolean
  *    melainkan diteruskan ke Google Gemini API hanya setelah pengguna memberikan persetujuan eksplisit.
  * 3. Keamanan API key: Dikirim melalui HTTP header `x-goog-api-key`, bukan melalui parameter query URL.
  * 4. Validasi server berlapis: MIME allowlist, magic bytes, batas ukuran 5MB, dan validasi skema Zod.
- * 5. Prompt presisi: Jika angka buram, wajib mengembalikan 0 dan meminta pemeriksaan manual (tanpa menebak).
+ * 5. Model aktif: Menggunakan model Gemini aktif (gemini-2.5-flash / gemini-3.5-flash-lite).
+ * 6. Prompt presisi: Jika angka buram, wajib mengembalikan 0 dan meminta pemeriksaan manual (tanpa menebak).
  */
 export async function POST(req: NextRequest) {
   try {
@@ -291,13 +133,37 @@ PENTING:
       ],
       generationConfig: {
         response_mime_type: 'application/json',
+        response_schema: {
+          type: 'OBJECT',
+          properties: {
+            nomorBupot: { type: 'STRING' },
+            npwpPemotong: { type: 'STRING' },
+            namaPemotong: { type: 'STRING' },
+            jenisPph: { type: 'STRING', enum: ['PPH_21', 'PPH_23'] },
+            dpp: { type: 'INTEGER' },
+            pphDipotong: { type: 'INTEGER' },
+            masaPajak: { type: 'STRING' },
+            perluPemeriksaanManual: { type: 'BOOLEAN' },
+          },
+          required: [
+            'nomorBupot',
+            'npwpPemotong',
+            'namaPemotong',
+            'jenisPph',
+            'dpp',
+            'pphDipotong',
+            'masaPajak',
+            'perluPemeriksaanManual',
+          ],
+        },
         temperature: 0.1,
       },
     };
 
-    // 5. Pengiriman API Key melalui Header x-goog-api-key (Bukan query URL)
+    // 5. Model Gemini Aktif & Pengiriman API Key melalui Header x-goog-api-key (Bukan query URL)
+    const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
       {
         method: 'POST',
         headers: {
@@ -349,6 +215,12 @@ PENTING:
       );
     }
 
+    const needsManualReview =
+      validated.data.perluPemeriksaanManual ||
+      validated.data.pphDipotong === 0 ||
+      !validated.data.nomorBupot ||
+      !validated.data.namaPemotong;
+
     const hasil = {
       nomorBupot: validated.data.nomorBupot,
       npwpPemotong: validated.data.npwpPemotong,
@@ -357,7 +229,7 @@ PENTING:
       dpp: validated.data.dpp,
       pphDipotong: validated.data.pphDipotong,
       masaPajak: validated.data.masaPajak,
-      perluPemeriksaanManual: validated.data.perluPemeriksaanManual,
+      perluPemeriksaanManual: needsManualReview,
       sumber: 'ocr' as const,
     };
 

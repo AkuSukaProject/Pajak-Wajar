@@ -69,6 +69,8 @@ export interface ParameterPtkp {
 
 export interface KluItem {
   kluKode: string;
+  nama?: string;
+  persenNorma?: Partial<Record<KelompokWilayahKey, number>>;
   dasarHukum: DasarHukumDetail[];
 }
 
@@ -213,6 +215,7 @@ export interface BuktiPotong {
   pphDipotong: number;   // PPh yang dipotong
   masaPajak: string;     // format MM-YYYY atau keterangan masa
   sumber: SumberBupot;   // transparansi sumber data
+  perluPemeriksaanManual?: boolean; // penanda jika data buram atau perlu verifikasi ekstra
 }
 
 export interface HasilRekonsiliasiBupot {

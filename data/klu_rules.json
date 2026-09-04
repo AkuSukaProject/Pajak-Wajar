@@ -189,11 +189,89 @@
   "klu": [
     {
       "kluKode": "74201",
+      "nama": "Jasa Konsultasi Manajemen / Profesional Lainnya",
+      "persenNorma": {
+        "kelompok1": 0.5,
+        "kelompok2": 0.5,
+        "kelompok3": 0.5
+      },
       "dasarHukum": [
         {
           "namaRegulasi": "Lampiran I PER-17/PJ/2015",
           "pasalAtauLampiran": "Daftar Persentase Norma",
           "fungsi": "Persentase norma perhitungan penghasilan neto",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    {
+      "kluKode": "90002",
+      "nama": "Kreator Konten / Influencer / Pekerja Seni",
+      "persenNorma": {
+        "kelompok1": 0.5,
+        "kelompok2": 0.5,
+        "kelompok3": 0.475
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
+          "pasalAtauLampiran": "Daftar Persentase Norma",
+          "fungsi": "Persentase norma perhitungan penghasilan neto aktivitas hiburan & seni",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    {
+      "kluKode": "62019",
+      "nama": "Software Engineer / Desainer / Konsultan Lepas",
+      "persenNorma": {
+        "kelompok1": 0.5,
+        "kelompok2": 0.5,
+        "kelompok3": 0.5
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
+          "pasalAtauLampiran": "Daftar Persentase Norma",
+          "fungsi": "Persentase norma perhitungan penghasilan neto aktivitas pemrograman komputer",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    {
+      "kluKode": "47911",
+      "nama": "Perdagangan E-Commerce / Toko Online / Reseller",
+      "persenNorma": {
+        "kelompok1": 0.3,
+        "kelompok2": 0.25,
+        "kelompok3": 0.2
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
+          "pasalAtauLampiran": "Daftar Persentase Norma",
+          "fungsi": "Persentase norma perdagangan eceran melalui media",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    {
+      "kluKode": "56101",
+      "nama": "Kuliner / Kafe / Jasa Usaha Mikro",
+      "persenNorma": {
+        "kelompok1": 0.3,
+        "kelompok2": 0.25,
+        "kelompok3": 0.2
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
+          "pasalAtauLampiran": "Daftar Persentase Norma",
+          "fungsi": "Persentase norma penyediaan makanan dan minuman",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }

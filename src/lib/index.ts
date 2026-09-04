@@ -75,10 +75,9 @@ export function auditPajakMandiri(input: InputAuditPajak, regulasi: DatabaseRegu
   const ptkpParam = regulasi.parameterPajak.ptkp;
   const tarifProgresifParam = regulasi.parameterPajak.tarifProgresif;
 
-  // Dapatkan persen norma dari KLU (Asumsi KLU tunggal yang valid)
+  // Dapatkan persen norma berdasarkan KLU dan kelompok wilayah
   const kluTerkait = regulasi.klu.find((k) => k.kluKode === profil.kluKode);
-  // Asumsi untuk lomba: gunakan kel 1 (dummy fallback = 0.5)
-  const persenNorma = 0.5; // TODO: Lookup actual percentage properly.
+  const persenNorma = kluTerkait?.persenNorma?.[profil.wilayah];
 
   if (kelayakanNppn.status !== 'BOLEH') {
     hasilNppn = {
@@ -99,6 +98,16 @@ export function auditPajakMandiri(input: InputAuditPajak, regulasi: DatabaseRegu
       dasarHukum: kelayakanNppn.dasarHukum,
       statusKalkulasi: 'BELUM_TERSEDIA',
       alasanKalkulasi: 'Sistem hanya menghitung NPPN untuk satu jenis kegiatan usaha/pekerjaan bebas. Hitung manual untuk multi-kegiatan.',
+    };
+  } else if (typeof persenNorma !== 'number' || persenNorma <= 0) {
+    const namaWilayah = regulasi.kelompokWilayah[profil.wilayah]?.nama || profil.wilayah;
+    hasilNppn = {
+      id: 'NPPN',
+      statusKelayakan: kelayakanNppn.status,
+      alasanKelayakan: kelayakanNppn.alasan,
+      dasarHukum: kelayakanNppn.dasarHukum,
+      statusKalkulasi: 'BELUM_TERSEDIA',
+      alasanKalkulasi: `Data persentase norma untuk KLU ${profil.kluKode} pada ${namaWilayah} belum tersedia di basis data regulasi.`,
     };
   } else if (
     ptkpParam.statusVerifikasi === 'DALAM_REVIEW' ||

@@ -52,6 +52,7 @@ export function FormBupotManual({ onTambahBupot, onBatal, initialData }: FormBup
       pphDipotong: parsedPph,
       masaPajak: masaPajak.trim(),
       sumber: initialData?.sumber || 'manual',
+      perluPemeriksaanManual: initialData?.perluPemeriksaanManual,
     };
 
     onTambahBupot(bupotBaru);
@@ -79,9 +80,18 @@ export function FormBupotManual({ onTambahBupot, onBatal, initialData }: FormBup
           </p>
         </div>
         <span className="rounded-full bg-blue/10 px-2.5 py-1 text-xs font-semibold text-blue">
-          Mode Manual
+          {initialData?.sumber === 'ocr' ? '⚡ Verifikasi OCR' : 'Mode Manual'}
         </span>
       </div>
+
+      {initialData?.perluPemeriksaanManual && (
+        <div className="mb-4 rounded-xl bg-amber-50 p-3.5 text-xs text-amber-900 border border-amber-200 flex items-start gap-2.5">
+          <span className="text-base">⚠️</span>
+          <div>
+            <strong className="font-bold">Perlu Pemeriksaan Manual:</strong> Beberapa teks atau nominal pada foto bukti potong mungkin kurang jelas/buram. Mohon periksa kembali kolom nomor bupot, nama pemotong, dan nominal di bawah sebelum menyimpan.
+          </div>
+        </div>
+      )}
 
       {errorMsg && (
         <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 border border-red-200">
