@@ -11,7 +11,7 @@ const tahapan = [
   ['01', 'Cek aturan', 'Lihat cara yang boleh dipakai'],
   ['02', 'Hitung', 'Lihat perkiraan pajak'],
   ['03', 'Pahami', 'Ketahui akibat pilihan'],
-  ['04', 'Simpan', 'Buat ringkasan hasil']
+  ['04', 'Simpan', 'Unduh kertas kerja PDF']
 ] as const;
 
 export default function CekKelayakanPage() {
@@ -32,7 +32,7 @@ export default function CekKelayakanPage() {
         <h1 className="max-w-xl font-display text-[2.75rem] font-medium leading-[1.04] tracking-[-0.035em] sm:text-6xl">Cari tahu cara hitung pajak yang boleh kamu pakai.</h1>
         <p className="mt-6 max-w-lg text-base leading-7 text-margin sm:text-lg sm:leading-8">Cukup jawab pertanyaan tentang pekerjaan dan penghasilan. Istilah pajak akan kami jelaskan saat muncul.</p>
         <ol className="mt-10 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-line pt-6 text-sm lg:grid-cols-1" aria-label="Urutan proses PajakWajar">
-          {tahapan.map(([nomor, judul, keterangan], index) => <li key={nomor} className={`flex gap-4 ${index > 0 ? 'opacity-45' : ''}`}><span className="font-mono text-xs text-margin">{nomor}</span><span><strong className="block font-semibold">{judul}</strong><span className="mt-0.5 hidden text-xs text-margin sm:block">{keterangan}</span></span></li>)}
+          {tahapan.map(([nomor, judul, keterangan]) => <li key={nomor} className="flex gap-4"><span className="font-mono text-xs text-margin">{nomor}</span><span><strong className="block font-semibold">{judul}</strong><span className="mt-0.5 hidden text-xs text-margin sm:block">{keterangan}</span></span></li>)}
         </ol>
         <div className="mt-10 border-l-2 border-blue pl-4 text-xs leading-5 text-margin">Jawaban diproses langsung di HP atau laptop Anda dan tidak disimpan di server.</div>
       </div>
