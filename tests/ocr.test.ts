@@ -253,11 +253,11 @@ describe('route /api/ocr-bupot', () => {
 // ---------------------------------------------------------------------------
 
 /**
- * Blok ini hanya berjalan bila `GEMINI_API_KEY` tersedia di lingkungan, supaya
- * pengujian rutin tidak pernah mengirim gambar keluar dan tidak menimbulkan
- * biaya. Jalankan dengan:
+ * Blok ini hanya berjalan bila `GEMINI_API_KEY` tersedia, supaya pengujian
+ * rutin tidak pernah mengirim gambar keluar dan tidak menimbulkan biaya.
+ * Isi kuncinya di `.env.local` (dimuat oleh `tests/setup-env.ts`), lalu:
  *
- *   GEMINI_API_KEY=... npm run test:ocr
+ *   npm run test:ocr
  *
  * Gambar yang dikirim adalah `tests/fixtures/contoh-bupot.png`, sebuah lembar
  * latihan berisi data karangan yang diberi cap CONTOH.

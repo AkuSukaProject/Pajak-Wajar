@@ -53,6 +53,66 @@ Isi keduanya di **Project Settings → Environment Variables** pada Vercel, buka
 
 `.env.local` tidak boleh masuk ke Git. Pastikan `.gitignore` masih memuatnya sebelum melakukan push.
 
+### Cara mendapatkan `GEMINI_API_KEY`
+
+1. Buka **[Google AI Studio](https://aistudio.google.com/apikey)** dan masuk dengan akun Google.
+2. Klik **Create API key**, pilih project Google Cloud yang ada atau biarkan AI Studio membuatkan yang baru.
+3. Salin kuncinya. Kunci hanya ditampilkan penuh sekali; simpan di pengelola kata sandi, bukan di catatan yang ikut ter-commit.
+
+Kunci itu terikat pada akun Google pribadi. Jangan bagikan di grup, jangan tempel di README, dan jangan kirim lewat chat. Bila bocor, cabut lewat halaman yang sama lalu buat yang baru.
+
+### Cara mengisi `.env.local`
+
+Salin templatnya, lalu isi barisnya:
+
+```bash
+cp .env.example .env.local     # PowerShell: Copy-Item .env.example .env.local
+```
+
+```env
+GEMINI_API_KEY=AIza...isi-kunci-anda-di-sini
+GEMINI_MODEL=
+```
+
+`GEMINI_MODEL` **boleh dikosongkan**. Bila kosong, aplikasi memakai `gemini-2.5-flash`. Isi hanya bila Anda sengaja ingin model lain.
+
+### Memastikan kunci dan nama model benar
+
+Nama model bisa berubah seiring waktu, jadi jangan menebak. Tanyakan langsung ke layanannya model apa yang tersedia untuk kunci Anda:
+
+```bash
+curl -s "https://generativelanguage.googleapis.com/v1beta/models" \
+  -H "x-goog-api-key: $GEMINI_API_KEY" \
+  | grep -o '"name": "models/[^"]*"'
+```
+
+Di PowerShell:
+
+```powershell
+$k = (Select-String -Path .env.local -Pattern '^GEMINI_API_KEY=(.+)$').Matches.Groups[1].Value
+(Invoke-RestMethod "https://generativelanguage.googleapis.com/v1beta/models" -Headers @{ "x-goog-api-key" = $k }).models.name
+```
+
+- Daftar keluar → kunci valid. Pastikan model yang Anda pakai ada di daftar itu.
+- `API key not valid` → kunci salah salin atau sudah dicabut.
+- `403` dengan pesan soal API belum aktif → aktifkan Generative Language API pada project Google Cloud yang bersangkutan.
+
+### Menguji pembacaan bukti potong
+
+Setelah `.env.local` terisi:
+
+```bash
+npm run test:ocr
+```
+
+Perintah itu mengirim `tests/fixtures/contoh-bupot.png` — lembar latihan berisi data karangan — ke layanan, lalu memeriksa apakah yang terbaca Rp120.000.000 dan Rp6.000.000. Hasil bacaannya dicetak ke konsol supaya dapat Anda bandingkan sendiri.
+
+Selama `.env.local` tidak ada atau kuncinya kosong, tes itu **dilewati** dan tidak ada gambar yang dikirim ke mana pun. `tests/setup-env.ts` yang memuat berkas itu ke `process.env`, karena Vitest tidak melakukannya sendiri seperti Next.js. Variabel dari lingkungan tetap menang atas isi berkas, sehingga `GEMINI_API_KEY=... npm run test:ocr` juga berfungsi.
+
+### Kuota dan biaya
+
+AI Studio menyediakan kuota gratis dengan batas permintaan per menit dan per hari. Untuk demo lomba, satu bukti potong per pembacaan jelas jauh di bawah batas itu. Periksa kuota dan harga yang berlaku di halaman AI Studio sebelum memakainya di luar demo, karena ketentuannya dapat berubah.
+
 ## Yang berjalan di mana
 
 | Bagian | Tempat eksekusi |

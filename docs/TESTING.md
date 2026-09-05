@@ -74,8 +74,11 @@ Pada 5 September 2026 seluruh parameter dicocokkan ke teks asli. Hasilnya: **17 
 - **Layanan OCR sungguhan.** Seluruh gerbang, batas, dan penanganan galat sudah diuji dengan layanan disimulasikan (18 tes lulus). Panggilan ke Gemini yang sebenarnya **belum pernah dijalankan** karena membutuhkan `GEMINI_API_KEY`. Tesnya sudah disiapkan beserta gambar contoh `tests/fixtures/contoh-bupot.png`; jalankan dengan:
 
   ```bash
-  GEMINI_API_KEY=... npm run test:ocr
+  cp .env.example .env.local   # lalu isi GEMINI_API_KEY
+  npm run test:ocr
   ```
+
+  Cara memperoleh kuncinya ada di [`docs/DEPLOYMENT.md`](DEPLOYMENT.md). `tests/setup-env.ts` memuat `.env.local` ke `process.env` karena Vitest tidak melakukannya sendiri seperti Next.js.
 
   Tes itu memeriksa apakah model membaca Rp120.000.000 dan Rp6.000.000 dari lembar contoh. Selama kunci tidak ada, tes tersebut dilewati dan tidak ada gambar yang dikirim ke mana pun.
 - **Deployment publik.** Belum ada URL produksi. Langkahnya ada di [`docs/DEPLOYMENT.md`](DEPLOYMENT.md).
