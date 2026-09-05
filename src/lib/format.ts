@@ -25,9 +25,40 @@ export function formatPersenNorma(persen: number): string {
 
 /** Mengubah masukan bebas menjadi angka rupiah; string kosong menjadi `undefined`. */
 export function bacaNominal(teks: string): number | undefined {
-  const bersih = teks.replace(/[^0-9]/g, '');
+  const bersih = hanyaAngka(teks);
   if (bersih.length === 0) return undefined;
   return Number(bersih);
+}
+
+/** Menyisakan digit saja dari masukan bebas. */
+export function hanyaAngka(teks: string): string {
+  return teks.replace(/[^0-9]/g, '');
+}
+
+/**
+ * Menyisipkan titik pemisah ribuan pada rangkaian digit, tanpa mengubahnya
+ * menjadi angka lebih dulu supaya nilai sepanjang apa pun tetap utuh.
+ * Contoh: "50000000" menjadi "50.000.000".
+ */
+export function formatRibuan(digit: string): string {
+  const bersih = hanyaAngka(digit).replace(/^0+(?=[0-9])/, '');
+  return bersih.replace(/\B(?=([0-9]{3})+(?![0-9]))/g, '.');
+}
+
+/**
+ * Letak karet setelah sejumlah digit tertentu pada teks yang sudah berpemisah.
+ * Dipakai agar kursor tidak melompat ke ujung saat teks diformat ulang.
+ */
+export function posisiSetelahDigit(teks: string, jumlahDigit: number): number {
+  if (jumlahDigit <= 0) return 0;
+  let terhitung = 0;
+  for (let i = 0; i < teks.length; i += 1) {
+    if (teks[i] >= '0' && teks[i] <= '9') {
+      terhitung += 1;
+      if (terhitung === jumlahDigit) return i + 1;
+    }
+  }
+  return teks.length;
 }
 
 export function formatTanggalIndonesia(iso: string): string {

@@ -6,7 +6,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/AkuSukaProject/Pajak-Wajar)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Aplikasi_Berfungsi-2ea44f?style=for-the-badge)](#fitur-unggulan)
-[![Tes](https://img.shields.io/badge/Vitest-103_lulus-2ea44f?style=for-the-badge)](#testing)
+[![Tes](https://img.shields.io/badge/Vitest-116_lulus-2ea44f?style=for-the-badge)](#testing)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
 
@@ -186,7 +186,7 @@ OCR          : Gemini API, structured JSON, temperature 0; opsional dan butuh pe
 Package Mgmt : npm dengan package-lock.json
 Deployment   : Vercel (vercel.json, region sin1); belum dieksekusi
 CI/CD        : Belum ada workflow di repositori
-Testing      : Vitest; 103 tes lulus pada 6 berkas. Ajv 2020 untuk integritas data aturan
+Testing      : Vitest; 116 tes lulus pada 7 berkas. Ajv 2020 untuk integritas data aturan
 Type Check   : TypeScript (tsc --noEmit), tanpa `any`
 Monitoring   : Belum dikonfigurasi
 ```
@@ -299,7 +299,7 @@ Pajak-Wajar/
 │   │   └── format.ts             # Pembantu tampilan
 │   ├── mock/                     # Profil contoh untuk demo dan tangkapan layar
 │   └── types/                    # Kontrak tipe domain
-├── tests/                        # 103 tes: schema, calculator, eligibility, audit, ocr
+├── tests/                        # 116 tes: schema, calculator, eligibility, audit, ocr, format
 │   └── fixtures/                 # Lembar bukti potong contoh untuk uji OCR
 ├── vitest.config.ts
 ├── vercel.json
@@ -526,9 +526,10 @@ npm run build
 | [tests/eligibility.test.ts](./tests/eligibility.test.ts) | 32 | Agregasi prioritas dan empat saringan kelayakan. |
 | [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 13 | Konsistensi status kalkulasi dan batasan perhitungan. |
 | [tests/schemas.test.ts](./tests/schemas.test.ts) | 15 | Kontrak masukan formulir dan bukti potong. |
+| [tests/format.test.ts](./tests/format.test.ts) | 13 | Pemisah ribuan pada isian nominal, termasuk jaminan titik tidak bocor ke perhitungan. |
 | [tests/ocr.test.ts](./tests/ocr.test.ts) | 18 (+1 opsional) | Gerbang persetujuan, batas berkas, dan seluruh kode galat route OCR. Tes ke layanan Gemini sungguhan berjalan hanya bila `GEMINI_API_KEY` tersedia. |
 
-Pemeriksaan pada 5 September 2026: lint, pemeriksaan tipe, build produksi, dan 103 tes berhasil; alur enam langkah juga dijalankan otomatis pada peramban tanpa error konsol. Rinciannya di [laporan pemeriksaan](./docs/TESTING.md).
+Pemeriksaan pada 5 September 2026: lint, pemeriksaan tipe, build produksi, dan 116 tes berhasil; alur enam langkah juga dijalankan otomatis pada peramban tanpa error konsol. Rinciannya di [laporan pemeriksaan](./docs/TESTING.md).
 
 Persentase coverage belum diukur. Script E2E dan coverage belum dikonfigurasi sebagai perintah npm.
 

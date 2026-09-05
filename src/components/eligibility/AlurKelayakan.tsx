@@ -1,8 +1,9 @@
 'use client';
 
-import { useId, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { InputBuktiPotong } from '@/components/eligibility/InputBuktiPotong';
 import { KartuVonis } from '@/components/eligibility/KartuVonis';
+import { InputRupiah } from '@/components/ui/InputRupiah';
 import { auditPajakMandiri } from '@/lib/index';
 import { basisAturan, daftarKlu } from '@/lib/regulasi';
 import type {
@@ -128,53 +129,6 @@ function PilihanTiga({
         );
       })}
     </div>
-  );
-}
-
-function InputRupiah({
-  label,
-  nilai,
-  onChange,
-  bantuan,
-  bolehKosong = false
-}: {
-  label: string;
-  nilai: number | undefined;
-  onChange: (nilai: number | undefined) => void;
-  bantuan: string;
-  bolehKosong?: boolean;
-}) {
-  const id = useId();
-  return (
-    <label htmlFor={id} className="block">
-      <span className="mb-2 block text-sm font-semibold">{label}</span>
-      <span className="flex border border-line bg-white transition-colors focus-within:border-blue focus-within:ring-1 focus-within:ring-blue">
-        <span className="border-r border-line px-4 py-3.5 font-mono text-sm text-margin">Rp</span>
-        <input
-          id={id}
-          aria-describedby={`${id}-help`}
-          inputMode="numeric"
-          min="0"
-          max="999999999999999"
-          type="number"
-          value={nilai === undefined ? '' : nilai || ''}
-          onChange={(e) => {
-            const teks = e.target.value;
-            if (teks === '') {
-              onChange(bolehKosong ? undefined : 0);
-              return;
-            }
-            onChange(Math.max(0, Math.min(Number(teks), 999_999_999_999_999)));
-          }}
-          className="w-full min-w-0 bg-transparent px-4 py-3.5 font-mono outline-none"
-          placeholder="0"
-          autoComplete="off"
-        />
-      </span>
-      <span id={`${id}-help`} className="mt-1.5 block text-xs leading-5 text-margin">
-        {bantuan}
-      </span>
-    </label>
   );
 }
 

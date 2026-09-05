@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { InputRupiah } from '@/components/ui/InputRupiah';
 import { formatCurrency } from '@/lib/format';
 import { GalatBerkas, GalatPersetujuan, bacaBupotDenganPersetujuan } from '@/lib/ocr';
 import type { KreditPajakItem } from '@/types/pajak';
@@ -13,12 +14,12 @@ import type { KreditPajakItem } from '@/types/pajak';
  * hasilnya masuk ke kolom yang sama supaya wajib ditinjau sebelum disimpan.
  */
 
-const kosong = { nomorBuktiPotong: '', pemotong: '', penghasilanBruto: '', pphDipotong: '' };
-
-function angkaDari(teks: string): number {
-  const bersih = teks.replace(/[^0-9]/g, '');
-  return bersih.length === 0 ? 0 : Number(bersih);
-}
+const kosong = {
+  nomorBuktiPotong: '',
+  pemotong: '',
+  penghasilanBruto: undefined as number | undefined,
+  pphDipotong: undefined as number | undefined
+};
 
 export function InputBuktiPotong({
   daftar,
@@ -37,7 +38,7 @@ export function InputBuktiPotong({
   const total = daftar.reduce((jumlah, item) => jumlah + item.pphDipotong, 0);
 
   const tambah = () => {
-    const pphDipotong = angkaDari(isian.pphDipotong);
+    const pphDipotong = isian.pphDipotong ?? 0;
     if (pphDipotong <= 0) {
       setPesan('Isi jumlah pajak yang sudah dipotong terlebih dahulu.');
       return;
@@ -47,7 +48,7 @@ export function InputBuktiPotong({
       {
         nomorBuktiPotong: isian.nomorBuktiPotong.trim(),
         pemotong: isian.pemotong.trim(),
-        penghasilanBruto: angkaDari(isian.penghasilanBruto),
+        penghasilanBruto: isian.penghasilanBruto ?? 0,
         pphDipotong,
         sumber
       }
@@ -69,8 +70,8 @@ export function InputBuktiPotong({
       setIsian({
         nomorBuktiPotong: hasil.nomorBuktiPotong,
         pemotong: hasil.pemotong,
-        penghasilanBruto: String(hasil.penghasilanBruto),
-        pphDipotong: String(hasil.pphDipotong)
+        penghasilanBruto: hasil.penghasilanBruto,
+        pphDipotong: hasil.pphDipotong
       });
       setSumber('OCR');
       setPesan('Angka sudah diisi dari foto. Periksa dan perbaiki bila ada yang salah baca.');
@@ -151,28 +152,18 @@ export function InputBuktiPotong({
             autoComplete="off"
           />
         </label>
-        <label className="block text-sm">
-          <span className="mb-1.5 block font-semibold">Penghasilan bruto</span>
-          <input
-            inputMode="numeric"
-            value={isian.penghasilanBruto}
-            onChange={(e) => setIsian({ ...isian, penghasilanBruto: e.target.value })}
-            placeholder="0"
-            className="w-full border border-line bg-white px-3 py-2.5 font-mono outline-none focus:border-blue"
-            autoComplete="off"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mb-1.5 block font-semibold">Pajak yang sudah dipotong</span>
-          <input
-            inputMode="numeric"
-            value={isian.pphDipotong}
-            onChange={(e) => setIsian({ ...isian, pphDipotong: e.target.value })}
-            placeholder="0"
-            className="w-full border border-line bg-white px-3 py-2.5 font-mono outline-none focus:border-blue"
-            autoComplete="off"
-          />
-        </label>
+        <InputRupiah
+          label="Penghasilan bruto"
+          nilai={isian.penghasilanBruto}
+          onChange={(nilai) => setIsian({ ...isian, penghasilanBruto: nilai })}
+          bolehKosong
+        />
+        <InputRupiah
+          label="Pajak yang sudah dipotong"
+          nilai={isian.pphDipotong}
+          onChange={(nilai) => setIsian({ ...isian, pphDipotong: nilai })}
+          bolehKosong
+        />
       </div>
 
       <button

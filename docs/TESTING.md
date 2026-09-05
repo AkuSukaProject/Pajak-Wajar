@@ -15,7 +15,7 @@ npm run build
 |---|---|
 | ESLint | Lulus tanpa error atau warning. |
 | TypeScript | Lulus. Tidak ada `any` di `src/` maupun `tests/`. |
-| Vitest | **103 tes lulus** pada 6 berkas, 1 tes dilewati (butuh `GEMINI_API_KEY`). |
+| Vitest | **116 tes lulus** pada 7 berkas, 1 tes dilewati (butuh `GEMINI_API_KEY`). |
 | Build produksi | Berhasil: `/`, `/cek-kelayakan`, `/api/ocr-bupot`, dan halaman 404. |
 
 ## Cakupan tes
@@ -27,6 +27,7 @@ npm run build
 | `tests/eligibility.test.ts` | 32 | Agregasi prioritas `TIDAK_BOLEH > PERLU_DIPASTIKAN > BOLEH`; empat saringan kelayakan; ambang Rp4,8 miliar yang inklusif; pemisahan omzet tahun berjalan dan tahun sebelumnya; penggabungan pasangan untuk seluruh status, termasuk pengecualian hidup berpisah menurut putusan hakim; perseroan perorangan; KLU tak dikenal; setiap skema membawa dasar hukum; peringatan peralihan 2025 dan penghasilan campuran. |
 | `tests/audit-pajak.test.ts` | 13 | Validasi Zod pada orkestrator; `TERSEDIA` selalu membawa nominal dan rincian bertipe sesuai skemanya; status lain tidak pernah membawa nominal; kalkulasi yang diblokir tidak menurunkan status kelayakan; multi-kegiatan memblokir NPPN; tarif umum tanpa biaya usaha berstatus `BELUM_TERSEDIA`, bukan memakai Rp0; kredit pajak terpisah dari profil. |
 | `tests/schemas.test.ts` | 15 | Kontrak masukan formulir: nilai negatif, teks, `NaN`, `Infinity`, tahun di luar cakupan, wilayah tak dikenal, jawaban kepatuhan tak sah, dan perbedaan antara biaya usaha yang dikosongkan (`undefined`) dan biaya usaha Rp0. |
+| `tests/format.test.ts` | 13 | Pemisah ribuan pada isian nominal: penyisipan titik setiap tiga digit, pembuangan nol di depan, penolakan karakter selain angka, letak karet setelah teks diformat ulang, dan jaminan bahwa nilai yang diformat lalu dibaca ulang tetap sama sehingga titik tidak pernah bocor ke perhitungan. |
 | `tests/ocr.test.ts` | 18 + 1 dilewati | Gerbang persetujuan tidak dapat dilewati dan tidak menyentuh jaringan; batas jenis dan ukuran berkas; route menjawab 503 tanpa kunci API, 403 tanpa persetujuan, 415, 413, 400, 502, dan 422 untuk jawaban model yang tidak sesuai kontrak; permintaan ke Gemini memakai `temperature: 0` dan `responseSchema`. Satu tes terhadap layanan Gemini sungguhan hanya berjalan bila `GEMINI_API_KEY` tersedia. |
 
 Angka coverage belum diukur.
