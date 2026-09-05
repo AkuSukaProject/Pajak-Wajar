@@ -69,6 +69,10 @@ export interface ParameterPtkp {
 
 export interface KluItem {
   kluKode: string;
+  nama?: string;
+  kategori?: string;
+  pekerjaanBebas?: boolean;
+  persenNorma?: Record<KelompokWilayahKey, number>;
   dasarHukum: DasarHukumDetail[];
 }
 

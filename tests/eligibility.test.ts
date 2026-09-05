@@ -194,7 +194,20 @@ const mockRegulasi: DatabaseRegulasi = {
     kelompok2: { nama: 'Ibukota Provinsi Lainnya', deskripsi: 'Ibukota provinsi lainnya' },
     kelompok3: { nama: 'Daerah Lainnya', deskripsi: 'Kabupaten/kota non-ibukota' },
   },
-  klu: [{ kluKode: '74201', dasarHukum: [] }],
+  klu: [
+    {
+      kluKode: '74201',
+      nama: 'Aktivitas Desain Komunikasi Visual / Desain Grafis',
+      kategori: 'Jasa Kreatif',
+      pekerjaanBebas: true,
+      persenNorma: {
+        kelompok1: 0.5,
+        kelompok2: 0.5,
+        kelompok3: 0.475,
+      },
+      dasarHukum: [],
+    },
+  ],
 };
 
 const baseProfil: ProfilWajibPajak = {

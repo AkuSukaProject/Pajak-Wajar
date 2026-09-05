@@ -75,10 +75,9 @@ export function auditPajakMandiri(input: InputAuditPajak, regulasi: DatabaseRegu
   const ptkpParam = regulasi.parameterPajak.ptkp;
   const tarifProgresifParam = regulasi.parameterPajak.tarifProgresif;
 
-  // Dapatkan persen norma dari KLU (Asumsi KLU tunggal yang valid)
-  const kluTerkait = regulasi.klu.find((k) => k.kluKode === profil.kluKode);
-  // Asumsi untuk lomba: gunakan kel 1 (dummy fallback = 0.5)
-  const persenNorma = 0.5; // TODO: Lookup actual percentage properly.
+  // Dapatkan persen norma dari KLU dan wilayah Wajib Pajak
+  const kluTerkait = regulasi.klu?.find((k) => k.kluKode === profil.kluKode);
+  const persenNorma = kluTerkait?.persenNorma?.[profil.wilayah];
 
   if (kelayakanNppn.status !== 'BOLEH') {
     hasilNppn = {
@@ -99,6 +98,15 @@ export function auditPajakMandiri(input: InputAuditPajak, regulasi: DatabaseRegu
       dasarHukum: kelayakanNppn.dasarHukum,
       statusKalkulasi: 'BELUM_TERSEDIA',
       alasanKalkulasi: 'Sistem hanya menghitung NPPN untuk satu jenis kegiatan usaha/pekerjaan bebas. Hitung manual untuk multi-kegiatan.',
+    };
+  } else if (persenNorma === undefined) {
+    hasilNppn = {
+      id: 'NPPN',
+      statusKelayakan: kelayakanNppn.status,
+      alasanKelayakan: kelayakanNppn.alasan,
+      dasarHukum: kelayakanNppn.dasarHukum,
+      statusKalkulasi: 'BELUM_TERSEDIA',
+      alasanKalkulasi: 'Data persentase norma untuk KLU atau kelompok wilayah yang dipilih belum tersedia dalam database regulasi.',
     };
   } else if (
     ptkpParam.statusVerifikasi === 'DALAM_REVIEW' ||
@@ -123,11 +131,16 @@ export function auditPajakMandiri(input: InputAuditPajak, regulasi: DatabaseRegu
       lapisanTarif: tarifProgresifParam.lapisan,
     });
 
+    const dasarHukumNppn = [...kelayakanNppn.dasarHukum];
+    if (kluTerkait?.dasarHukum) {
+      dasarHukumNppn.push(...kluTerkait.dasarHukum);
+    }
+
     hasilNppn = {
       id: 'NPPN',
       statusKelayakan: kelayakanNppn.status,
       alasanKelayakan: kelayakanNppn.alasan,
-      dasarHukum: kelayakanNppn.dasarHukum,
+      dasarHukum: dasarHukumNppn,
       statusKalkulasi: 'TERSEDIA',
       pajakTerutang,
       rincianKalkulasi: {
