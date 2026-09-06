@@ -134,11 +134,11 @@ Screenshot berikut diambil dari build produksi lokal pada 5 September 2026 memak
   <img src="docs/screenshots/landing-mobile.png" alt="Halaman utama PajakWajar pada perangkat seluler" width="320" />
   <p><em>Tampilan seluler — tata letak halaman utama pada layar kecil.</em></p>
 
-  <img src="docs/screenshots/formulir.png" alt="Formulir pemeriksaan kelayakan pajak" width="800" />
-  <p><em>Formulir — pemilihan pekerjaan, cara menjalankannya, kelompok wilayah, dan jumlah kegiatan.</em></p>
+  <img src="docs/screenshots/formulir.png" alt="Formulir kelayakan dengan penjelasan istilah PT Perorangan terbuka" width="800" />
+  <p><em>Formulir — keadaan keluarga, pertanyaan penghasilan pasangan, dan penjelasan istilah yang muncul saat ditekan.</em></p>
 
-  <img src="docs/screenshots/hasil-kelayakan.png" alt="Tiga kartu hasil kelayakan beserta perkiraan pajak" width="800" />
-  <p><em>Hasil — kreator konten: PPh Final tertutup oleh Pasal 56 ayat (4) huruf b, dua skema lain terhitung.</em></p>
+  <img src="docs/screenshots/hasil-kelayakan.png" alt="Tiga kartu hasil kelayakan beserta perkiraan pajak dan saran perbandingan" width="800" />
+  <p><em>Hasil — pedagang daring yang menikah dengan pasangan tanpa penghasilan: ketiga skema terhitung, disertai perbandingan skema paling ringan dan kamus istilah.</em></p>
 
   <img src="docs/screenshots/hasil-mobile.png" alt="Hasil kelayakan pada perangkat seluler" width="320" />
   <p><em>Hasil pada layar kecil — kartu vonis tetap terbaca penuh.</em></p>
