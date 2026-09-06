@@ -197,6 +197,16 @@ export function KertasKerjaPdf({ hasil }: { hasil: HasilAuditPajak }) {
           <Text style={s.bagianJudul}>DATA YANG ANDA ISI</Text>
           <Baris kunci="Bentuk kegiatan" nilai={profil.bentukKegiatan.replaceAll('_', ' ')} />
           <Baris kunci="Status perpajakan pasangan" nilai={profil.statusPerpajakanPasangan.replaceAll('_', ' ')} />
+          <Baris
+            kunci="Pasangan punya penghasilan sendiri"
+            nilai={profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN'
+              ? 'Tidak ada pasangan'
+              : profil.pasanganPunyaPenghasilan === undefined
+                ? 'Belum dijawab'
+                : profil.pasanganPunyaPenghasilan === 'tidak_yakin'
+                  ? 'Tidak yakin'
+                  : profil.pasanganPunyaPenghasilan ? 'Punya' : 'Tidak punya'}
+          />
           <Baris kunci="Neto pegawai sebelum PTKP" nilai={!profil.jugaPegawaiTetap ? 'Bukan pegawai' : profil.penghasilanNetoPegawai === undefined ? 'Belum diisi' : formatCurrency(profil.penghasilanNetoPegawai)} />
           <Baris
             kunci="Kegiatan (KLU lampiran Norma)"

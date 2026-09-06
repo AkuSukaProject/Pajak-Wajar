@@ -11,3 +11,6 @@ coverage/
 output/
 .playwright-cli/
 *.tsbuildinfo
+
+# Guidebook panitia disimpan lokal, tidak ikut repo publik.
+WebDev Guidebook*.pdf
