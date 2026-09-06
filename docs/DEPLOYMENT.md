@@ -7,23 +7,20 @@ Target: **Vercel**. Region disetel ke `sin1` (Singapura) pada `vercel.json` kare
 - Node.js 20 atau lebih baru (diuji pada 24.19.0).
 - Akun Vercel yang terhubung ke repositori.
 
-## Dua remote: organisasi dan pribadi
+## Repositori utama dan salinan tim
 
-Paket Vercel Hobby (gratis) tidak dapat men-deploy repositori milik **organisasi** GitHub. Karena repositori utama berada di `AkuSukaProject`, disiapkan remote kedua ke repositori pribadi:
+Sumber utama kode, README, pull request, dan deployment adalah **[samythh/Pajak-Wajar](https://github.com/samythh/Pajak-Wajar)**. Nama tim tetap **AkuSukaProject**. Vercel mengikuti cabang `main` repo tersebut.
 
-| Remote | URL | Peran |
+| Remote lokal | URL | Peran |
 |---|---|---|
-| `origin` | `https://github.com/AkuSukaProject/Pajak-Wajar.git` | Repositori tim, sumber kebenaran |
-| `pribadi` | `https://github.com/samythh/Pajak-Wajar.git` | Repositori pribadi (privat), khusus agar Vercel Hobby dapat men-deploy |
+| `pribadi` | `https://github.com/samythh/Pajak-Wajar.git` | Repositori utama dan sumber deployment |
+| `origin` | `https://github.com/AkuSukaProject/Pajak-Wajar.git` | Salinan tim; perubahan disinkronkan melalui PR |
 
-Repo organisasi menyimpan kode tim. Situs yang sudah aktif mengambil kode dari `main` di repo pribadi; perbarui cabang di kedua remote bila diperlukan:
+Nama remote ini berlaku untuk checkout pengembang saat ini. Jika Anda mengikuti perintah clone pada README, `origin` akan menunjuk ke `samythh/Pajak-Wajar`; periksa `git remote -v` sebelum mengirim perubahan.
 
-```bash
-git push origin <cabang>     # alur kerja tim seperti biasa
-git push pribadi <cabang>    # perbarui cermin deployment
-```
+Alur pembaruan: buat cabang dari `main` repo utama, kirim PR ke `samythh/Pajak-Wajar`, tunggu pemeriksaan, lalu gabungkan. Sinkronkan salinan tim dengan PR dari hasil integrasi yang sama. Jangan mengembangkan dua `main` secara terpisah dan jangan melakukan force push. Untuk integrasi yang membawa riwayat tim, gunakan merge commit agar commit asal tetap menjadi leluhur.
 
-Hubungkan **repositori pribadi** itu ke Vercel, bukan yang di organisasi. Bila nanti tim memakai paket berbayar, remote `pribadi` dapat dihapus dengan `git remote remove pribadi`.
+Riwayat tiga commit engine Sheva disatukan melalui merge; keputusan konflik dan cakupan tes dicatat di [INTEGRASI-REPOSITORI.md](INTEGRASI-REPOSITORI.md). Pastikan tautan repo yang dikumpulkan dapat diakses juri; deployment yang publik tidak otomatis membuat repo GitHub publik.
 
 ## Langkah
 
@@ -74,7 +71,7 @@ GEMINI_API_KEY=AIza...isi-kunci-anda-di-sini
 GEMINI_MODEL=
 ```
 
-`GEMINI_MODEL` **boleh dikosongkan**. Bila kosong, aplikasi memakai `gemini-2.5-flash`. Isi hanya bila Anda sengaja ingin model lain.
+`GEMINI_MODEL` **boleh dikosongkan**. Bila kosong, aplikasi memakai `gemini-3.6-flash`. Isi hanya bila Anda sengaja ingin model lain.
 
 ### Memastikan kunci dan nama model benar
 

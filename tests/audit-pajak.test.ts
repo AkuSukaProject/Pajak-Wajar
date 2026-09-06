@@ -178,3 +178,31 @@ describe('rekomendasi dan keluaran akhir', () => {
     expect(final.pajakTerutang).toBe(2_000_000);
   });
 });
+
+// Adaptasi tujuan uji efd2976 (Sheva): lookup Norma per KLU/wilayah,
+// memakai angka Lampiran I yang diverifikasi, bukan angka fixture sementara.
+describe('integrasi Norma wilayah dari engine tim', () => {
+  it.each([
+    ['kelompok1', 30, 120_000_000, 3_900_000],
+    ['kelompok2', 25, 100_000_000, 2_300_000],
+    ['kelompok3', 20, 80_000_000, 1_300_000]
+  ] as const)('KLU 47919 memakai Norma dan pajak yang sesuai untuk %s', (wilayah, norma, neto, pajak) => {
+    const nppn = skemaDari(auditPajakMandiri(input({ ...profilDagang, wilayah, omzetPribadiTahunPajak: 400_000_000 })), 'NPPN');
+    expect(nppn.statusKalkulasi).toBe('TERSEDIA');
+    if (nppn.statusKalkulasi !== 'TERSEDIA') throw new Error('NPPN seharusnya terhitung');
+    expect(nppn.rincianKalkulasi.persenNorma).toBe(norma);
+    expect(nppn.rincianKalkulasi.penghasilanNetoUsaha).toBe(neto);
+    expect(nppn.pajakTerutang).toBe(pajak);
+    expect(nppn.dasarHukum.some(d => d.namaRegulasi.includes('PER-17'))).toBe(true);
+  });
+
+  it('dokter 86201 tetap 50% pada semua wilayah sesuai Lampiran, bukan fixture sementara 45%', () => {
+    for (const wilayah of ['kelompok1', 'kelompok2', 'kelompok3'] as const) {
+      const nppn = skemaDari(auditPajakMandiri(input({ ...profilDagang, kluKode: '86201', bentukKegiatan: 'PEKERJAAN_BEBAS', wilayah, omzetPribadiTahunPajak: 400_000_000 })), 'NPPN');
+      expect(nppn.statusKalkulasi).toBe('TERSEDIA');
+      if (nppn.statusKalkulasi !== 'TERSEDIA') throw new Error('NPPN seharusnya terhitung');
+      expect(nppn.rincianKalkulasi.persenNorma).toBe(50);
+      expect(nppn.pajakTerutang).toBe(15_900_000);
+    }
+  });
+});

@@ -1,8 +1,8 @@
 > ## ⚠️ KOREKSI 5 SEPTEMBER 2026 — BACA SEBELUM MEMAKAI DOKUMEN INI
 >
-> Dokumen ini dicocokkan ke teks asli PP 20/2026 yang diunduh dari JDIH Kemenkeu. Sebagian besar isinya terbukti benar, tetapi **dua hal keliru dan tidak boleh dipakai**:
+> Dokumen ini dicocokkan ke teks asli PP 20/2026 yang diunduh dari JDIH Kemenkeu. Sebagian besar isinya terbukti benar, tetapi **dua hal memerlukan koreksi; Bagian I angka 3 telah diperbaiki pada 6 September 2026**:
 >
-> 1. **Bagian I angka 3 salah menyitasi "PP 20/2026 Pasal 59 ayat (3)".** Teks asli PP 20/2026 angka 6 berbunyi **"Pasal 59 dihapus."** Dasar pintu satu arah yang benar adalah **Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4)**. Ada uji otomatis yang menolak sitasi ke Pasal 59.
+> 1. **Rujukan lama pada Bagian I angka 3 sudah diganti.** Teks asli PP 20/2026 angka 6 berbunyi **"Pasal 59 dihapus."** Dasar pintu satu arah yang benar adalah **Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4)**. Ada uji otomatis yang menolak sitasi ke Pasal 59.
 > 2. **Bagian I angka 2 dan III kurang lengkap soal dasar pengukuran ambang.** Pasal 58 ayat (1) huruf a mengukur peredaran bruto dari **Tahun Pajak terakhir sebelum Tahun Pajak bersangkutan**, bukan tahun berjalan.
 >
 > Selain itu, **persentase norma dan sebagian kode KLU** yang diturunkan dari dokumen ini ternyata tidak cocok dengan Lampiran I PER-17/PJ/2015; 17 dari 20 KLU sudah dikoreksi. Rinciannya di [REGULASI.md](REGULASI.md).
@@ -15,7 +15,7 @@
 **Pemilik Dokumen:** Sheva (Rule & Regulation Engine Owner)  
 **Versi:** 1.0  
 **Tanggal Verifikasi:** 24 Agustus 2026  
-**Status:** Terverifikasi terhadap Sumber Primer (JDIH Kemenkeu & DJP)  
+**Status:** Arsip riset awal dengan koreksi. Untuk status implementasi dan verifikasi terbaru, gunakan [REGULASI.md](REGULASI.md) dan data aturan aplikasi.
 
 ---
 
@@ -46,13 +46,13 @@ Berikut adalah jawaban pasti yang diekstrak langsung dari teks undang-undang dan
 
 ---
 
-### 3. Konsekuensi Memilih Tarif Umum (Pintu Satu Arah / Irrevocable)
-* **Pertanyaan:** Jika Wajib Pajak memilih menggunakan tarif umum Pasal 17, apakah hak PPh Final 0,5% hilang permanen atau hanya mulai tahun pajak berikutnya?
-* **Jawaban:** **HILANG PERMANEN (Pintu Satu Arah).**
-* **Dasar Hukum:**
-  * **PP No. 55 Tahun 2022 jo. PP No. 20 Tahun 2026 Pasal 59 ayat (3):** *"Wajib Pajak yang memilih untuk dikenai Pajak Penghasilan berdasarkan ketentuan umum Pajak Penghasilan sebagaimana dimaksud pada ayat (1) huruf b, **untuk Tahun Pajak-Tahun Pajak berikutnya tidak dapat lagi memilih untuk dikenai Pajak Penghasilan yang bersifat final** berdasarkan Peraturan Pemerintah ini."*
-* **Catatan Implementasi Kode (`eligibility.ts`):**
-  * Jika `pernahPilihTarifUmum === true` ➔ PPh Final 0,5% berstatus `TIDAK_BOLEH` dengan alasan: *"Anda pernah memilih tarif umum Pasal 17. Berdasarkan PP 20/2026 Pasal 59 ayat (3), keputusan ini bersifat satu arah dan Anda tidak dapat kembali menggunakan skema PPh Final 0,5%."*
+### 3. Konsekuensi Memilih Tarif Umum (Pintu Satu Arah)
+
+Pilihan untuk memakai ketentuan umum diatur dalam **PP 55/2022 sebagaimana diubah dengan PP 20/2026, Pasal 57 ayat (2) huruf a dan ayat (3)**. **Pasal 57 ayat (4)** mengatur bahwa pada tahun-tahun pajak berikutnya wajib pajak yang dimaksud tidak dapat dikenai PPh berdasarkan bagian fasilitas final ini.
+
+Aplikasi memeriksa `pernahPilihTarifUmum`. Jawaban `true` menutup PPh Final untuk tahun setelah pilihan tersebut; jawaban belum yakin menghasilkan `PERLU_DIPASTIKAN`. Tahun mulai pilihan perlu dicocokkan dengan pemberitahuan wajib pajak. Rujukan lama ke pasal yang dihapus tidak digunakan.
+
+Sumber: [teks asli PP 20/2026, Pasal I angka 4](https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026). Uraian ini merupakan parafrasa, bukan kutipan langsung.
 
 ---
 

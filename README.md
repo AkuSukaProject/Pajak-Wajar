@@ -4,10 +4,10 @@
 ### Cek dulu skemanya, baru hitung pajaknya.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-17497d?style=for-the-badge&logo=vercel)](https://pajak-wajar.vercel.app/)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/AkuSukaProject/Pajak-Wajar)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/samythh/Pajak-Wajar)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Aplikasi_Berfungsi-2ea44f?style=for-the-badge)](#fitur-unggulan)
-[![Tes](https://img.shields.io/badge/Vitest-154_lulus-2ea44f?style=for-the-badge)](#testing)
+[![Tes](https://img.shields.io/badge/Vitest-158_lulus-2ea44f?style=for-the-badge)](#testing)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
 
@@ -60,6 +60,8 @@ PajakWajar dikembangkan sebagai platform web pra-lapor untuk membantu pekerja le
 PajakWajar bekerja dengan urutan **kelayakan → perhitungan → konsekuensi → berkas**. Pengguna mengisi profil, melihat skema mana yang sah dipakai beserta pasal yang mendasarinya, lalu melihat perkiraan pajak hanya untuk skema yang memang berhak, dan menyimpannya sebagai kertas kerja PDF.
 
 Seluruh keputusan kelayakan dan seluruh perhitungan lahir dari aturan yang ditulis eksplisit di `data/klu_rules.json`. Tidak ada model bahasa yang ikut memutuskan hak hukum atau menghitung angka. AI dipakai pada tepat satu titik, yaitu membaca foto bukti potong menjadi angka terstruktur, dengan persetujuan eksplisit pengguna dan mode ketik manual yang selalu tersedia.
+
+> **Repositori utama:** [samythh/Pajak-Wajar](https://github.com/samythh/Pajak-Wajar). Nama tim tetap **AkuSukaProject**. [Panduan pengumpulan karya](docs/PENGUMPULAN.md).
 
 > **Status saat ini:** demo publik tersedia di [pajak-wajar.vercel.app](https://pajak-wajar.vercel.app/), dari repo pribadi `samythh/Pajak-Wajar`. Tim tetap **AkuSukaProject**. Formulir, kalkulator, PDF, dan OCR dengan bukti potong contoh sudah diuji. Kasus pajak keluarga, riwayat final 2025, multi-kegiatan, serta peralihan tertentu masih memerlukan pemeriksaan tambahan; sistem menahan nominal yang belum dapat dipastikan. Ini alat bantu, bukan nasihat pajak.
 
@@ -187,7 +189,7 @@ OCR          : Gemini API, structured JSON, temperature 0; opsional dan butuh pe
 Package Mgmt : npm dengan package-lock.json
 Deployment   : Vercel (region sin1), https://pajak-wajar.vercel.app/
 CI/CD        : GitHub Actions (lint, tipe, tes, build, audit) dan deployment Vercel
-Testing      : Vitest; 154 tes rutin pada 10 berkas. Ajv 2020 untuk integritas data aturan
+Testing      : Vitest; 158 tes rutin pada 10 berkas. Ajv 2020 untuk integritas data aturan
 Type Check   : TypeScript (tsc --noEmit), tanpa `any`
 Monitoring   : Belum dikonfigurasi
 ```
@@ -313,7 +315,7 @@ Pajak-Wajar/
 
 Dokumentasi pendukung: [Arsitektur](./docs/ARSITEKTUR.md), [Desain UI](./docs/DESAIN_UI.md), [Regulasi](./docs/REGULASI.md), [Deployment](./docs/DEPLOYMENT.md), [Pemeriksaan](./docs/TESTING.md), [Riset regulasi](./docs/00_CATATAN.md), dan [Rencana Implementasi](./docs/implementation_plan.md).
 
-> Catatan: `docs/00_CATATAN.md` Bagian I angka 3 menyitasi “PP 20/2026 Pasal 59 ayat (3)”. Pasal itu **dihapus** oleh PP 20/2026. Rujukan yang benar adalah Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4). Koreksinya tercatat di [docs/REGULASI.md](./docs/REGULASI.md) dan dijaga oleh uji otomatis.
+> Riwayat koreksi regulasi ada di [docs/REGULASI.md](./docs/REGULASI.md). Bagian I angka 3 pada catatan riset sudah diperbaiki agar mengacu ke Pasal 57 ayat (2) huruf a, ayat (3), dan ayat (4). Penyatuan engine tim dan produksi dijelaskan di [laporan integrasi](docs/INTEGRASI-REPOSITORI.md).
 
 ---
 
@@ -332,7 +334,7 @@ Dokumentasi pendukung: [Arsitektur](./docs/ARSITEKTUR.md), [Desain UI](./docs/DE
 #### 1. Clone Repository
 
 ```bash
-git clone https://github.com/AkuSukaProject/Pajak-Wajar.git
+git clone https://github.com/samythh/Pajak-Wajar.git
 cd Pajak-Wajar
 ```
 
@@ -519,7 +521,7 @@ npm run build
 
 ### Test Coverage
 
-**154 tes rutin** pada sepuluh berkas, ditambah satu tes integrasi OCR opsional:
+**158 tes rutin** pada sepuluh berkas, ditambah satu tes integrasi OCR opsional:
 
 | Berkas | Tes | Fokus |
 |--------|-----|-------|
@@ -527,7 +529,7 @@ npm run build
 | [tests/klasifikasi.test.ts](./tests/klasifikasi.test.ts) | 13 | Padanan 22 kegiatan ke KBLI 2020, perubahan dan pemecahan kode, batas alias kegiatan, serta pencegahan pemberian Norma otomatis untuk kode yang belum didukung. |
 | [tests/calculator.test.ts](./tests/calculator.test.ts) | 14 | Tarif progresif berlapis, termasuk bukti bahwa PKP Rp337 juta ≠ PKP × 25% dan kecocokan dengan contoh resmi UU HPP (PKP Rp6 miliar → Rp1.794.000.000). |
 | [tests/eligibility.test.ts](./tests/eligibility.test.ts) | 32 | Agregasi prioritas dan empat saringan kelayakan. |
-| [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 13 | Konsistensi status kalkulasi dan batasan perhitungan. |
+| [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 17 | Konsistensi status kalkulasi dan batasan perhitungan. |
 | [tests/saran.test.ts](./tests/saran.test.ts) | 5 | Saran kontekstual, perbandingan sebelum kredit, nilai sama, serta data keluarga atau Norma yang belum pasti. |
 | [tests/schemas.test.ts](./tests/schemas.test.ts) | 15 | Kontrak masukan formulir dan bukti potong. |
 | [tests/audit-regression.test.ts](./tests/audit-regression.test.ts) | 15 | Pembulatan PKP, gaji, kelebihan kredit, duplikasi bukti potong, batas pajak keluarga dan riwayat 2025/2026. |

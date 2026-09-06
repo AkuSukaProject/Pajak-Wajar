@@ -49,7 +49,7 @@ Seluruh entri di bawah dicocokkan ke **teks asli** yang diunduh dari JDIH Kemenk
 
 ## Koreksi terhadap dokumen internal
 
-- **`docs/00_CATATAN.md` Bagian I angka 3 keliru.** Dokumen itu mengutip “PP 20/2026 Pasal 59 ayat (3)” sebagai dasar pintu satu arah. Teks asli PP 20/2026 angka 6 berbunyi **“Pasal 59 dihapus.”** Rujukan yang benar adalah **Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4)**. `docs/implementation_plan.md` sudah benar sejak awal. Jangan pernah menyitasi Pasal 59; ada uji otomatis yang menolaknya (`tests/schema.test.ts`).
+- **Rujukan lama `docs/00_CATATAN.md` Bagian I angka 3 sudah diperbaiki pada 6 September 2026.** Sebelumnya dokumen itu mengutip “PP 20/2026 Pasal 59 ayat (3)” sebagai dasar pintu satu arah. Teks asli PP 20/2026 angka 6 berbunyi **“Pasal 59 dihapus.”** Rujukan yang benar adalah **Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4)**. `docs/implementation_plan.md` sudah benar sejak awal. Jangan pernah menyitasi Pasal 59; ada uji otomatis yang menolaknya (`tests/schema.test.ts`).
 - **Kode layanan Coretax adalah `AS.04-01`, bukan `LA.04-01`.** `CLAUDE.md` masih menulis LA.04-01. `docs/00_CATATAN.md` Bagian II angka 5 sudah benar. Antarmuka dan basis aturan memakai AS.04-01.
 - **Pintu satu arah tidak hanya berlaku bagi yang memilih tarif umum.** Pasal 57 ayat (4) juga mengunci Wajib Pajak yang peredaran brutonya pernah melewati Rp4,8 miliar (huruf e) dan koperasi yang lewat 4 tahun (huruf f). Aplikasi memunculkan peringatan untuk kasus huruf e.
 
