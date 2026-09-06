@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ISTILAH, type KunciIstilah } from '@/lib/istilah';
 
@@ -9,7 +9,7 @@ const JARAK = 8;
 const TEPI = 12;
 
 /**
- * Istilah yang dapat ditekan untuk memunculkan penjelasan singkat.
+ * Penjelasan muncul saat hover atau fokus keyboard; layar sentuh memakai ketuk.
  *
  * Panelnya dipasang lewat portal ke `document.body`, bukan sebagai anak dari
  * pemicunya. Kartu formulir memakai `overflow-hidden` dan daftar pekerjaan
@@ -22,8 +22,36 @@ export function Istilah({ nama, children }: { nama: KunciIstilah; children?: Rea
   const [posisi, setPosisi] = useState<{ top: number; left: number } | null>(null);
   const pemicu = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const penunjukDiDalam = useRef(false);
+  const jenisPenunjuk = useRef('mouse');
+  const jedaTutup = useRef<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
   const entri = ISTILAH[nama];
+
+  const batalkanTutup = useCallback(() => {
+    if (jedaTutup.current !== null) clearTimeout(jedaTutup.current);
+    jedaTutup.current = null;
+  }, []);
+
+  const tutup = useCallback(() => {
+    batalkanTutup();
+    penunjukDiDalam.current = false;
+    // Kembalikan fokus hanya bila pengguna sedang berinteraksi di panel.
+    if (panel.current?.contains(document.activeElement)) pemicu.current?.focus();
+    setTerbuka(false);
+  }, [batalkanTutup]);
+
+  const jadwalkanTutup = useCallback(() => {
+    batalkanTutup();
+    // Beri waktu melintasi jarak antara tulisan dan panel portal.
+    jedaTutup.current = setTimeout(() => {
+      jedaTutup.current = null;
+      const fokusKeyboard = pemicu.current === document.activeElement && pemicu.current?.matches(':focus-visible');
+      if (!penunjukDiDalam.current && !fokusKeyboard && !panel.current?.contains(document.activeElement)) setTerbuka(false);
+    }, 200);
+  }, [batalkanTutup]);
+
+  useEffect(() => () => batalkanTutup(), [batalkanTutup]);
 
   useLayoutEffect(() => {
     if (!terbuka) return;
@@ -65,25 +93,24 @@ export function Istilah({ nama, children }: { nama: KunciIstilah; children?: Rea
   useEffect(() => {
     if (!terbuka) return;
 
-    const tutupBilaDiluar = (peristiwa: MouseEvent) => {
+    const tutupBilaDiluar = (peristiwa: PointerEvent) => {
       const sasaran = peristiwa.target as Node;
       if (pemicu.current?.contains(sasaran) || panel.current?.contains(sasaran)) return;
-      setTerbuka(false);
+      tutup();
     };
     const tutupDenganEscape = (peristiwa: KeyboardEvent) => {
       if (peristiwa.key === 'Escape') {
-        setTerbuka(false);
-        pemicu.current?.focus();
+        tutup();
       }
     };
 
-    document.addEventListener('mousedown', tutupBilaDiluar);
+    document.addEventListener('pointerdown', tutupBilaDiluar);
     document.addEventListener('keydown', tutupDenganEscape);
     return () => {
-      document.removeEventListener('mousedown', tutupBilaDiluar);
+      document.removeEventListener('pointerdown', tutupBilaDiluar);
       document.removeEventListener('keydown', tutupDenganEscape);
     };
-  }, [terbuka]);
+  }, [terbuka, tutup]);
 
   const kenapa = 'kenapaDitanya' in entri ? entri.kenapaDitanya : undefined;
 
@@ -92,13 +119,36 @@ export function Istilah({ nama, children }: { nama: KunciIstilah; children?: Rea
       <button
         ref={pemicu}
         type="button"
-        onClick={() => setTerbuka((lama) => !lama)}
+        onPointerEnter={(e) => {
+          if (e.pointerType === 'touch') return;
+          penunjukDiDalam.current = true;
+          batalkanTutup();
+          setTerbuka(true);
+        }}
+        onPointerLeave={(e) => {
+          if (e.pointerType === 'touch') return;
+          penunjukDiDalam.current = false;
+          jadwalkanTutup();
+        }}
+        onPointerDown={(e) => { jenisPenunjuk.current = e.pointerType; }}
+        onFocus={(e) => {
+          if (e.currentTarget.matches(':focus-visible')) {
+            batalkanTutup();
+            setTerbuka(true);
+          }
+        }}
+        onBlur={jadwalkanTutup}
+        onClick={(e) => {
+          batalkanTutup();
+          if (e.detail !== 0 && jenisPenunjuk.current === 'touch' && terbuka) tutup();
+          else setTerbuka(true);
+        }}
         aria-expanded={terbuka}
         aria-controls={terbuka ? id : undefined}
         className="istilah-pemicu cursor-help border-b border-dashed border-blue/70 font-semibold text-blue hover:border-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue"
       >
         {children ?? entri.judul}
-        <span className="sr-only"> — tekan untuk penjelasan</span>
+        <span className="sr-only"> — penjelasan istilah</span>
       </button>
 
       {terbuka && typeof document !== 'undefined' && createPortal(
@@ -106,6 +156,19 @@ export function Istilah({ nama, children }: { nama: KunciIstilah; children?: Rea
           ref={panel}
           id={id}
           role="note"
+          aria-label={entri.judul}
+          onPointerEnter={(e) => {
+            if (e.pointerType === 'touch') return;
+            penunjukDiDalam.current = true;
+            batalkanTutup();
+          }}
+          onPointerLeave={(e) => {
+            if (e.pointerType === 'touch') return;
+            penunjukDiDalam.current = false;
+            jadwalkanTutup();
+          }}
+          onFocusCapture={batalkanTutup}
+          onBlurCapture={jadwalkanTutup}
           style={{
             position: 'fixed',
             top: posisi?.top ?? -9999,
@@ -122,10 +185,7 @@ export function Istilah({ nama, children }: { nama: KunciIstilah; children?: Rea
           )}
           <button
             type="button"
-            onClick={() => {
-              setTerbuka(false);
-              pemicu.current?.focus();
-            }}
+            onClick={tutup}
             className="mt-3 text-xs font-semibold text-blue hover:underline"
           >
             Tutup

@@ -135,7 +135,7 @@ Screenshot berikut diambil dari build produksi lokal pada 5 September 2026 memak
   <p><em>Tampilan seluler — tata letak halaman utama pada layar kecil.</em></p>
 
   <img src="docs/screenshots/formulir.png" alt="Formulir kelayakan dengan penjelasan istilah PT Perorangan terbuka" width="800" />
-  <p><em>Formulir — keadaan keluarga, pertanyaan penghasilan pasangan, dan penjelasan istilah yang muncul saat ditekan.</em></p>
+  <p><em>Formulir — keadaan keluarga, pertanyaan penghasilan pasangan, dan penjelasan istilah yang muncul saat hover atau fokus keyboard; ketuk pada layar sentuh.</em></p>
 
   <img src="docs/screenshots/hasil-kelayakan.png" alt="Tiga kartu hasil kelayakan beserta perkiraan pajak dan saran perbandingan" width="800" />
   <p><em>Hasil — pedagang daring yang menikah dengan pasangan tanpa penghasilan: ketiga skema terhitung, disertai perbandingan skema paling ringan dan kamus istilah.</em></p>
