@@ -52,6 +52,19 @@ export type DasarHukumDetail = {
 // Masukan
 // ---------------------------------------------------------------------------
 
+/**
+ * Kegiatan usaha selain kegiatan utama.
+ *
+ * PER-17/PJ/2015 Pasal 5 menghitung penghasilan neto **per kegiatan**, memakai
+ * persentase Norma masing-masing, lalu menjumlahkannya. Karena itu tiap kegiatan
+ * membawa kode KLU dan omzetnya sendiri; omzet gabungan tidak boleh dikalikan
+ * satu persentase.
+ */
+export type KegiatanTambahan = {
+  kluKode: string;
+  omzet: number;
+};
+
 export type ProfilWajibPajak = {
   tahunPajak: TahunPajak;
   kluKode: string;
@@ -90,6 +103,12 @@ export type ProfilWajibPajak = {
    * dan PTKP kawin sudah memperhitungkan keluarga. Kosong berarti belum dijawab.
    */
   pasanganPunyaPenghasilan?: JawabanKepatuhan;
+  /**
+   * Kegiatan selain kegiatan utama, bila `punyaLebihDariSatuKegiatan` bernilai
+   * `true`. Kosong berarti pengguna belum merinci kegiatannya, sehingga Norma
+   * tetap ditahan: satu persentase tidak boleh dikalikan ke omzet gabungan.
+   */
+  kegiatanTambahan?: KegiatanTambahan[];
 };
 
 export type KreditPajakItem = {
@@ -130,10 +149,26 @@ export type LapisanTerpakai = {
   pajakLapisan: number;
 };
 
+/** Satu baris perhitungan Norma: omzet kegiatan dikali persentasenya sendiri. */
+export type BarisKegiatanNorma = {
+  kluKode: string;
+  nama: string;
+  omzet: number;
+  persenNorma: number;
+  netoKegiatan: number;
+};
+
 export type RincianNppn = {
   skema: 'NPPN';
   omzetPribadi: number;
+  /**
+   * Untuk satu kegiatan, ini persentase Norma kegiatan itu. Untuk beberapa
+   * kegiatan, ini persentase gabungan efektif — hasil bagi neto usaha terhadap
+   * omzet total — dan rinciannya ada pada `rincianKegiatan`.
+   */
   persenNorma: number;
+  /** Terisi hanya bila Wajib Pajak merinci lebih dari satu kegiatan. */
+  rincianKegiatan?: BarisKegiatanNorma[];
   penghasilanNeto: number;
   penghasilanNetoUsaha: number;
   penghasilanNetoPegawai: number;

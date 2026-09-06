@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/samythh/Pajak-Wajar)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Aplikasi_Berfungsi-2ea44f?style=for-the-badge)](#fitur-unggulan)
-[![Tes](https://img.shields.io/badge/Vitest-184_lulus-2ea44f?style=for-the-badge)](#testing)
+[![Tes](https://img.shields.io/badge/Vitest-201_lulus-2ea44f?style=for-the-badge)](#testing)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
 
@@ -140,6 +140,9 @@ Screenshot berikut diambil dari build produksi lokal pada 5 September 2026 memak
   <img src="docs/screenshots/hasil-kelayakan.png" alt="Tiga kartu hasil kelayakan beserta perkiraan pajak dan saran perbandingan" width="800" />
   <p><em>Hasil — pedagang daring yang menikah dengan pasangan tanpa penghasilan: ketiga skema terhitung, disertai perbandingan skema paling ringan dan kamus istilah.</em></p>
 
+  <img src="docs/screenshots/hasil-multi-kegiatan.png" alt="Rincian Norma dihitung per kegiatan lalu dijumlahkan" width="800" />
+  <p><em>Lebih dari satu kegiatan — Norma dihitung per kegiatan memakai persentase masing-masing (30% dan 25%), lalu dijumlahkan sesuai PER-17/PJ/2015 Pasal 5. Vonis dinyatakan berlaku atas kegiatan utama saja.</em></p>
+
   <img src="docs/screenshots/hasil-mobile.png" alt="Hasil kelayakan pada perangkat seluler" width="320" />
   <p><em>Hasil pada layar kecil — kartu vonis tetap terbaca penuh.</em></p>
 </div>
@@ -189,7 +192,7 @@ OCR          : Gemini API, structured JSON, temperature 0; opsional dan butuh pe
 Package Mgmt : npm dengan package-lock.json
 Deployment   : Vercel (region sin1), https://pajak-wajar.vercel.app/
 CI/CD        : GitHub Actions (lint, tipe, tes, build, audit) dan deployment Vercel
-Testing      : Vitest; 184 tes rutin pada 12 berkas. Ajv 2020 untuk integritas data aturan
+Testing      : Vitest; 201 tes rutin pada 13 berkas. Ajv 2020 untuk integritas data aturan
 Type Check   : TypeScript (tsc --noEmit), tanpa `any`
 Monitoring   : Belum dikonfigurasi
 ```
@@ -302,7 +305,7 @@ Pajak-Wajar/
 │   │   └── format.ts             # Pembantu tampilan
 │   ├── mock/                     # Profil contoh untuk demo dan tangkapan layar
 │   └── types/                    # Kontrak tipe domain
-├── tests/                        # 184 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
+├── tests/                        # 201 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
 │   └── fixtures/                 # Lembar bukti potong contoh untuk uji OCR
 ├── vitest.config.ts
 ├── vercel.json
@@ -521,7 +524,7 @@ npm run build
 
 ### Test Coverage
 
-**184 tes rutin** pada dua belas berkas, ditambah satu tes integrasi OCR opsional:
+**201 tes rutin** pada tiga belas berkas, ditambah satu tes integrasi OCR opsional:
 
 | Berkas | Tes | Fokus |
 |--------|-----|-------|
@@ -530,6 +533,7 @@ npm run build
 | [tests/calculator.test.ts](./tests/calculator.test.ts) | 14 | Tarif progresif berlapis, termasuk bukti bahwa PKP Rp337 juta ≠ PKP × 25% dan kecocokan dengan contoh resmi UU HPP (PKP Rp6 miliar → Rp1.794.000.000). |
 | [tests/eligibility.test.ts](./tests/eligibility.test.ts) | 32 | Agregasi prioritas dan empat saringan kelayakan. |
 | [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 17 | Konsistensi status kalkulasi dan batasan perhitungan. |
+| [tests/kegiatan.test.ts](./tests/kegiatan.test.ts) | 17 | Norma untuk lebih dari satu kegiatan: neto dihitung per kegiatan memakai persentasenya sendiri lalu dijumlahkan (PER-17/PJ/2015 Pasal 5), dengan penjaga bahwa hasilnya berbeda dari cara keliru mengalikan omzet gabungan dengan satu persentase; ambang Norma dan dasar tarif umum memakai omzet seluruh kegiatan; kegiatan yang belum dirinci tetap ditahan; jawaban yang bertentangan ditolak Zod; vonis dinyatakan berlaku atas kegiatan utama saja. |
 | [tests/istilah.test.ts](./tests/istilah.test.ts) | 6 | Mutu kamus istilah sebagai teks antarmuka: tiap entri terisi, ringkas agar muat di popover, judulnya unik, dan tidak menyitasi pasal — dasar hukum hanya boleh datang dari mesin aturan. |
 | [tests/keluarga.test.ts](./tests/keluarga.test.ts) | 18 | Perhitungan saat pasangan tidak berpenghasilan; matriks lengkap status pelaporan keluarga × jawaban penghasilan pasangan, dengan jaminan setiap keadaan yang ditahan menyebut alasannya sendiri; kasus dokter multi-sumber. |
 | [tests/saran.test.ts](./tests/saran.test.ts) | 5 | Saran kontekstual, perbandingan sebelum kredit, nilai sama, serta data keluarga atau Norma yang belum pasti. |

@@ -71,6 +71,17 @@ function Perhitungan({ skema }: { skema: HasilSkema }) {
               <BarisHitung kunci="Omzet setahun" nilai={formatCurrency(r.omzetPribadi)} />
               {r.skema === 'TARIF_UMUM' ? (
                 <BarisHitung kunci="Biaya usaha" nilai={`− ${formatCurrency(r.biayaOperasional)}`} />
+              ) : r.rincianKegiatan ? (
+                <>
+                  {r.rincianKegiatan.map((baris) => (
+                    <BarisHitung
+                      key={baris.kluKode}
+                      kunci={`${baris.nama} — ${formatCurrency(baris.omzet)} × Norma ${formatPersenNorma(baris.persenNorma)}`}
+                      nilai={formatCurrency(baris.netoKegiatan)}
+                    />
+                  ))}
+                  <BarisHitung kunci="Jumlah neto seluruh kegiatan" nilai={formatCurrency(r.penghasilanNetoUsaha)} />
+                </>
               ) : (
                 <BarisHitung
                   kunci={`Norma ${formatPersenNorma(r.persenNorma)} dari omzet`}
