@@ -78,8 +78,27 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   // UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu
   // kesatuan. Bila pasangan tidak berpenghasilan, tidak ada yang perlu digabungkan
   // dan PTKP kawin sudah memperhitungkan keluarga, sehingga perhitungan dapat lanjut.
+  const gabung = statusPasangan === 'GABUNG';
   const pasanganTanpaPenghasilan = profil.pasanganPunyaPenghasilan === false;
-  const batasKeluarga = adaPasangan && !(statusPasangan === 'GABUNG' && pasanganTanpaPenghasilan);
+  // UU PPh Pasal 8 ayat (1) mengecualikan gaji istri dari satu pemberi kerja
+  // yang sudah dipotong PPh Pasal 21: penghasilan itu tidak digabungkan.
+  const pasanganGajiSatuPemberiKerja = profil.pasanganHanyaGajiSatuPemberiKerja === true;
+  const netoPasanganDigabung =
+    gabung &&
+    profil.pasanganPunyaPenghasilan === true &&
+    profil.pasanganHanyaGajiSatuPemberiKerja === false &&
+    profil.penghasilanNetoPasangan !== undefined;
+
+  const keluargaTerhitung =
+    gabung && (pasanganTanpaPenghasilan || pasanganGajiSatuPemberiKerja || netoPasanganDigabung);
+  const batasKeluarga = adaPasangan && !keluargaTerhitung;
+
+  // PMK 101/PMK.010/2016 Pasal 1 huruf c menambah PTKP hanya ketika penghasilan
+  // istri benar-benar digabungkan.
+  const netoPasangan = netoPasanganDigabung ? profil.penghasilanNetoPasangan ?? 0 : 0;
+  const ptkpDipakai =
+    PARAMETER.ptkp.nilai[profil.statusPtkp] +
+    (netoPasanganDigabung ? PARAMETER.ptkp.tambahanIstriDigabung.nilai : 0);
 
   // Tiap keadaan keluarga yang menahan perhitungan menjelaskan sebabnya sendiri;
   // tidak ada cabang yang berhenti tanpa alasan yang dapat ditindaklanjuti.
@@ -90,7 +109,9 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
         ? 'Jawab dulu apakah pasangan Anda punya penghasilan sendiri pada langkah keadaan keluarga. Tanpa jawaban itu, penggabungan penghasilan suami istri belum dapat dipastikan.'
         : profil.pasanganPunyaPenghasilan === 'tidak_yakin'
           ? 'Anda belum yakin apakah pasangan punya penghasilan sendiri. Periksa bukti potong atau catatan usaha pasangan, lalu perbarui jawaban agar perhitungan dapat dilanjutkan.'
-          : 'Perhitungan pajak keluarga belum tersedia. Neto pasangan, status penggabungan penghasilan, PTKP keluarga, dan pembagian pajak perlu diperiksa bersama; omzet pasangan saja tidak cukup.'
+          : profil.pasanganHanyaGajiSatuPemberiKerja === undefined || profil.pasanganHanyaGajiSatuPemberiKerja === 'tidak_yakin'
+            ? 'Jawab dulu apakah penghasilan pasangan hanya berupa gaji dari satu pemberi kerja yang sudah dipotong PPh Pasal 21. Keadaan itu tidak digabungkan, sedangkan penghasilan lain digabungkan.'
+            : 'Isi penghasilan neto pasangan setahun agar dapat digabungkan. Neto tidak bisa diturunkan dari omzet, jadi angkanya perlu Anda ambil dari catatan atau bukti potong pasangan.'
       : statusPasangan === 'PISAH_HARTA' || statusPasangan === 'PISAH_KEWAJIBAN'
         ? 'Pada pisah harta atau pisah kewajiban, pajak dihitung dari penghasilan neto gabungan lalu dibagi menurut perbandingan neto masing-masing. Neto pasangan tidak dapat diturunkan dari omzet, sehingga pembagian itu perlu diperiksa bersama petugas.'
         : 'Cara Anda dan pasangan melapor pajak belum dipastikan. Tentukan dulu status pelaporan keluarga, karena penggabungan penghasilan dan pembagian pajaknya berbeda untuk tiap status.';
@@ -183,9 +204,10 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       omzetPribadi: profil.omzetPribadiTahunPajak,
       persenNorma: persenNorma(klu, profil.wilayah),
       kegiatan: barisKegiatan,
-      ptkp: PARAMETER.ptkp.nilai[profil.statusPtkp],
+      ptkp: ptkpDipakai,
       kreditBupot,
       penghasilanNetoPegawai: netoPegawai,
+      penghasilanNetoPasangan: netoPasangan,
       lapisan: PARAMETER.tarifProgresif.lapisan
     });
     skemaNppn = {
@@ -224,9 +246,10 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
     const rincian = hitungTarifUmum({
       omzetPribadi: omzetKegiatan,
       biayaOperasional: profil.biayaOperasionalRiil,
-      ptkp: PARAMETER.ptkp.nilai[profil.statusPtkp],
+      ptkp: ptkpDipakai,
       kreditBupot,
       penghasilanNetoPegawai: netoPegawai,
+      penghasilanNetoPasangan: netoPasangan,
       lapisan: PARAMETER.tarifProgresif.lapisan
     });
     skemaTarifUmum = {

@@ -177,7 +177,20 @@
           "url": "https://jdih.kemenkeu.go.id/dok/uu-7-tahun-2021",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "tambahanIstriDigabung": {
+        "nilai": 54000000,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PMK No. 101/PMK.010/2016",
+            "pasalAtauLampiran": "Pasal 1 huruf c",
+            "fungsi": "Tambahan PTKP untuk seorang isteri yang penghasilannya digabung dengan penghasilan suami sebagaimana dimaksud dalam Pasal 8 ayat (1) UU PPh",
+            "url": "https://www.pajak.go.id/id/peraturan/penyesuaian-besarnya-penghasilan-tidak-kena-pajak-2",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      }
     }
   },
   "aturanKelayakan": {

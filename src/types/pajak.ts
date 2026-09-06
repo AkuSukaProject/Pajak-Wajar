@@ -104,6 +104,19 @@ export type ProfilWajibPajak = {
    */
   pasanganPunyaPenghasilan?: JawabanKepatuhan;
   /**
+   * Benar bila seluruh penghasilan pasangan berupa gaji dari **satu** pemberi
+   * kerja yang sudah dipotong PPh Pasal 21. UU PPh Pasal 8 ayat (1)
+   * mengecualikan keadaan itu dari penggabungan, sehingga penghasilan pasangan
+   * tidak ikut dihitung dan PTKP tetap tanpa tambahan istri.
+   */
+  pasanganHanyaGajiSatuPemberiKerja?: JawabanKepatuhan;
+  /**
+   * Penghasilan neto pasangan setahun, dipakai hanya bila penghasilannya
+   * memang digabung. Neto tidak dapat diturunkan dari omzet, jadi angkanya
+   * harus datang dari pengguna.
+   */
+  penghasilanNetoPasangan?: number;
+  /**
    * Kegiatan selain kegiatan utama, bila `punyaLebihDariSatuKegiatan` bernilai
    * `true`. Kosong berarti pengguna belum merinci kegiatannya, sehingga Norma
    * tetap ditahan: satu persentase tidak boleh dikalikan ke omzet gabungan.
@@ -172,6 +185,8 @@ export type RincianNppn = {
   penghasilanNeto: number;
   penghasilanNetoUsaha: number;
   penghasilanNetoPegawai: number;
+  /** Neto pasangan yang digabungkan menurut UU PPh Pasal 8 ayat (1); 0 bila tidak digabung. */
+  penghasilanNetoPasangan: number;
   ptkp: number;
   pkp: number;
   pajakSebelumKredit: number;
@@ -188,6 +203,8 @@ export type RincianTarifUmum = {
   penghasilanNeto: number;
   penghasilanNetoUsaha: number;
   penghasilanNetoPegawai: number;
+  /** Neto pasangan yang digabungkan menurut UU PPh Pasal 8 ayat (1); 0 bila tidak digabung. */
+  penghasilanNetoPasangan: number;
   ptkp: number;
   pkp: number;
   pajakSebelumKredit: number;

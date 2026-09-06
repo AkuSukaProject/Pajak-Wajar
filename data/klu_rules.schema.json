@@ -241,7 +241,8 @@
           "required": [
             "nilai",
             "statusVerifikasi",
-            "dasarHukum"
+            "dasarHukum",
+            "tambahanIstriDigabung"
           ],
           "properties": {
             "nilai": {
@@ -297,6 +298,27 @@
             },
             "dasarHukum": {
               "$ref": "#/$defs/daftarDasarHukum"
+            },
+            "tambahanIstriDigabung": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
             }
           }
         }
