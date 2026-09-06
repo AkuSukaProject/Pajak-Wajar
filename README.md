@@ -149,7 +149,7 @@ Screenshot berikut diambil dari build produksi lokal pada 5 September 2026 memak
 
 ### Video Demo
 
-[Unduh rekaman demo aplikasi](./docs/demo/pajakwajar-demo.webm). Rekaman tanpa narasi ini memperagakan enam langkah, bukti potong manual, hasil perhitungan, unduhan PDF, dan perubahan jawaban. [Skenario narasi](./docs/DEMO.md) tersedia untuk presentasi tim.
+[Unduh rekaman demo aplikasi](./docs/demo/pajakwajar-demo.webm). Rekaman tanpa narasi ini menelusuri keenam langkah untuk pedagang daring yang punya **dua kegiatan usaha** dan menikah dengan pasangan tanpa penghasilan: pengisian omzet, penambahan kegiatan kedua, penjelasan istilah yang muncul saat ditunjuk, lalu halaman hasil dengan rincian Norma yang dihitung per kegiatan. [Skenario narasi](./docs/DEMO.md) tersedia untuk presentasi tim, termasuk bagian bukti potong dan unduhan PDF yang tidak masuk rekaman ini.
 
 Contoh keluaran kertas kerja tersedia sebagai berkas: [contoh-kertas-kerja.pdf](./docs/demo/contoh-kertas-kerja.pdf).
 
