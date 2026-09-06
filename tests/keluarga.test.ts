@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { auditPajakMandiri } from '../src/lib/index';
 import { profilWajibPajakSchema } from '../src/lib/schemas';
+import { basisAturan } from '../src/lib/regulasi';
 import { contohHasilDokter } from '../src/mock/hasilKelayakan';
 import type {
   HasilAuditPajak,
@@ -117,13 +118,13 @@ describe('keadaan keluarga yang tetap ditahan', () => {
       kata: 'Jawab dulu'
     },
     {
-      nama: 'pisah harta walau pasangan tanpa penghasilan',
-      profil: keluarga('PISAH_HARTA', false),
+      nama: 'pisah harta dengan neto pasangan belum diisi',
+      profil: keluarga('PISAH_HARTA', true),
       kata: 'perbandingan neto'
     },
     {
-      nama: 'pisah kewajiban walau pasangan tanpa penghasilan',
-      profil: keluarga('PISAH_KEWAJIBAN', false),
+      nama: 'pisah kewajiban dengan neto pasangan belum diisi',
+      profil: keluarga('PISAH_KEWAJIBAN', true),
       kata: 'perbandingan neto'
     },
     {
@@ -241,9 +242,9 @@ describe('penggabungan penghasilan pasangan menurut UU PPh Pasal 8 ayat (1)', ()
     expect(dengan.pajakTerutang).toBeGreaterThan(tanpa.pajakTerutang);
   });
 
-  it('tetap menahan pisah harta walau neto pasangan sudah diisi', () => {
+  it('menghitung pisah harta setelah neto pasangan diisi', () => {
     const pisah: ProfilWajibPajak = { ...digabung, statusPerpajakanPasangan: 'PISAH_HARTA' };
-    expect(skemaDari(audit(pisah), 'NPPN').statusKalkulasi).toBe('BELUM_TERSEDIA');
+    expect(skemaDari(audit(pisah), 'NPPN').statusKalkulasi).toBe('TERSEDIA');
   });
 });
 
@@ -295,5 +296,84 @@ describe('jawaban yang saling bertentangan ditolak sejak validasi', () => {
 
   it('menerima profil gabung tanpa penghasilan pasangan yang omzetnya nol', () => {
     expect(profilWajibPajakSchema.safeParse(keluarga('GABUNG', false)).success).toBe(true);
+  });
+});
+
+
+describe('pembagian PH/MT berdasarkan hitungan tangan', () => {
+  const profil = (status: 'PISAH_HARTA' | 'PISAH_KEWAJIBAN'): ProfilWajibPajak => ({
+    ...dasarLajang, statusPerpajakanPasangan: status, pasanganPunyaPenghasilan: true,
+    pasanganHanyaGajiSatuPemberiKerja: false, penghasilanNetoPasangan: 100_000_000
+  });
+  it('menahan nominal jika parameter tambahan PTKP kembali dalam review', () => {
+    const aturan = basisAturan.parameterPajak.ptkp.tambahanIstriDigabung;
+    const status = aturan.statusVerifikasi;
+    try {
+      aturan.statusVerifikasi = 'DALAM_REVIEW';
+      for (const id of ['NPPN', 'TARIF_UMUM'] as const) {
+        const s = skemaDari(audit(profil('PISAH_HARTA')), id);
+        expect(s.statusKalkulasi).toBe('BELUM_TERSEDIA');
+        expect(s).not.toHaveProperty('pajakTerutang');
+      }
+    } finally { aturan.statusVerifikasi = status; }
+  });
+  for (const status of ['PISAH_HARTA', 'PISAH_KEWAJIBAN'] as const) {
+    it(`${status}: neto 400 + 100 juta menghasilkan bagian WP 50,9 juta`, () => {
+      const s = skemaDari(audit(profil(status)), 'NPPN');
+      if (s.statusKalkulasi !== 'TERSEDIA') throw Error('Nominal harus tersedia');
+      expect(s.rincianKalkulasi.ptkp).toBe(121_500_000);
+      expect(s.rincianKalkulasi.pkp).toBe(378_500_000);
+      expect(s.rincianKalkulasi.pembagianProporsional).toEqual({
+        netoGabungan: 500_000_000, netoWajibPajak: 400_000_000, porsi: 0.8,
+        pajakGabungan: 63_625_000, bagianWajibPajak: 50_900_000, bagianPasangan: 12_725_000
+      });
+      expect(s.pajakTerutang).toBe(50_900_000);
+      expect(s.dasarHukum.some(d => d.pasalAtauLampiran.includes('ayat (3)'))).toBe(true);
+    });
+    it(`${status}: pembukuan neto 500 + 100 juta menghasilkan bagian WP 73.854.167`, () => {
+      const s = skemaDari(audit(profil(status)), 'TARIF_UMUM');
+      if (s.statusKalkulasi !== 'TERSEDIA') throw Error('Nominal harus tersedia');
+      expect(s.rincianKalkulasi.pembagianProporsional?.pajakGabungan).toBe(88_625_000);
+      expect(s.pajakTerutang).toBe(73_854_167);
+    });
+    it(`${status}: gaji pasangan satu pemberi kerja tetap digabung`, () => {
+      const a = audit(profil(status));
+      const b = audit({ ...profil(status), pasanganHanyaGajiSatuPemberiKerja: true });
+      expect(b.skema).toEqual(a.skema);
+    });
+    it(`${status}: mengurangi kredit WP setelah pembagian`, () => {
+      const hasil = auditPajakMandiri({ profil: profil(status), kreditPajak: [{ nomorBuktiPotong: 'WP-1', pemotong: 'RS', penghasilanBruto: 100_000_000, pphDipotong: 7_000_000, sumber: 'MANUAL' }] });
+      const s = skemaDari(hasil, 'NPPN');
+      expect(s.statusKalkulasi === 'TERSEDIA' && s.pajakTerutang).toBe(43_900_000);
+    });
+    it(`${status}: kedua SPT mempunyai jumlah bagian yang tepat sama tanpa selisih pembulatan`, () => {
+      const suami = { ...profil(status), peranDalamKeluarga: 'SUAMI' as const, biayaOperasionalRiil: 400_000_003, penghasilanNetoPasangan: 111_111_111 };
+      const istri = { ...suami, peranDalamKeluarga: 'ISTRI' as const, omzetPribadiTahunPajak: 111_111_111, biayaOperasionalRiil: 0, penghasilanNetoPasangan: 399_999_997 };
+      const a = skemaDari(audit(suami), 'TARIF_UMUM');
+      const b = skemaDari(audit(istri), 'TARIF_UMUM');
+      if (a.statusKalkulasi !== 'TERSEDIA' || b.statusKalkulasi !== 'TERSEDIA') throw Error('Kedua SPT harus terhitung');
+      expect(a.pajakTerutang + b.pajakTerutang).toBe(a.rincianKalkulasi.pembagianProporsional?.pajakGabungan);
+      expect(a.rincianKalkulasi.pembagianProporsional?.bagianPasangan).toBe(b.pajakTerutang);
+    });
+  }
+  it('neto keduanya nol menghasilkan porsi nol tanpa NaN', () => {
+    const s = skemaDari(audit({ ...profil('PISAH_HARTA'), omzetPribadiTahunPajak: 0, biayaOperasionalRiil: 0, penghasilanNetoPasangan: 0 }), 'NPPN');
+    if (s.statusKalkulasi !== 'TERSEDIA') throw Error('Nol tetap dapat dihitung');
+    expect(s.pajakTerutang).toBe(0);
+    expect(s.rincianKalkulasi.pembagianProporsional?.porsi).toBe(0);
+  });
+  it('neto pasangan nol menghasilkan porsi WP satu', () => {
+    const s = skemaDari(audit({ ...profil('PISAH_HARTA'), penghasilanNetoPasangan: 0 }), 'NPPN');
+    if (s.statusKalkulasi !== 'TERSEDIA') throw Error('Nol tetap dapat dihitung');
+    expect(s.rincianKalkulasi.pembagianProporsional?.porsi).toBe(1);
+  });
+  it('pasangan tidak berpenghasilan dapat dihitung tanpa memaksa isian neto', () => {
+    expect(skemaDari(audit(keluarga('PISAH_HARTA', false)), 'NPPN').statusKalkulasi).toBe('TERSEDIA');
+  });
+  it('gabung tidak dibagi proporsional', () => {
+    const s = skemaDari(audit({ ...profil('PISAH_HARTA'), statusPerpajakanPasangan: 'GABUNG' }), 'NPPN');
+    if (s.statusKalkulasi !== 'TERSEDIA') throw Error('Nominal harus tersedia');
+    expect(s.pajakTerutang).toBe(63_625_000);
+    expect(s.rincianKalkulasi.pembagianProporsional).toBeUndefined();
   });
 });

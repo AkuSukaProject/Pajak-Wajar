@@ -215,3 +215,31 @@ export function hitungTarifUmum(params: {
 export function totalKreditBupot(daftar: Array<{ pphDipotong: number }>): number {
   return daftar.reduce((jumlah, item) => jumlah + Math.max(0, item.pphDipotong), 0);
 }
+
+/**
+ * UU PPh Pasal 8 ayat (3): bagi pajak gabungan menurut neto SEBELUM kredit.
+ * Bagian suami dibulatkan sekali; bagian istri adalah selisihnya. Pemilihan
+ * pemilik SPT tidak mengubah jumlah pajak keluarga, termasuk pada pecahan rupiah.
+ */
+export function bagiPajakKeluarga<T extends RincianNppn | RincianTarifUmum>(
+  rincian: T, peran: 'SUAMI' | 'ISTRI'
+): T {
+  const netoWajibPajak = rincian.penghasilanNetoUsaha + rincian.penghasilanNetoPegawai;
+  const netoGabungan = rincian.penghasilanNeto;
+  const pajakGabungan = rincian.pajakSebelumKredit;
+  const netoSuami = peran === 'SUAMI' ? netoWajibPajak : rincian.penghasilanNetoPasangan;
+  const bagianSuami = netoGabungan > 0 ? Math.round(pajakGabungan * (netoSuami / netoGabungan)) : 0;
+  const bagianIstri = pajakGabungan - bagianSuami;
+  const bagianWajibPajak = peran === 'SUAMI' ? bagianSuami : bagianIstri;
+  return {
+    ...rincian,
+    pajakSebelumKredit: bagianWajibPajak,
+    pajakTerutang: Math.max(0, bagianWajibPajak - rincian.kreditBupot),
+    kelebihanKredit: Math.max(0, rincian.kreditBupot - bagianWajibPajak),
+    pembagianProporsional: {
+      netoGabungan, netoWajibPajak, pajakGabungan,
+      porsi: netoGabungan > 0 ? netoWajibPajak / netoGabungan : 0,
+      bagianWajibPajak, bagianPasangan: pajakGabungan - bagianWajibPajak
+    }
+  };
+}
