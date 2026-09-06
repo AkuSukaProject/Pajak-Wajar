@@ -1,6 +1,6 @@
 # Pengumpulan karya ITechno Cup 2026
 
-Dicocokkan pada 6 September 2026 dengan [guidebook yang tersimpan di repo](../WebDev%20Guidebook%20%28Mahasiswa%29%20ITechnoCup%202026%20%283%29.pdf). Nomor halaman berikut adalah halaman PDF, dimulai dari 1. Teks halaman 9, 10, dan 12 juga diperiksa secara visual.
+Dicocokkan pada 6 September 2026 dengan guidebook resmi ITechno Cup 2026 (Web Development, mahasiswa). Berkas guidebook itu milik panitia dan tidak disertakan di repositori publik ini; salinannya ada pada tim. Nomor halaman berikut adalah halaman PDF, dimulai dari 1. Teks halaman 9, 10, dan 12 juga diperiksa secara visual.
 
 ## Penyisihan
 
