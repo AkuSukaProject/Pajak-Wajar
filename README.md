@@ -140,6 +140,9 @@ Screenshot berikut diambil dari build produksi lokal pada 5 September 2026 memak
   <img src="docs/screenshots/hasil-kelayakan.png" alt="Tiga kartu hasil kelayakan beserta perkiraan pajak dan saran perbandingan" width="800" />
   <p><em>Hasil — pedagang daring yang menikah dengan pasangan tanpa penghasilan: ketiga skema terhitung, disertai perbandingan skema paling ringan dan kamus istilah.</em></p>
 
+  <img src="docs/screenshots/hasil-multi-kegiatan.png" alt="Rincian Norma dihitung per kegiatan lalu dijumlahkan" width="800" />
+  <p><em>Lebih dari satu kegiatan — Norma dihitung per kegiatan memakai persentase masing-masing (30% dan 25%), lalu dijumlahkan sesuai PER-17/PJ/2015 Pasal 5. Vonis dinyatakan berlaku atas kegiatan utama saja.</em></p>
+
   <img src="docs/screenshots/hasil-mobile.png" alt="Hasil kelayakan pada perangkat seluler" width="320" />
   <p><em>Hasil pada layar kecil — kartu vonis tetap terbaca penuh.</em></p>
 </div>
