@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { TombolUnduhKertasKerja } from '@/components/berkas/TombolUnduhKertasKerja';
+import { Istilah } from '@/components/ui/Istilah';
 import { IkonStatus } from '@/components/ui/StatusProses';
 import { Maskot } from '@/components/ui/Maskot';
 import { KlasifikasiKegiatan } from '@/components/eligibility/KlasifikasiKegiatan';
@@ -18,7 +20,7 @@ const tampilan: Record<StatusKelayakan, { label: string; simbol: string; border:
   PERLU_DIPASTIKAN: { label: 'PERLU DICEK DULU', simbol: '?', border: 'border-pending', text: 'text-pending' }
 };
 
-function BarisHitung({ kunci, nilai, tebal }: { kunci: string; nilai: string; tebal?: boolean }) {
+function BarisHitung({ kunci, nilai, tebal }: { kunci: ReactNode; nilai: string; tebal?: boolean }) {
   return (
     <div
       className={`grid grid-cols-1 gap-1 py-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-4 ${tebal ? 'mt-1 border-t border-line pt-2 font-semibold' : ''}`}
@@ -79,8 +81,11 @@ function Perhitungan({ skema }: { skema: HasilSkema }) {
                 <BarisHitung kunci="Penghasilan neto usaha" nilai={formatCurrency(r.penghasilanNetoUsaha)} />
               )}
               {r.penghasilanNetoPegawai > 0 && <><BarisHitung kunci="Penghasilan neto gaji" nilai={formatCurrency(r.penghasilanNetoPegawai)} /><BarisHitung kunci="Total penghasilan neto" nilai={formatCurrency(r.penghasilanNeto)} /></>}
-              <BarisHitung kunci="PTKP" nilai={`− ${formatCurrency(r.ptkp)}`} />
-              <BarisHitung kunci="PKP (dibulatkan ke bawah ke ribuan)" nilai={formatCurrency(r.pkp)} />
+              <BarisHitung kunci={<Istilah nama="ptkp">PTKP</Istilah>} nilai={`− ${formatCurrency(r.ptkp)}`} />
+              <BarisHitung
+                kunci={<><Istilah nama="pkp">PKP</Istilah> (dibulatkan ke bawah ke ribuan)</>}
+                nilai={formatCurrency(r.pkp)}
+              />
               {r.lapisanTerpakai.map((lapis) => (
                 <BarisHitung
                   key={lapis.lapisan}
@@ -240,14 +245,37 @@ export function KartuVonis({ hasil }: { hasil: HasilAuditPajak }) {
         </div>
       )}
 
+      <section aria-label="Kamus istilah" className="mt-6 border border-line bg-paper p-5">
+        <h3 className="text-sm font-semibold text-ink">Belum paham istilahnya?</h3>
+        <p className="mt-1 text-xs leading-5 text-margin">
+          Tekan salah satu kata di bawah ini untuk membaca penjelasan singkat dengan bahasa sehari-hari.
+        </p>
+        <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs leading-5">
+          <Istilah nama="pphFinal" />
+          <Istilah nama="norma" />
+          <Istilah nama="tarifUmum" />
+          <Istilah nama="peredaranBruto" />
+          <Istilah nama="ptkp" />
+          <Istilah nama="pkp" />
+          <Istilah nama="tarifProgresif" />
+          <Istilah nama="kreditPajak" />
+          <Istilah nama="buktiPotong" />
+          <Istilah nama="pekerjaanBebas" />
+          <Istilah nama="ptPerorangan" />
+          <Istilah nama="pembukuan" />
+          <Istilah nama="sptTahunan" />
+          <Istilah nama="coretax" />
+        </p>
+      </section>
+
       <div className="mt-6">
         <TombolUnduhKertasKerja hasil={hasil} />
       </div>
 
       <p className="mt-5 text-xs leading-5 text-margin">
         Ini alat bantu, bukan nasihat pajak. Seluruh angka berasal dari data yang Anda isi sendiri.
-        Cocokkan kembali melalui akun Coretax DJP, KPP tempat Anda terdaftar, atau Kring Pajak
-        1500200 sebelum mengisi SPT Tahunan.
+        Cocokkan kembali melalui akun <Istilah nama="coretax">Coretax</Istilah> DJP, KPP tempat Anda terdaftar, atau Kring Pajak
+        1500200 sebelum mengisi <Istilah nama="sptTahunan">SPT Tahunan</Istilah>.
       </p>
     </section>
   );
