@@ -215,6 +215,8 @@ export function KertasKerjaPdf({ hasil }: { hasil: HasilAuditPajak }) {
             kunci="Pasangan punya penghasilan sendiri"
             nilai={profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN'
               ? 'Tidak ada pasangan'
+              : profil.statusPerpajakanPasangan === 'PISAH_PUTUSAN_HAKIM'
+              ? 'Tidak digabungkan, berpisah menurut putusan hakim'
               : profil.pasanganPunyaPenghasilan === undefined
                 ? 'Belum dijawab'
                 : profil.pasanganPunyaPenghasilan === 'tidak_yakin'
