@@ -5,6 +5,7 @@ import { InputBuktiPotong } from '@/components/eligibility/InputBuktiPotong';
 import { KartuVonis } from '@/components/eligibility/KartuVonis';
 import { KlasifikasiKegiatan } from '@/components/eligibility/KlasifikasiKegiatan';
 import { InputRupiah } from '@/components/ui/InputRupiah';
+import { Istilah } from '@/components/ui/Istilah';
 import { PanelProses } from '@/components/ui/StatusProses';
 import { PetunjukWaji } from '@/components/ui/PetunjukWaji';
 import { auditPajakMandiri } from '@/lib/index';
@@ -338,8 +339,9 @@ export function AlurKelayakan() {
             <fieldset>
               <legend className="text-lg font-semibold">Bagaimana Anda menjalankannya?</legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
-                Aturan membedakan orang yang menjual keahliannya sendiri dari orang yang menjalankan usaha
-                dan mempekerjakan orang lain. Perbedaan ini menentukan boleh tidaknya tarif 0,5%.
+                Aturan membedakan orang yang menjual keahliannya sendiri (<Istilah nama="pekerjaanBebas">pekerjaan bebas</Istilah>)
+                dari orang yang menjalankan usaha dan mempekerjakan orang lain. Perbedaan ini menentukan boleh
+                tidaknya <Istilah nama="pphFinal">tarif 0,5%</Istilah>.
               </p>
               <div className="space-y-2">
                 {pilihanBentukKegiatan.map((item) => {
@@ -457,8 +459,9 @@ export function AlurKelayakan() {
         {langkah === 3 && (
           <div className="space-y-6">
             <div className="border-l-2 border-blue bg-paper px-4 py-3 text-xs leading-5 text-margin">
-              <strong className="text-ink">Kenapa tahun sebelumnya?</strong> Batas Rp4,8 miliar diukur dari
-              peredaran bruto tahun pajak terakhir sebelum tahun yang Anda periksa, bukan tahun berjalan.
+              <strong className="text-ink">Kenapa tahun sebelumnya?</strong> Batas Rp4,8 miliar diukur dari{' '}
+              <Istilah nama="peredaranBruto">peredaran bruto</Istilah> tahun pajak terakhir sebelum tahun yang
+              Anda periksa, bukan tahun berjalan.
             </div>
 
             <InputRupiah
@@ -534,12 +537,18 @@ export function AlurKelayakan() {
               </>
             )}
 
-            <InputRupiah
-              label={`Total uang masuk seluruh PT Perorangan selama ${profil.tahunPajak - 1}`}
-              nilai={profil.omzetSeluruhPerseroanPeroranganThnSebelumnya}
-              onChange={(nilai) => ubah('omzetSeluruhPerseroanPeroranganThnSebelumnya', nilai ?? 0)}
-              bantuan="Jumlahkan semua PT Perorangan yang Anda, dan pasangan Anda, dirikan. Isi 0 bila tidak punya."
-            />
+            <div>
+              <InputRupiah
+                label={`Total uang masuk seluruh PT Perorangan selama ${profil.tahunPajak - 1}`}
+                nilai={profil.omzetSeluruhPerseroanPeroranganThnSebelumnya}
+                onChange={(nilai) => ubah('omzetSeluruhPerseroanPeroranganThnSebelumnya', nilai ?? 0)}
+                bantuan="Jumlahkan semua PT Perorangan yang Anda, dan pasangan Anda, dirikan. Isi 0 bila tidak punya."
+              />
+              <p className="mt-1.5 text-xs leading-5 text-margin">
+                Belum tahu maksudnya? Baca <Istilah nama="ptPerorangan">PT Perorangan</Istilah> dan{' '}
+                <Istilah nama="ambang">batas Rp4,8 miliar</Istilah>.
+              </p>
+            </div>
           </div>
         )}
 
@@ -555,7 +564,7 @@ export function AlurKelayakan() {
                 Sudahkah Anda memberitahukan penggunaan Norma untuk tahun {profil.tahunPajak} tepat waktu?
               </legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
-                Norma atau NPPN adalah cara memperkirakan penghasilan bersih memakai persentase resmi.
+                <Istilah nama="norma">Norma atau NPPN</Istilah> adalah cara memperkirakan penghasilan bersih memakai persentase resmi.
                 Pemberitahuannya lewat layanan {basisAturan.parameterPajak.nppn.batasWaktuPemberitahuan.layananCoretax} di
                 Coretax, paling lambat 31 Maret tahun pajak yang bersangkutan. Jika baru mendengar istilah ini,
                 pilih “Tidak yakin”.

@@ -10,10 +10,35 @@ describe('saran akhir berdasarkan jawaban', () => {
     expect(hasil.langkahTindakLanjut[0]).toContain('sebelum kredit');
     expect(hasil.langkahTindakLanjut.some(s => s.includes('nomor, tahun pajak'))).toBe(true);
   });
-  it('menyebut final hanya ketika ketiga skema dapat dibandingkan', () => {
+  it('menyebut skema paling rendah ketika ketiga skema dapat dibandingkan', () => {
     const hasil = auditPajakMandiri({ profil: profilPedagang, kreditPajak: [] });
-    expect(hasil.langkahTindakLanjut[0]).toContain('Pertimbangkan PPh Final');
+    expect(hasil.langkahTindakLanjut[0]).toContain('PPh Final UMKM 0,5%');
+    expect(hasil.langkahTindakLanjut[0]).toContain('paling rendah');
+    expect(hasil.langkahTindakLanjut[0]).toContain('3 skema');
     expect(hasil.langkahTindakLanjut.some(s => s.includes('setoran final yang sudah dibayar'))).toBe(true);
+  });
+
+  it('tetap membandingkan ketika hanya dua skema yang terhitung', () => {
+    // Tanpa pemberitahuan Norma, NPPN tertutup sehingga hanya PPh Final dan
+    // tarif umum yang terhitung. Perbandingan tetap setara karena tidak ada
+    // kredit bupot dan penghasilan pegawai.
+    const hasil = auditPajakMandiri({
+      profil: { ...profilPedagang, sudahMemberitahukanNppn: false },
+      kreditPajak: []
+    });
+    const terhitung = hasil.skema.filter((s) => s.statusKalkulasi === 'TERSEDIA');
+    expect(terhitung).toHaveLength(2);
+    expect(hasil.rekomendasiHemat?.id).toBe('PPH_FINAL_05');
+    expect(hasil.langkahTindakLanjut[0]).toContain('2 skema');
+    expect(hasil.langkahTindakLanjut[0]).toContain('lebih rendah daripada');
+  });
+
+  it('tidak membandingkan bila ada kredit bupot, karena basis angkanya tidak setara', () => {
+    const hasil = auditPajakMandiri({
+      profil: profilPedagang,
+      kreditPajak: [{ nomorBuktiPotong: 'BP-1', pemotong: 'PT Contoh', penghasilanBruto: 50_000_000, pphDipotong: 2_500_000, sumber: 'MANUAL' }]
+    });
+    expect(hasil.rekomendasiHemat).toBeUndefined();
   });
   it('tidak menyarankan Norma ketika pemberitahuannya belum pasti', () => {
     const hasil = auditPajakMandiri({ ...contohInput, profil: { ...contohInput.profil, sudahMemberitahukanNppn: 'tidak_yakin' } });
