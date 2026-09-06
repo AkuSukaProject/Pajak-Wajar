@@ -97,9 +97,14 @@ describe('perhitungan saat pasangan tidak berpenghasilan', () => {
 describe('keadaan keluarga yang tetap ditahan', () => {
   const ditahan: Array<{ nama: string; profil: ProfilWajibPajak; kata: string }> = [
     {
-      nama: 'gabung dengan pasangan berpenghasilan',
+      nama: 'gabung dengan pasangan berpenghasilan yang belum dirinci',
       profil: keluarga('GABUNG', true),
-      kata: 'Neto pasangan'
+      kata: 'gaji dari satu pemberi kerja'
+    },
+    {
+      nama: 'gabung, penghasilan pasangan digabung, tetapi netonya belum diisi',
+      profil: { ...keluarga('GABUNG', true), pasanganHanyaGajiSatuPemberiKerja: false },
+      kata: 'Isi penghasilan neto pasangan'
     },
     {
       nama: 'gabung tetapi belum yakin',
@@ -166,6 +171,79 @@ describe('keadaan keluarga yang tetap ditahan', () => {
         }
       }
     }
+  });
+});
+
+describe('penggabungan penghasilan pasangan menurut UU PPh Pasal 8 ayat (1)', () => {
+  /** Gabung, pasangan berpenghasilan selain gaji satu pemberi kerja, neto diisi. */
+  const digabung: ProfilWajibPajak = {
+    ...keluarga('GABUNG', true),
+    pasanganHanyaGajiSatuPemberiKerja: false,
+    penghasilanNetoPasangan: 100_000_000
+  };
+
+  it('menambahkan neto pasangan ke penghasilan neto', () => {
+    const skema = skemaDari(audit(digabung), 'NPPN');
+    if (skema.statusKalkulasi !== 'TERSEDIA') throw new Error('seharusnya terhitung');
+    // Neto usaha 800 juta × Norma 50% = 400 juta, ditambah neto pasangan 100 juta.
+    expect(skema.rincianKalkulasi.penghasilanNetoUsaha).toBe(400_000_000);
+    expect(skema.rincianKalkulasi.penghasilanNetoPasangan).toBe(100_000_000);
+    expect(skema.rincianKalkulasi.penghasilanNeto).toBe(500_000_000);
+  });
+
+  it('menambah PTKP sebesar tambahan istri yang penghasilannya digabung', () => {
+    const skema = skemaDari(audit(digabung), 'NPPN');
+    if (skema.statusKalkulasi !== 'TERSEDIA') throw new Error('seharusnya terhitung');
+    // PTKP K/2 Rp67.500.000 ditambah Rp54.000.000 menurut PMK 101/PMK.010/2016 Pasal 1 huruf c.
+    expect(skema.rincianKalkulasi.ptkp).toBe(121_500_000);
+  });
+
+  it('menghasilkan pajak yang cocok dengan hitungan berlapis', () => {
+    const skema = skemaDari(audit(digabung), 'NPPN');
+    if (skema.statusKalkulasi !== 'TERSEDIA') throw new Error('seharusnya terhitung');
+    // PKP = 500.000.000 − 121.500.000 = 378.500.000.
+    // 60 juta × 5% = 3.000.000; 190 juta × 15% = 28.500.000; 128,5 juta × 25% = 32.125.000.
+    expect(skema.rincianKalkulasi.pkp).toBe(378_500_000);
+    expect(skema.pajakTerutang).toBe(63_625_000);
+  });
+
+  it('tidak menggabungkan gaji pasangan dari satu pemberi kerja, dan PTKP tetap tanpa tambahan', () => {
+    const gajiSaja: ProfilWajibPajak = {
+      ...keluarga('GABUNG', true),
+      pasanganHanyaGajiSatuPemberiKerja: true,
+      penghasilanNetoPasangan: 100_000_000
+    };
+    const skema = skemaDari(audit(gajiSaja), 'NPPN');
+    if (skema.statusKalkulasi !== 'TERSEDIA') throw new Error('seharusnya terhitung');
+    expect(skema.rincianKalkulasi.penghasilanNetoPasangan).toBe(0);
+    expect(skema.rincianKalkulasi.ptkp).toBe(67_500_000);
+  });
+
+  it('menghasilkan angka yang sama dengan profil tanpa pasangan berpenghasilan pada kasus gaji satu pemberi kerja', () => {
+    const gajiSaja: ProfilWajibPajak = {
+      ...keluarga('GABUNG', true),
+      pasanganHanyaGajiSatuPemberiKerja: true
+    };
+    const tanpa = skemaDari(audit(keluarga('GABUNG', false)), 'NPPN');
+    const dengan = skemaDari(audit(gajiSaja), 'NPPN');
+    if (tanpa.statusKalkulasi !== 'TERSEDIA' || dengan.statusKalkulasi !== 'TERSEDIA') {
+      throw new Error('keduanya seharusnya terhitung');
+    }
+    expect(dengan.pajakTerutang).toBe(tanpa.pajakTerutang);
+  });
+
+  it('menaikkan pajak dibanding pasangan tanpa penghasilan, karena netonya bertambah', () => {
+    const tanpa = skemaDari(audit(keluarga('GABUNG', false)), 'NPPN');
+    const dengan = skemaDari(audit(digabung), 'NPPN');
+    if (tanpa.statusKalkulasi !== 'TERSEDIA' || dengan.statusKalkulasi !== 'TERSEDIA') {
+      throw new Error('keduanya seharusnya terhitung');
+    }
+    expect(dengan.pajakTerutang).toBeGreaterThan(tanpa.pajakTerutang);
+  });
+
+  it('tetap menahan pisah harta walau neto pasangan sudah diisi', () => {
+    const pisah: ProfilWajibPajak = { ...digabung, statusPerpajakanPasangan: 'PISAH_HARTA' };
+    expect(skemaDari(audit(pisah), 'NPPN').statusKalkulasi).toBe('BELUM_TERSEDIA');
   });
 });
 

@@ -55,6 +55,8 @@ export const profilWajibPajakSchema = z.object({
   penghasilanNetoPegawai: uang.optional(),
   pernahMelewatiAmbang: jawabanKepatuhan.optional(),
   pasanganPunyaPenghasilan: jawabanKepatuhan.optional(),
+  pasanganHanyaGajiSatuPemberiKerja: jawabanKepatuhan.optional(),
+  penghasilanNetoPasangan: uang.optional(),
   kegiatanTambahan: z
     .array(
       z.object({
