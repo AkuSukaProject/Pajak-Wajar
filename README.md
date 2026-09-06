@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/samythh/Pajak-Wajar)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Aplikasi_Berfungsi-2ea44f?style=for-the-badge)](#fitur-unggulan)
-[![Tes](https://img.shields.io/badge/Vitest-209_lulus-2ea44f?style=for-the-badge)](#testing)
+[![Tes](https://img.shields.io/badge/Vitest-248_lulus-2ea44f?style=for-the-badge)](#testing)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
 
@@ -192,7 +192,7 @@ OCR          : Gemini API, structured JSON, temperature 0; opsional dan butuh pe
 Package Mgmt : npm dengan package-lock.json
 Deployment   : Vercel (region sin1), https://pajak-wajar.vercel.app/
 CI/CD        : GitHub Actions (lint, tipe, tes, build, audit) dan deployment Vercel
-Testing      : Vitest; 209 tes rutin pada 13 berkas. Ajv 2020 untuk integritas data aturan
+Testing      : Vitest; 248 tes rutin pada 14 berkas. Ajv 2020 untuk integritas data aturan
 Type Check   : TypeScript (tsc --noEmit), tanpa `any`
 Monitoring   : Belum dikonfigurasi
 ```
@@ -305,7 +305,7 @@ Pajak-Wajar/
 │   │   └── format.ts             # Pembantu tampilan
 │   ├── mock/                     # Profil contoh untuk demo dan tangkapan layar
 │   └── types/                    # Kontrak tipe domain
-├── tests/                        # 209 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
+├── tests/                        # 248 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
 │   └── fixtures/                 # Lembar bukti potong contoh untuk uji OCR
 ├── vitest.config.ts
 ├── vercel.json
@@ -524,7 +524,7 @@ npm run build
 
 ### Test Coverage
 
-**209 tes rutin** pada tiga belas berkas, ditambah satu tes integrasi OCR opsional:
+**248 tes rutin** pada empat belas berkas, ditambah satu tes integrasi OCR opsional:
 
 | Berkas | Tes | Fokus |
 |--------|-----|-------|
@@ -535,11 +535,12 @@ npm run build
 | [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 17 | Konsistensi status kalkulasi dan batasan perhitungan. |
 | [tests/kegiatan.test.ts](./tests/kegiatan.test.ts) | 17 | Norma untuk lebih dari satu kegiatan: neto dihitung per kegiatan memakai persentasenya sendiri lalu dijumlahkan (PER-17/PJ/2015 Pasal 5), dengan penjaga bahwa hasilnya berbeda dari cara keliru mengalikan omzet gabungan dengan satu persentase; ambang Norma dan dasar tarif umum memakai omzet seluruh kegiatan; kegiatan yang belum dirinci tetap ditahan; jawaban yang bertentangan ditolak Zod; vonis dinyatakan berlaku atas kegiatan utama saja. |
 | [tests/istilah.test.ts](./tests/istilah.test.ts) | 6 | Mutu kamus istilah sebagai teks antarmuka: tiap entri terisi, ringkas agar muat di popover, judulnya unik, dan tidak menyitasi pasal — dasar hukum hanya boleh datang dari mesin aturan. |
-| [tests/keluarga.test.ts](./tests/keluarga.test.ts) | 26 | Perhitungan keluarga: pasangan tanpa penghasilan; penggabungan neto pasangan menurut UU PPh Pasal 8 ayat (1) berikut tambahan PTKP PMK 101/PMK.010/2016 Pasal 1 huruf c; pengecualian gaji dari satu pemberi kerja yang sudah dipotong PPh 21; matriks lengkap status pelaporan × jawaban penghasilan pasangan dengan jaminan tiap keadaan yang ditahan menyebut alasannya sendiri; kasus dokter multi-sumber. |
-| [tests/saran.test.ts](./tests/saran.test.ts) | 5 | Saran kontekstual, perbandingan sebelum kredit, nilai sama, serta data keluarga atau Norma yang belum pasti. |
+| [tests/keluarga.test.ts](./tests/keluarga.test.ts) | 41 | Perhitungan keluarga: pasangan tanpa penghasilan; penggabungan neto pasangan menurut UU PPh Pasal 8 ayat (1) berikut tambahan PTKP PMK 101/PMK.010/2016 Pasal 1 huruf c; pengecualian gaji dari satu pemberi kerja yang sudah dipotong PPh 21; matriks lengkap status pelaporan × jawaban penghasilan pasangan dengan jaminan tiap keadaan yang ditahan menyebut alasannya sendiri; kasus dokter multi-sumber; pembagian PH/MT sebelum kredit dan jumlah kedua bagian yang konsisten. |
+| [tests/saran.test.ts](./tests/saran.test.ts) | 7 | Saran kontekstual, perbandingan sebelum kredit, nilai sama, serta data keluarga atau Norma yang belum pasti. |
 | [tests/schemas.test.ts](./tests/schemas.test.ts) | 15 | Kontrak masukan formulir dan bukti potong. |
 | [tests/audit-regression.test.ts](./tests/audit-regression.test.ts) | 15 | Pembulatan PKP, gaji, kelebihan kredit, duplikasi bukti potong, batas pajak keluarga dan riwayat 2025/2026. |
 | [tests/format.test.ts](./tests/format.test.ts) | 13 | Pemisah ribuan pada isian nominal, termasuk jaminan titik tidak bocor ke perhitungan. |
+| [tests/investasi.test.ts](./tests/investasi.test.ts) | 24 | Deposito, saham, dividen penuh/sebagian, pengecualian, pemisahan kredit, bukti ganda, dan parameter dalam review. |
 | [tests/ocr.test.ts](./tests/ocr.test.ts) | 23 (+1 opsional) | Gerbang persetujuan, batas berkas, dan seluruh kode galat route OCR. Tes nyata dijalankan khusus dengan `npm run test:ocr` dan `GEMINI_API_KEY`; `npm test` tidak mengirim gambar. |
 
 Pemeriksaan ulang 6 September 2026 mencakup lint, tipe, build produksi, regresi pembulatan PKP dan gaji, input ganda, browser mobile/desktop, serta PDF. Rinciannya di [laporan pemeriksaan](./docs/TESTING.md).
@@ -577,3 +578,10 @@ PajakWajar adalah alat bantu pra-lapor, bukan nasihat pajak. Verifikasi hasil da
 **Made with ❤️ by AkuSukaProject for ITECHNO CUP 2026**
 
 </div>
+
+
+### Penghasilan keluarga dan investasi
+
+PH/MT menghitung pajak dari neto gabungan dan PTKP K/I, lalu menampilkan **bagian pajak Anda** beserta porsi dan pajak keluarga sebelum pembagian. Kredit pajak milik Anda dikurangkan setelah pembagian; gaji pasangan satu pemberi kerja tetap digabung pada PH/MT.
+
+Pada langkah bukti potong tersedia catatan bunga deposito/tabungan biasa, penjualan saham bursa Indonesia nonpendiri, dan dividen dalam negeri. Pajak final serta bagian bukan objek ditampilkan terpisah dari pajak usaha dan ikut disertakan pada PDF. Semua hasil bersumber dari parameter terverifikasi, dengan [rincian verifikasi dan contoh angka](docs/VERIFIKASI-PH-MT-INVESTASI.md). Kondisi khusus atau jawaban belum pasti tetap memerlukan pemeriksaan.

@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { InputInvestasi } from '@/components/eligibility/InputInvestasi';
+import type { PenghasilanInvestasi } from '@/types/investasi';
 import { InputBuktiPotong } from '@/components/eligibility/InputBuktiPotong';
 import { KartuVonis } from '@/components/eligibility/KartuVonis';
 import { KlasifikasiKegiatan } from '@/components/eligibility/KlasifikasiKegiatan';
@@ -188,6 +190,8 @@ export function AlurKelayakan() {
   const [galatKolom, setGalatKolom] = useState<Record<string, string>>({});
   const [kolomBergetar, setKolomBergetar] = useState<string | null>(null);
   const [buktiBelumDisimpan, setBuktiBelumDisimpan] = useState(false);
+  const [penghasilanInvestasi, setPenghasilanInvestasi] = useState<PenghasilanInvestasi[]>([]);
+  const pisah = profil.statusPerpajakanPasangan === 'PISAH_HARTA' || profil.statusPerpajakanPasangan === 'PISAH_KEWAJIBAN';
   const container = useRef<HTMLDivElement>(null);
   const pertama = useRef(true);
   useEffect(() => {
@@ -299,7 +303,7 @@ export function AlurKelayakan() {
     }
 
     try {
-      setHasilSiap(auditPajakMandiri({ profil, kreditPajak }));
+      setHasilSiap(auditPajakMandiri({ profil, kreditPajak, penghasilanInvestasi }));
       setGalat(null);
     } catch (kesalahan) {
       setGalat(
@@ -790,18 +794,19 @@ export function AlurKelayakan() {
                   />
                 )}
 
-                {/* Hanya untuk pelaporan gabung: pisah harta dan pisah kewajiban
-                    membagi pajak menurut perbandingan neto, yang belum didukung. */}
-                {profil.statusPerpajakanPasangan === 'GABUNG' && profil.pasanganPunyaPenghasilan === true && (
+                {pisah && <label className="block text-sm font-semibold">Anda mengisi bagian pajak sebagai
+                  <select className="mt-2 block w-full border border-line bg-white p-3" value={profil.peranDalamKeluarga ?? 'SUAMI'} onChange={e => ubah('peranDalamKeluarga', e.target.value as 'SUAMI' | 'ISTRI')}>
+                    <option value="SUAMI">Suami</option><option value="ISTRI">Istri</option>
+                  </select>
+                </label>}
+                {(profil.statusPerpajakanPasangan === 'GABUNG' || pisah) && profil.pasanganPunyaPenghasilan === true && (
                   <>
                     <fieldset>
                       <legend className="text-lg font-semibold">
                         Apakah penghasilan pasangan hanya berupa gaji dari satu pemberi kerja?
                       </legend>
                       <p className="mb-4 mt-1 text-xs leading-5 text-margin">
-                        Gaji dari satu pemberi kerja yang sudah dipotong <Istilah nama="pph21">PPh 21</Istilah>{' '}
-                        tidak digabungkan ke penghasilan Anda. Penghasilan lain — usaha, pekerjaan bebas, atau
-                        gaji dari beberapa pemberi kerja — digabungkan.
+                        {pisah ? 'Pada PH/MT, gaji pasangan tetap digabung meskipun hanya dari satu pemberi kerja. Pajak keluarga kemudian dibagi menurut neto masing-masing.' : <>Pengecualian hanya untuk gaji istri dari satu pemberi kerja, sudah dipotong <Istilah nama="pph21">PPh 21</Istilah>, dan pekerjaannya tidak berhubungan dengan usaha atau pekerjaan bebas suami maupun keluarga. Jawab Tidak bila salah satu syarat tidak terpenuhi.</>}
                       </p>
                       <PilihanTiga
                         nama="gaji-satu-pemberi-kerja"
@@ -812,14 +817,14 @@ export function AlurKelayakan() {
                       />
                     </fieldset>
 
-                    {profil.pasanganHanyaGajiSatuPemberiKerja === false && (
+                    {(pisah || profil.pasanganHanyaGajiSatuPemberiKerja === false) && (
                       <>
                         <InputRupiah
                           label="Penghasilan neto pasangan setahun"
                           nilai={profil.penghasilanNetoPasangan}
                           onChange={(nilai) => ubah('penghasilanNetoPasangan', nilai)}
                           bolehKosong
-                          bantuan="Keuntungan bersih pasangan setahun sebelum PTKP, bukan uang masuk kotor. Ambil dari catatan usaha atau bukti potongnya."
+                          bantuan="Total neto nonfinal pasangan sebelum PTKP dan sebelum kredit pajak: gabungkan gaji serta usaha nonfinal. Jangan masukkan bunga deposito, dividen final, atau penghasilan final lainnya. Ambil dari catatan atau bukti potongnya."
                         />
                         <p className="-mt-4 text-xs leading-5 text-margin">
                           Angka ini digabungkan ke <Istilah nama="penghasilanNeto">penghasilan neto</Istilah> Anda,
@@ -893,7 +898,11 @@ export function AlurKelayakan() {
           </div>
         )}
 
-        {langkah === 5 && <InputBuktiPotong daftar={kreditPajak} onChange={setKreditPajak} onPendingChange={setBuktiBelumDisimpan} />}
+        {langkah === 5 && <>
+          {pisah && <p className="mb-4 border-l-2 border-blue bg-paper p-4 text-sm">PH/MT: masukkan hanya bukti potong nonfinal milik Anda. Pajak gabungan dibagi lebih dahulu; kredit pasangan digunakan pada SPT pasangan.</p>}
+          <InputBuktiPotong daftar={kreditPajak} onChange={setKreditPajak} onPendingChange={setBuktiBelumDisimpan} />
+          <InputInvestasi daftar={penghasilanInvestasi} onChange={setPenghasilanInvestasi} />
+        </>}
       </div>
 
       {galat && (

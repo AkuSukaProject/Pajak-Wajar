@@ -10,6 +10,7 @@ const nama = {
 /** Menyusun tindak lanjut dari hasil terverifikasi, tanpa menetapkan hak pajak baru. */
 export function susunSaran(hasil: HasilAuditPajak): string[] {
   const saran: string[] = [];
+  const pisah = ['PISAH_HARTA', 'PISAH_KEWAJIBAN'].includes(hasil.profil.statusPerpajakanPasangan);
   const terhitung = hasil.skema.filter(s => s.statusKalkulasi === 'TERSEDIA');
   const nppn = hasil.skema.find(s => s.id === 'NPPN');
   const umum = hasil.skema.find(s => s.id === 'TARIF_UMUM');
@@ -39,6 +40,8 @@ export function susunSaran(hasil: HasilAuditPajak): string[] {
     saran.push('Lengkapi bagian yang ditandai belum pasti sebelum memilih skema. Saat ini belum ada nominal yang cukup lengkap untuk dijadikan dasar perbandingan.');
   }
 
+  if (pisah) saran.push('Pada PH/MT, perbandingan berikut memakai bagian pajak Anda. Pajak keluarga dihitung dari neto gabungan lalu dibagi sebelum kredit masing-masing dikurangkan. Cocokkan bagian pasangan dengan SPT pasangan.');
+
   if (hasil.profil.jugaPegawaiTetap && hasil.profil.penghasilanNetoPegawai === undefined) {
     saran.push('Salin penghasilan neto gaji sebelum PTKP dari bukti potong pegawai, lalu perbarui jawaban agar gabungan gaji dan usaha dapat dihitung.');
   }
@@ -59,6 +62,11 @@ export function susunSaran(hasil: HasilAuditPajak): string[] {
   }
   if (hasil.skema.some(adaKelebihanKredit)) {
     saran.push('Periksa selisih kredit yang melebihi perkiraan pajak beserta dokumen pendukungnya sebelum mengisi SPT. Selisih tersebut belum memastikan adanya pengembalian pajak.');
+  }
+  if (hasil.investasi?.length) {
+    saran.push('Laporkan penghasilan investasi sesuai klasifikasinya. Jangan masukkan bunga deposito, penjualan saham bursa, atau dividen final ke omzet maupun kredit nonfinal; pokok simpanan dan saham yang masih dimiliki dicatat sebagai harta.');
+    if (hasil.investasi.some(item => item.status === 'PERLU_DIPASTIKAN')) saran.push('Ada catatan investasi yang belum dapat dihitung. Lengkapi syarat dan nominalnya; hasil usaha tidak berarti seluruh penghasilan investasi sudah selesai diperiksa.');
+    if (hasil.investasi.some(item => item.input.jenis === 'DIVIDEN_DN' && item.input.reinvestasi === 'MEMENUHI')) saran.push('Simpan bukti reinvestasi dividen dan penuhi laporan realisasi serta masa penahanan investasi. Pengecualian dapat gugur bila syarat berikutnya tidak dipenuhi.');
   }
   return [...new Set([...saran, ...hasil.langkahTindakLanjut])];
 }

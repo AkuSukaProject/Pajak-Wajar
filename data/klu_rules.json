@@ -191,6 +191,101 @@
           }
         ]
       }
+    },
+    "investasi": {
+      "tarifDeposito": {
+        "nilai": 0.2,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP 131 Tahun 2000 sebagaimana diubah PP 123 Tahun 2015",
+            "pasalAtauLampiran": "Pasal 2 huruf c angka 1",
+            "fungsi": "Tarif bunga simpanan biasa bagi WP dalam negeri, di luar fasilitas devisa hasil ekspor.",
+            "url": "https://pajak.go.id/en/node/63047",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PP 131 Tahun 2000",
+            "pasalAtauLampiran": "Pasal 3 ayat (1) huruf a",
+            "fungsi": "Pengecualian pemotongan pada simpanan tidak melebihi Rp7.500.000 dan tidak dipecah-pecah.",
+            "url": "https://pajak.go.id/en/node/57574",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "batasSimpananTanpaPotongan": {
+        "nilai": 7500000,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP 131 Tahun 2000",
+            "pasalAtauLampiran": "Pasal 3 ayat (1) huruf a",
+            "fungsi": "Pengecualian pemotongan pada simpanan tidak melebihi Rp7.500.000 dan tidak dipecah-pecah.",
+            "url": "https://pajak.go.id/en/node/57574",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "tarifPenjualanSaham": {
+        "nilai": 0.001,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PMK 81 Tahun 2024",
+            "pasalAtauLampiran": "Pasal 244–249",
+            "fungsi": "Tarif transaksi saham bursa dan pemotongannya; saham pendiri mempunyai ketentuan tambahan.",
+            "url": "https://www.pajak.go.id/en/node/113110",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "tarifDividenDalamNegeri": {
+        "nilai": 0.1,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP 19 Tahun 2009",
+            "pasalAtauLampiran": "Pasal 1",
+            "fungsi": "Tarif final dividen dalam negeri yang tidak mendapat pengecualian objek PPh.",
+            "url": "https://www.pajak.go.id/index.php/id/peraturan/pajak-penghasilan-atas-deviden-yang-diterima-atau-diperoleh-oleh-wajib-pajak-orang",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PP 55 Tahun 2022",
+            "pasalAtauLampiran": "Pasal 9 ayat (2) huruf a dan j; Pasal 10; Pasal 11",
+            "fungsi": "Pengecualian dividen sesuai investasi yang memenuhi bentuk dan jangka waktu. Dividen berasal dari RUPS atau dividen interim.",
+            "url": "https://www.pajak.go.id/index.php/id/peraturan/penyesuaian-pengaturan-di-bidang-pajak-penghasilan",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PMK 81 Tahun 2024",
+            "pasalAtauLampiran": "Pasal 370–374",
+            "fungsi": "Pengecualian wajib memenuhi investasi dan laporan realisasi. Dividen dalam negeri yang terutang disetor sendiri.",
+            "url": "https://www.pajak.go.id/en/node/113110",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      },
+      "tahunInvestasiDividen": {
+        "nilai": 3,
+        "statusVerifikasi": "TERVERIFIKASI",
+        "dasarHukum": [
+          {
+            "namaRegulasi": "PP 55 Tahun 2022",
+            "pasalAtauLampiran": "Pasal 9 ayat (2) huruf a dan j; Pasal 10; Pasal 11",
+            "fungsi": "Pengecualian dividen sesuai investasi yang memenuhi bentuk dan jangka waktu. Dividen berasal dari RUPS atau dividen interim.",
+            "url": "https://www.pajak.go.id/index.php/id/peraturan/penyesuaian-pengaturan-di-bidang-pajak-penghasilan",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PMK 81 Tahun 2024",
+            "pasalAtauLampiran": "Pasal 370–374",
+            "fungsi": "Pengecualian wajib memenuhi investasi dan laporan realisasi. Dividen dalam negeri yang terutang disetor sendiri.",
+            "url": "https://www.pajak.go.id/en/node/113110",
+            "statusVerifikasi": "TERVERIFIKASI"
+          }
+        ]
+      }
     }
   },
   "aturanKelayakan": {
@@ -240,6 +335,13 @@
           "pasalAtauLampiran": "Pasal 8 ayat (2) dan ayat (4)",
           "fungsi": "Pemisahan pengenaan pajak suami-istri dan penggabungan penghasilan anak yang belum dewasa",
           "url": "https://jdih.kemenkeu.go.id/dok/uu-36-tahun-2008",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "UU Pajak Penghasilan",
+          "pasalAtauLampiran": "Pasal 8 ayat (2) huruf b dan c serta ayat (3)",
+          "fungsi": "PH/MT: penghasilan neto digabung, PPh dibagi menurut neto masing-masing sebelum kredit pajak.",
+          "url": "https://www.pajak.go.id/en/node/119134",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
