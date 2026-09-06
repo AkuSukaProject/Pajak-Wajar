@@ -23,7 +23,10 @@ export function InputRupiah({
   nilai,
   onChange,
   bantuan,
-  bolehKosong = false
+  bolehKosong = false,
+  idKolom,
+  galat,
+  bergetar = false
 }: {
   label: string;
   nilai: number | undefined;
@@ -31,8 +34,15 @@ export function InputRupiah({
   bantuan?: string;
   /** Bila true, kolom yang dikosongkan menghasilkan `undefined`, bukan 0. */
   bolehKosong?: boolean;
+  /** Dipakai formulir untuk menggulir dan memfokuskan kolom yang belum benar. */
+  idKolom?: string;
+  /** Pesan yang menjelaskan apa yang kurang dan cara memperbaikinya. */
+  galat?: string;
+  /** Menandai kolom yang baru saja disorot karena isinya belum benar. */
+  bergetar?: boolean;
 }) {
-  const id = useId();
+  const idOtomatis = useId();
+  const id = idKolom ?? idOtomatis;
 
   // Pada kolom wajib, nilai 0 berarti "belum diisi", jadi biarkan placeholder
   // yang tampil. Pada kolom yang boleh dikosongkan, 0 adalah jawaban yang
@@ -66,15 +76,24 @@ export function InputRupiah({
   };
 
   return (
-    <label htmlFor={id} className="block">
+    <label htmlFor={id} className={`block ${bergetar ? 'motion-shake' : ''}`}>
       <span className="mb-2 block text-sm font-semibold">{label}</span>
-      <span className="flex border border-line bg-white transition-colors focus-within:border-blue focus-within:ring-1 focus-within:ring-blue">
+      <span
+        className={`flex border bg-white transition-colors focus-within:ring-1 ${
+          galat
+            ? 'border-stamp ring-1 ring-stamp focus-within:border-stamp focus-within:ring-stamp'
+            : 'border-line focus-within:border-blue focus-within:ring-blue'
+        }`}
+      >
         <span className="border-r border-line px-4 py-3.5 font-mono text-sm text-margin">Rp</span>
         <input
           id={id}
           type="text"
           inputMode="numeric"
-          aria-describedby={bantuan ? `${id}-help` : undefined}
+          aria-invalid={galat ? true : undefined}
+          aria-describedby={
+            [galat ? `${id}-galat` : null, bantuan ? `${id}-help` : null].filter(Boolean).join(' ') || undefined
+          }
           value={teks}
           onChange={tangani}
           className="w-full min-w-0 bg-transparent px-4 py-3.5 font-mono outline-none"
@@ -82,6 +101,11 @@ export function InputRupiah({
           autoComplete="off"
         />
       </span>
+      {galat && (
+        <span id={`${id}-galat`} className="mt-1.5 block text-xs font-semibold leading-5 text-stamp">
+          {galat}
+        </span>
+      )}
       {bantuan && (
         <span id={`${id}-help`} className="mt-1.5 block text-xs leading-5 text-margin">
           {bantuan}
