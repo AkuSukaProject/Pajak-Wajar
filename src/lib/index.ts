@@ -1,5 +1,6 @@
 import { hitungNppn, hitungPphFinal, hitungTarifUmum, totalKreditBupot } from '@/lib/calculator';
 import { periksaKelayakan } from '@/lib/eligibility';
+import { barisNormaPerKegiatan, kegiatanSudahDirinci, omzetSeluruhKegiatan } from '@/lib/kegiatan';
 import type { KelayakanSkema } from '@/lib/eligibility';
 import { basisAturan, cariKlu, persenNorma } from '@/lib/regulasi';
 import { inputAuditPajakSchema } from '@/lib/schemas';
@@ -66,6 +67,10 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   const { profil, kreditPajak } = tervalidasi.data;
   const kelayakan = periksaKelayakan(profil);
   const klu = cariKlu(profil.kluKode);
+  // Norma dihitung per kegiatan lalu dijumlahkan (PER-17/PJ/2015 Pasal 5);
+  // tarif umum dan uji ambang Norma memakai omzet seluruh kegiatan.
+  const barisKegiatan = barisNormaPerKegiatan(profil);
+  const omzetKegiatan = omzetSeluruhKegiatan(profil);
   const kreditBupot = totalKreditBupot(kreditPajak);
   const netoPegawai = profil.jugaPegawaiTetap ? profil.penghasilanNetoPegawai : 0;
   const statusPasangan = profil.statusPerpajakanPasangan;
@@ -156,18 +161,28 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       statusKalkulasi: 'BELUM_TERSEDIA',
       alasanKalkulasi: 'Persentase Norma belum tersedia untuk pekerjaan yang Anda pilih.'
     };
-  } else if (profil.punyaLebihDariSatuKegiatan !== false) {
+  } else if (profil.punyaLebihDariSatuKegiatan !== false && !kegiatanSudahDirinci(profil)) {
+    skemaNppn = {
+      id: 'NPPN',
+      ...bagianKelayakan(kelayakanNppn),
+      statusKalkulasi: 'BELUM_TERSEDIA',
+      alasanKalkulasi: profil.punyaLebihDariSatuKegiatan === true
+        ? 'Persentase Norma berbeda untuk tiap kegiatan, jadi omzet gabungan tidak boleh dikalikan satu persentase saja. Rinci tiap kegiatan beserta omzetnya agar Norma dihitung per kegiatan lalu dijumlahkan.'
+        : 'Anda belum memastikan apakah kegiatannya lebih dari satu. Persentase Norma berbeda untuk tiap kegiatan, sehingga omzet gabungan tidak boleh dikalikan satu persentase saja.'
+    };
+  } else if (barisKegiatan === null) {
     skemaNppn = {
       id: 'NPPN',
       ...bagianKelayakan(kelayakanNppn),
       statusKalkulasi: 'BELUM_TERSEDIA',
       alasanKalkulasi:
-        'Persentase Norma berbeda untuk tiap kegiatan, jadi omzet gabungan tidak boleh dikalikan satu persentase saja. Hitung tiap kegiatan secara terpisah.'
+        'Ada kegiatan yang persentase Normanya belum tersedia. Periksa kembali pilihan kegiatan tambahan Anda.'
     };
   } else {
     const rincian = hitungNppn({
       omzetPribadi: profil.omzetPribadiTahunPajak,
       persenNorma: persenNorma(klu, profil.wilayah),
+      kegiatan: barisKegiatan,
       ptkp: PARAMETER.ptkp.nilai[profil.statusPtkp],
       kreditBupot,
       penghasilanNetoPegawai: netoPegawai,
@@ -203,11 +218,11 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       alasanKalkulasi:
         'Isi dulu total biaya usaha setahun. Biaya yang dikosongkan tidak boleh dianggap Rp0 karena membuat pajaknya terlihat jauh lebih besar dari seharusnya.'
     };
-  } else if (profil.jugaPegawaiTetap && profil.biayaOperasionalRiil > profil.omzetPribadiTahunPajak) {
+  } else if (profil.jugaPegawaiTetap && profil.biayaOperasionalRiil > omzetKegiatan) {
     skemaTarifUmum = { id: 'TARIF_UMUM', ...bagianKelayakan(kelayakanTarifUmum), statusKalkulasi: 'BELUM_TERSEDIA', alasanKalkulasi: 'Biaya usaha melebihi omzet. Perlakuan rugi usaha terhadap penghasilan pegawai perlu diperiksa sebelum pajak gabungan dihitung.' };
   } else {
     const rincian = hitungTarifUmum({
-      omzetPribadi: profil.omzetPribadiTahunPajak,
+      omzetPribadi: omzetKegiatan,
       biayaOperasional: profil.biayaOperasionalRiil,
       ptkp: PARAMETER.ptkp.nilai[profil.statusPtkp],
       kreditBupot,

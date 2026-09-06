@@ -1,5 +1,6 @@
 import type { LapisanTarif } from '@/lib/regulasi';
 import type {
+  BarisKegiatanNorma,
   LapisanTerpakai,
   RincianNppn,
   RincianPphFinal,
@@ -106,9 +107,29 @@ export function hitungNppn(params: {
   kreditBupot: number;
   lapisan: LapisanTarif[];
   penghasilanNetoPegawai?: number;
+  /**
+   * Bila diisi lebih dari satu baris, neto usaha dihitung per kegiatan memakai
+   * persentase Norma masing-masing lalu dijumlahkan, sesuai PER-17/PJ/2015
+   * Pasal 5. Omzet gabungan tidak pernah dikalikan satu persentase.
+   */
+  kegiatan?: BarisKegiatanNorma[];
 }): RincianNppn {
-  const omzetPribadi = Math.max(0, params.omzetPribadi);
-  const penghasilanNetoUsaha = omzetPribadi * (params.persenNorma / 100);
+  const kegiatan = params.kegiatan && params.kegiatan.length > 1 ? params.kegiatan : undefined;
+
+  const omzetPribadi = kegiatan
+    ? kegiatan.reduce((jumlah, baris) => jumlah + Math.max(0, baris.omzet), 0)
+    : Math.max(0, params.omzetPribadi);
+
+  const penghasilanNetoUsaha = kegiatan
+    ? kegiatan.reduce((jumlah, baris) => jumlah + baris.netoKegiatan, 0)
+    : omzetPribadi * (params.persenNorma / 100);
+
+  // Untuk beberapa kegiatan, persentase yang ditampilkan adalah gabungan
+  // efektif; angka aslinya per kegiatan tetap dibawa pada `rincianKegiatan`.
+  const persenTampil = kegiatan
+    ? (omzetPribadi > 0 ? (penghasilanNetoUsaha / omzetPribadi) * 100 : 0)
+    : params.persenNorma;
+
   const penghasilanNetoPegawai = Math.max(0, params.penghasilanNetoPegawai ?? 0);
   const penghasilanNeto = penghasilanNetoUsaha + penghasilanNetoPegawai;
   const pkp = bulatkanPkp(penghasilanNeto - params.ptkp);
@@ -118,7 +139,8 @@ export function hitungNppn(params: {
   return {
     skema: 'NPPN',
     omzetPribadi,
-    persenNorma: params.persenNorma,
+    persenNorma: persenTampil,
+    ...(kegiatan ? { rincianKegiatan: kegiatan } : {}),
     penghasilanNeto,
     penghasilanNetoUsaha,
     penghasilanNetoPegawai,

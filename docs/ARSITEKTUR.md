@@ -57,7 +57,11 @@ Omzet konsolidasi **tidak pernah** menjadi dasar perhitungan, dan pembebasan Rp5
 - `TERSEDIA` wajib membawa `pajakTerutang` dan `rincianKalkulasi`.
 - `BELUM_TERSEDIA` dan `TIDAK_RELEVAN` wajib membawa `alasanKalkulasi` dan tidak boleh membawa nominal.
 
-Kalkulasi diblokir bila: kelayakan bukan `BOLEH`; pengguna punya lebih dari satu kegiatan (NPPN, karena satu persentase norma tidak boleh dikalikan ke omzet gabungan); biaya usaha belum diisi (tarif umum, karena `undefined` tidak boleh dianggap Rp0); atau parameter yang dibutuhkan masih `DALAM_REVIEW`.
+Kalkulasi diblokir bila: kelayakan bukan `BOLEH`; pengguna punya lebih dari satu kegiatan **tetapi belum merincinya** (NPPN, karena satu persentase norma tidak boleh dikalikan ke omzet gabungan); biaya usaha belum diisi (tarif umum, karena `undefined` tidak boleh dianggap Rp0); atau parameter yang dibutuhkan masih `DALAM_REVIEW`.
+
+Setelah kegiatannya dirinci, Norma dihitung **per kegiatan** memakai persentase masing-masing lalu dijumlahkan, sesuai PER-17/PJ/2015 Pasal 5. `src/lib/kegiatan.ts` menyusun daftarnya; `hitungNppn` menerima larik kegiatan dan mengembalikan `rincianKegiatan` agar tiap baris dapat ditelusuri di kartu hasil maupun PDF. Uji ambang Norma dan dasar tarif umum memakai omzet seluruh kegiatan, sehingga ambang tidak dapat dihindari dengan memecah kegiatan.
+
+Vonis tiap skema dinilai dari kegiatan utama. Pengecualian PPh Final pada Pasal 56 ayat (3) huruf a melekat pada penghasilannya, bukan pada orangnya, sehingga hasil untuk kegiatan lain dapat berbeda dan sistem menyatakan hal itu secara eksplisit.
 
 Keadaan keluarga diperlakukan terpisah. UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu kesatuan, sehingga perhitungan ditahan selama neto pasangan belum diketahui. Pengecualiannya satu: pelaporan **gabung** dengan pasangan yang **tidak berpenghasilan**, karena tidak ada yang perlu digabungkan dan PTKP kawin sudah memperhitungkan keluarga — hasilnya identik dengan profil tanpa penggabungan pada PTKP yang sama. Pisah harta dan pisah kewajiban tetap ditahan walau pasangan tidak berpenghasilan, sebab pembagian pajaknya mengikuti perbandingan neto masing-masing. Tiap keadaan yang ditahan wajib menyebut alasannya sendiri; tidak ada cabang yang berhenti tanpa langkah yang dapat ditindaklanjuti.
 

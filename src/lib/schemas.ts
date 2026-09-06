@@ -54,8 +54,44 @@ export const profilWajibPajakSchema = z.object({
   jugaPegawaiTetap: z.boolean(),
   penghasilanNetoPegawai: uang.optional(),
   pernahMelewatiAmbang: jawabanKepatuhan.optional(),
-  pasanganPunyaPenghasilan: jawabanKepatuhan.optional()
+  pasanganPunyaPenghasilan: jawabanKepatuhan.optional(),
+  kegiatanTambahan: z
+    .array(
+      z.object({
+        kluKode: z.string().min(1, 'Pilih kegiatannya atau hapus baris ini.'),
+        omzet: uang
+      })
+    )
+    .max(9, 'Maksimal sepuluh kegiatan, termasuk kegiatan utama.')
+    .optional()
 }).superRefine((profil, ctx) => {
+  const tambahan = profil.kegiatanTambahan ?? [];
+
+  // Menyatakan hanya satu kegiatan sambil merinci kegiatan lain adalah dua
+  // jawaban yang bertentangan; uji ambang dan Norma akan memakai premis berbeda.
+  if (profil.punyaLebihDariSatuKegiatan === false && tambahan.length > 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['kegiatanTambahan'],
+      message:
+        'Anda menjawab hanya punya satu kegiatan, tetapi masih ada kegiatan tambahan yang terisi. Hapus kegiatan tambahannya, atau ubah jawaban menjadi lebih dari satu kegiatan.'
+    });
+  }
+
+  // Kegiatan yang sama dicatat dua kali membuat omzetnya terbaca ganda.
+  const kode = [profil.kluKode, ...tambahan.map((kegiatan) => kegiatan.kluKode)].filter(Boolean);
+  const terlihat = new Set<string>();
+  for (const [urutan, satu] of kode.entries()) {
+    if (terlihat.has(satu)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['kegiatanTambahan', Math.max(0, urutan - 1), 'kluKode'],
+        message: 'Kegiatan ini sudah dicatat. Jumlahkan omzetnya pada satu baris saja.'
+      });
+      break;
+    }
+    terlihat.add(satu);
+  }
   // Menjawab "tidak punya" sekaligus mengisi omzet pasangan membuat uji ambang
   // Pasal 58 dan perhitungan keluarga memakai dua premis yang bertentangan.
   if (profil.pasanganPunyaPenghasilan === false && profil.omzetPasanganThnSebelumnya > 0) {
