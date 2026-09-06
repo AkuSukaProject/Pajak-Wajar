@@ -1,84 +1,303 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pajakwajar.local/schema/klu_rules.schema.json",
+  "title": "Basis aturan perpajakan PajakWajar",
   "type": "object",
   "additionalProperties": false,
-  "required": ["versiRegulasi", "statusDokumen", "tahunPajakDidukung", "lingkupWajibPajak", "parameterPajak", "aturanKelayakan", "kelompokWilayah", "klu"],
+  "required": [
+    "versiRegulasi",
+    "berlakuSejak",
+    "lembaranNegara",
+    "statusDokumen",
+    "tanggalVerifikasiTerakhir",
+    "tahunPajakDidukung",
+    "lingkupWajibPajak",
+    "kelompokWilayah",
+    "parameterPajak",
+    "aturanKelayakan",
+    "klu"
+  ],
   "properties": {
-    "versiRegulasi": { "type": "string" },
-    "statusDokumen": { "type": "string" },
+    "versiRegulasi": {
+      "type": "string",
+      "minLength": 1
+    },
+    "berlakuSejak": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "lembaranNegara": {
+      "type": "string",
+      "minLength": 1
+    },
+    "statusDokumen": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tanggalVerifikasiTerakhir": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
     "tahunPajakDidukung": {
       "type": "array",
-      "items": { "type": "integer" }
+      "minItems": 1,
+      "items": {
+        "type": "integer",
+        "enum": [
+          2025,
+          2026
+        ]
+      }
     },
-    "lingkupWajibPajak": { "type": "string", "enum": ["ORANG_PRIBADI"] },
+    "lingkupWajibPajak": {
+      "const": "ORANG_PRIBADI"
+    },
+    "kelompokWilayah": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kelompok1",
+        "kelompok2",
+        "kelompok3"
+      ],
+      "properties": {
+        "kelompok1": {
+          "$ref": "#/$defs/kelompokWilayah"
+        },
+        "kelompok2": {
+          "$ref": "#/$defs/kelompokWilayah"
+        },
+        "kelompok3": {
+          "$ref": "#/$defs/kelompokWilayah"
+        }
+      }
+    },
     "parameterPajak": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["pphFinal", "nppn", "tarifProgresif", "ptkp"],
+      "required": [
+        "pphFinal",
+        "nppn",
+        "tarifProgresif",
+        "ptkp"
+      ],
       "properties": {
         "pphFinal": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["tarif", "ambangOmzet", "pembebasanOmzetOp"],
+          "required": [
+            "tarif",
+            "ambangPeredaranBruto",
+            "pembebasanOmzetOp"
+          ],
           "properties": {
-            "tarif": { "$ref": "#/$defs/parameterBerStatus" },
-            "ambangOmzet": { "$ref": "#/$defs/parameterAmbang" },
-            "pembebasanOmzetOp": { "$ref": "#/$defs/parameterBerStatus" }
+            "tarif": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            },
+            "ambangPeredaranBruto": {
+              "$ref": "#/$defs/ambang"
+            },
+            "pembebasanOmzetOp": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "basisTahun",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "basisTahun": {
+                  "$ref": "#/$defs/basisTahun"
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            }
           }
         },
         "nppn": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["ambangOmzet", "batasPemberitahuanBulan"],
+          "required": [
+            "ambangPeredaranBruto",
+            "batasWaktuPemberitahuan"
+          ],
           "properties": {
-            "ambangOmzet": { "$ref": "#/$defs/parameterAmbang" },
-            "batasPemberitahuanBulan": { "$ref": "#/$defs/parameterBerStatus" }
+            "ambangPeredaranBruto": {
+              "$ref": "#/$defs/ambang"
+            },
+            "batasWaktuPemberitahuan": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "keterangan",
+                "layananCoretax",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "keterangan": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "layananCoretax": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            }
           }
         },
         "tarifProgresif": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["lapisan", "statusVerifikasi", "dasarHukum"],
+          "required": [
+            "lapisan",
+            "statusVerifikasi",
+            "dasarHukum"
+          ],
           "properties": {
             "lapisan": {
               "type": "array",
+              "minItems": 1,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["batasBawah", "tarif"],
+                "required": [
+                  "lapisan",
+                  "batasBawah",
+                  "batasAtas",
+                  "tarif"
+                ],
                 "properties": {
-                  "batasBawah": { "type": "number" },
-                  "batasAtas": { "type": ["number", "null"] },
-                  "tarif": { "type": "number" }
+                  "lapisan": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "batasBawah": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "batasAtas": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0
+                  },
+                  "tarif": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1
+                  }
                 }
               }
             },
-            "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" },
-            "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+            "statusVerifikasi": {
+              "$ref": "#/$defs/statusVerifikasi"
+            },
+            "dasarHukum": {
+              "$ref": "#/$defs/daftarDasarHukum"
+            }
           }
         },
         "ptkp": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["nilai", "statusVerifikasi", "dasarHukum"],
+          "required": [
+            "nilai",
+            "statusVerifikasi",
+            "dasarHukum"
+          ],
           "properties": {
             "nilai": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["TK/0", "TK/1", "TK/2", "TK/3", "K/0", "K/1", "K/2", "K/3"],
+              "required": [
+                "TK/0",
+                "TK/1",
+                "TK/2",
+                "TK/3",
+                "K/0",
+                "K/1",
+                "K/2",
+                "K/3"
+              ],
               "properties": {
-                "TK/0": { "type": "number" },
-                "TK/1": { "type": "number" },
-                "TK/2": { "type": "number" },
-                "TK/3": { "type": "number" },
-                "K/0": { "type": "number" },
-                "K/1": { "type": "number" },
-                "K/2": { "type": "number" },
-                "K/3": { "type": "number" }
+                "TK/0": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "TK/1": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "TK/2": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "TK/3": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "K/0": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "K/1": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "K/2": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "K/3": {
+                  "type": "integer",
+                  "minimum": 0
+                }
               }
             },
-            "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" },
-            "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+            "statusVerifikasi": {
+              "$ref": "#/$defs/statusVerifikasi"
+            },
+            "dasarHukum": {
+              "$ref": "#/$defs/daftarDasarHukum"
+            }
           }
         }
       }
@@ -86,105 +305,339 @@
     "aturanKelayakan": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["pekerjaanBebas", "ambangKonsolidasi", "pilihanTarifUmum", "administrasiNppn", "ketentuanPeralihan"],
+      "required": [
+        "pekerjaanBebas",
+        "ambangKonsolidasi",
+        "penggabunganSuamiIstriPisah",
+        "penggabunganSuamiIstriGabung",
+        "pintuSatuArahTarifUmum",
+        "pintuSatuArahLewatAmbang",
+        "pemberitahuanNppn",
+        "ketentuanPeralihan2025",
+        "ketentuanPeralihanAgregat2026"
+      ],
       "properties": {
-        "pekerjaanBebas": { "$ref": "#/$defs/aturanPajak" },
-        "ambangKonsolidasi": { "$ref": "#/$defs/aturanPajak" },
-        "pilihanTarifUmum": { "$ref": "#/$defs/aturanPajak" },
-        "administrasiNppn": { "$ref": "#/$defs/aturanPajak" },
-        "ketentuanPeralihan": {
-          "allOf": [
-            { "$ref": "#/$defs/aturanPajak" },
-            {
-              "type": "object",
-              "properties": {
-                "catatanReview": { "type": "string" }
-              }
-            }
-          ]
+        "pekerjaanBebas": {
+          "$ref": "#/$defs/aturan"
+        },
+        "ambangKonsolidasi": {
+          "$ref": "#/$defs/aturan"
+        },
+        "penggabunganSuamiIstriPisah": {
+          "$ref": "#/$defs/aturan"
+        },
+        "penggabunganSuamiIstriGabung": {
+          "$ref": "#/$defs/aturan"
+        },
+        "pintuSatuArahTarifUmum": {
+          "$ref": "#/$defs/aturan"
+        },
+        "pintuSatuArahLewatAmbang": {
+          "$ref": "#/$defs/aturan"
+        },
+        "pemberitahuanNppn": {
+          "$ref": "#/$defs/aturan"
+        },
+        "ketentuanPeralihanAgregat2026": {
+          "$ref": "#/$defs/aturan"
+        },
+        "ketentuanPeralihan2025": {
+          "$ref": "#/$defs/aturan"
         }
-      }
-    },
-    "kelompokWilayah": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["kelompok1", "kelompok2", "kelompok3"],
-      "properties": {
-        "kelompok1": { "$ref": "#/$defs/wilayahDetail" },
-        "kelompok2": { "$ref": "#/$defs/wilayahDetail" },
-        "kelompok3": { "$ref": "#/$defs/wilayahDetail" }
       }
     },
     "klu": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kluKode", "dasarHukum"],
+        "required": [
+          "kluKode",
+          "nama",
+          "uraianLampiran",
+          "alias",
+          "bentukKegiatan",
+          "pekerjaanBebas",
+          "rujukanPasal56Ayat4",
+          "normaPersen",
+          "dasarHukum",
+          "pemetaanKbli2020"
+        ],
         "properties": {
-          "kluKode": { "type": "string" },
-          "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+          "kluKode": {
+            "type": "string",
+            "pattern": "^[0-9]{5}$"
+          },
+          "nama": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uraianLampiran": {
+            "type": "string",
+            "minLength": 1
+          },
+          "alias": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "bentukKegiatan": {
+            "enum": [
+              "PEKERJAAN_BEBAS",
+              "USAHA_JASA",
+              "USAHA_DAGANG"
+            ]
+          },
+          "pekerjaanBebas": {
+            "enum": [
+              "YA",
+              "TIDAK",
+              "PERLU_DIPASTIKAN"
+            ]
+          },
+          "rujukanPasal56Ayat4": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "normaPersen": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kelompok1",
+              "kelompok2",
+              "kelompok3"
+            ],
+            "properties": {
+              "kelompok1": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 100
+              },
+              "kelompok2": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 100
+              },
+              "kelompok3": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "dasarHukum": {
+            "$ref": "#/$defs/daftarDasarHukum"
+          },
+          "pemetaanKbli2020": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "metode",
+              "tanggalPemeriksaan",
+              "hubungan",
+              "padanan",
+              "catatan",
+              "sumberKbli",
+              "halamanNorma"
+            ],
+            "properties": {
+              "metode": {
+                "const": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS"
+              },
+              "tanggalPemeriksaan": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "hubungan": {
+                "enum": [
+                  "SATU_PADANAN",
+                  "BEBERAPA_PADANAN"
+                ]
+              },
+              "padanan": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "kode",
+                    "nama",
+                    "halamanPdf"
+                  ],
+                  "properties": {
+                    "kode": {
+                      "type": "string",
+                      "pattern": "^\\d{5}$"
+                    },
+                    "nama": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "halamanPdf": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              },
+              "catatan": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sumberKbli": {
+                "type": "string",
+                "pattern": "^https://ppid\\.bps\\.go\\.id/upload/doc/"
+              },
+              "halamanNorma": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
         }
       }
     }
   },
   "$defs": {
     "statusVerifikasi": {
-      "type": "string",
-      "enum": ["TERVERIFIKASI", "DALAM_REVIEW"]
+      "enum": [
+        "TERVERIFIKASI",
+        "DALAM_REVIEW"
+      ]
     },
-    "dasarHukumArray": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["namaRegulasi", "pasalAtauLampiran", "fungsi", "url", "statusVerifikasi"],
-        "properties": {
-          "namaRegulasi": { "type": "string" },
-          "pasalAtauLampiran": { "type": "string" },
-          "fungsi": { "type": "string" },
-          "url": { "type": "string", "format": "uri" },
-          "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" }
+    "basisTahun": {
+      "enum": [
+        "TAHUN_PAJAK_BERJALAN",
+        "TAHUN_PAJAK_SEBELUMNYA"
+      ]
+    },
+    "kelompokWilayah": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nama",
+        "deskripsi"
+      ],
+      "properties": {
+        "nama": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deskripsi": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
-    "parameterBerStatus": {
+    "dasarHukum": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nilai", "statusVerifikasi", "dasarHukum"],
+      "required": [
+        "namaRegulasi",
+        "pasalAtauLampiran",
+        "fungsi",
+        "url",
+        "statusVerifikasi"
+      ],
       "properties": {
-        "nilai": { "type": "number" },
-        "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" },
-        "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+        "namaRegulasi": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pasalAtauLampiran": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fungsi": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://(jdih\\.kemenkeu\\.go\\.id|www\\.pajak\\.go\\.id|pajak\\.go\\.id)/"
+        },
+        "statusVerifikasi": {
+          "$ref": "#/$defs/statusVerifikasi"
+        }
       }
     },
-    "parameterAmbang": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["nilai", "operator", "statusVerifikasi", "dasarHukum"],
-      "properties": {
-        "nilai": { "type": "number" },
-        "operator": { "type": "string", "enum": ["LT", "LTE"] },
-        "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" },
-        "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+    "daftarDasarHukum": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/dasarHukum"
       }
     },
-    "aturanPajak": {
+    "ambang": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["statusVerifikasi", "dasarHukum"],
+      "required": [
+        "nilai",
+        "operator",
+        "basisTahun",
+        "statusVerifikasi",
+        "dasarHukum"
+      ],
       "properties": {
-        "statusVerifikasi": { "$ref": "#/$defs/statusVerifikasi" },
-        "dasarHukum": { "$ref": "#/$defs/dasarHukumArray" }
+        "nilai": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operator": {
+          "enum": [
+            "LT",
+            "LTE"
+          ]
+        },
+        "basisTahun": {
+          "$ref": "#/$defs/basisTahun"
+        },
+        "statusVerifikasi": {
+          "$ref": "#/$defs/statusVerifikasi"
+        },
+        "dasarHukum": {
+          "$ref": "#/$defs/daftarDasarHukum"
+        }
       }
     },
-    "wilayahDetail": {
+    "aturan": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nama", "deskripsi"],
+      "required": [
+        "kode",
+        "statusVerifikasi",
+        "dasarHukum"
+      ],
       "properties": {
-        "nama": { "type": "string" },
-        "deskripsi": { "type": "string" }
+        "kode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pesan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pesanTidakBoleh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pesanPerluDipastikan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statusVerifikasi": {
+          "$ref": "#/$defs/statusVerifikasi"
+        },
+        "dasarHukum": {
+          "$ref": "#/$defs/daftarDasarHukum"
+        }
       }
     }
   }

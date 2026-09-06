@@ -1,3 +1,5 @@
+> **Arsip perencanaan tim.** Dokumen dipertahankan dari riwayat kerja Sheva. Contoh data, kontrak API, dan status di sini bukan spesifikasi produksi terbaru. Gunakan [REGULASI.md](REGULASI.md) untuk aturan terverifikasi dan [INTEGRASI-REPOSITORI.md](INTEGRASI-REPOSITORI.md) untuk keputusan integrasi.
+
 # PRD — Rule & Regulation Engine
 ## PajakWajar · ITechno Cup 2026
 

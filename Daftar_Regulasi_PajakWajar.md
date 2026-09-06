@@ -1,3 +1,5 @@
+> **Arsip perencanaan tim.** Dokumen dipertahankan dari riwayat kerja Sheva. Contoh data, kontrak API, dan status di sini bukan spesifikasi produksi terbaru. Gunakan [docs/REGULASI.md](docs/REGULASI.md) untuk aturan terverifikasi dan [docs/INTEGRASI-REPOSITORI.md](docs/INTEGRASI-REPOSITORI.md) untuk keputusan integrasi.
+
 # Daftar Regulasi yang Harus Dikumpulkan
 ## PajakWajar · ITechno Cup 2026
 

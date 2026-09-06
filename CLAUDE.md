@@ -66,23 +66,28 @@ Penafian tampil di layar dan di PDF. Sistem selalu mengarahkan verifikasi ke DJP
 
 Aturan berubah pada **22 April 2026** lewat **PP No. 20 Tahun 2026** (merevisi PP 55/2022). Banyak artikel dan blog konsultan **masih memuat ketentuan lama** — jangan pernah memakainya sebagai sumber.
 
-Perubahan pokok:
-- Batas waktu 7 tahun untuk WP Orang Pribadi **dihapus**
-- Penerima fasilitas dipersempit: WP orang pribadi, PT Perorangan, koperasi
-- Ambang Rp4,8 miliar dihitung **gabungan** suami, istri, dan perseroan perorangan mereka
-- Pekerjaan bebas (termasuk kreator konten) **dilarang** memakai PPh Final 0,5% — ditegaskan DJP 5 Juni 2026
+Perubahan pokok, seluruhnya sudah dicocokkan ke teks asli pada 5 September 2026:
+- **Pasal 59 dihapus**, sehingga batas waktu 7 tahun untuk WP Orang Pribadi hilang
+- Penerima fasilitas dipersempit: WP orang pribadi, perseroan perorangan, koperasi — Pasal 57 ayat (1)
+- Ambang Rp4,8 miliar diukur dari **Tahun Pajak sebelumnya** — Pasal 58 ayat (1) huruf a
+- Ambang itu dihitung **gabungan**: WP beserta seluruh perseroan perorangannya (Pasal 57 ayat (2) huruf e), ditambah omzet pasangan (Pasal 58 ayat (2) dan (3) untuk pisah harta atau istri yang melapor sendiri; UU PPh Pasal 8 ayat (1) untuk pasangan yang melapor gabungan). Pengecualiannya hanya pasangan yang hidup berpisah berdasarkan putusan hakim.
+- Pekerjaan bebas **dilarang** memakai PPh Final 0,5% — Pasal 56 ayat (3) huruf a jo. ayat (4). Kreator konten daring disebut **secara eksplisit** pada ayat (4) huruf b, sehingga tidak lagi bergantung pada penegasan DJP.
 
 **Sumber yang boleh dipakai:** jdih.kemenkeu.go.id, pajak.go.id, teks PP/PMK/PER langsung.
 **Sumber yang tidak boleh:** blog konsultan, artikel media, ringkasan pihak ketiga.
 
-### Empat hal yang masih harus diverifikasi
+Salinan teks asli PP 20/2026 yang dipakai tersimpan di `docs/sumber/pp-20-2026.txt`. Register lengkap beserta kutipannya ada di `docs/REGULASI.md`.
 
-Jangan tulis kode final untuk bagian ini sebelum ada konfirmasi dari teks asli:
+### Empat hal yang dulu belum pasti — semuanya sudah terverifikasi
 
-1. **Dasar pengenaan pembebasan Rp500 juta** — dari omzet pribadi atau omzet konsolidasi? (Dugaan: omzet pribadi. Konsolidasi hanya untuk uji ambang.)
-2. **Konsekuensi memilih tarif umum** — hak 0,5% hilang permanen, atau hanya mulai tahun berikutnya? **Jangan tulis kata "permanen" sebelum terbukti.**
-3. **Daftar KLU pekerjaan bebas** — profesi mana persisnya.
-4. **Ketentuan peralihan** — perbedaan aturan tahun pajak 2025 vs 2026.
+1. **Dasar pengenaan pembebasan Rp500 juta** — dari **omzet pribadi**, bukan konsolidasi. UU PPh Pasal 7 ayat (2a) hasil perubahan UU HPP. Omzet konsolidasi hanya dipakai untuk uji ambang.
+2. **Konsekuensi memilih tarif umum** — hak 0,5% tertutup untuk **Tahun Pajak-Tahun Pajak berikutnya**. Dasarnya Pasal 57 ayat (4), bukan Pasal 59 yang sudah dihapus. Aturan yang sama juga mengunci WP yang omzetnya pernah melewati Rp4,8 miliar.
+3. **Daftar KLU pekerjaan bebas** — Pasal 56 ayat (4) huruf a sampai k. Profesi yang tidak disebut satu per satu, misalnya programmer lepas, desainer, dan fotografer, harus menghasilkan `PERLU_DIPASTIKAN`, bukan vonis pasti.
+4. **Ketentuan peralihan** — Pasal II angka 1 huruf a. WP OP yang jangka waktunya berakhir pada Tahun Pajak 2024 dapat memakai PP ini untuk Tahun Pajak 2025 dan 2026; yang berakhir pada 2025 hanya untuk 2026.
+
+**Klasifikasi kegiatan:** 22 kegiatan KLU pada `data/klu_rules.json` sudah dicocokkan ke KBLI 2020 pada 6 September 2026; padanan terpisah dari kode Norma, dengan batas cakupan di `docs/KLU-KBLI-2020.md`. KBLI 2025 sudah diterbitkan dan bukan versi yang dikonversi oleh pemetaan ini.
+
+**Yang masih terbuka:** PDF PP 55/2022 di JDIH berupa pindaian gambar, sehingga Pasal 60 belum dapat dikutip langsung dan sitasinya ditandai `DALAM_REVIEW`.
 
 ---
 
@@ -114,16 +119,21 @@ pajakwajar/
 │   └── klu_rules.json        ← aturan terpisah dari kode
 ├── src/
 │   ├── app/
+│   │   └── api/ocr-bupot/    ← perantara kunci API, satu-satunya endpoint
 │   ├── components/
+│   │   ├── eligibility/      ← formulir, kartu vonis, input bukti potong
+│   │   └── berkas/           ← kertas kerja PDF
 │   ├── lib/
-│   │   ├── eligibility.ts    ← Sheva
-│   │   ├── calculator.ts     ← Sheva
+│   │   ├── regulasi.ts       ← pemuat bertipe untuk data aturan
+│   │   ├── eligibility.ts    ← Sheva; saringan kelayakan, tanpa aritmetika
+│   │   ├── calculator.ts     ← Sheva; fungsi murni, tanpa penilaian hukum
+│   │   ├── index.ts          ← orkestrator auditPajakMandiri
 │   │   ├── schemas.ts        ← Zod
-│   │   └── ocr.ts            ← Habib
-│   ├── mock/                 ← data palsu untuk kerja paralel
+│   │   ├── ocr.ts            ← Habib
+│   │   └── format.ts
+│   ├── mock/                 ← profil contoh untuk demo dan tangkapan layar
 │   └── types/
-└── tests/
-    └── eligibility.test.ts   ← minimal 15 kasus
+└── tests/                    ← schema, calculator, eligibility, audit, ocr
 ```
 
 **Aturan penting:** aturan perpajakan tinggal di `data/klu_rules.json`, **bukan** di dalam kode. Regulasi berubah; logika tidak.
@@ -132,36 +142,39 @@ pajakwajar/
 
 ## Kontrak tipe
 
+Kontrak lengkap ada di `src/types/pajak.ts`. Intinya:
+
 ```ts
 type ProfilWajibPajak = {
   tahunPajak: 2025 | 2026;
   kluKode: string;
-  statusPtkp: 'TK/0' | 'TK/1' | 'TK/2' | 'TK/3'
-            | 'K/0'  | 'K/1'  | 'K/2'  | 'K/3';
-  omzetPribadi: number;              // dasar PERHITUNGAN
-  omzetPasangan: number;             // hanya untuk uji AMBANG
-  omzetPerseroanPerorangan: number;  // hanya untuk uji AMBANG
-  sudahLaporLA0401: boolean | 'tidak_yakin';
+  wilayah: 'kelompok1' | 'kelompok2' | 'kelompok3';   // norma berbeda per wilayah
+  statusPtkp: 'TK/0' | ... | 'K/3';
+  bentukKegiatan: 'PEKERJAAN_BEBAS' | 'USAHA_JASA' | 'USAHA_DAGANG' | 'BELUM_PASTI';
+  statusPerpajakanPasangan: 'TIDAK_ADA_PASANGAN' | 'GABUNG' | 'PISAH_HARTA'
+                          | 'PISAH_KEWAJIBAN' | 'PISAH_PUTUSAN_HAKIM' | 'TIDAK_YAKIN';
+  punyaLebihDariSatuKegiatan: boolean | 'tidak_yakin';
+
+  omzetPribadiTahunPajak: number;                     // dasar PERHITUNGAN
+  biayaOperasionalRiil?: number;                      // undefined bukan 0
+
+  omzetPribadiThnSebelumnya: number;                  // hanya untuk uji AMBANG
+  omzetPasanganThnSebelumnya: number;                 // hanya untuk uji AMBANG
+  omzetSeluruhPerseroanPeroranganThnSebelumnya: number;
+
+  sudahMemberitahukanNppn: boolean | 'tidak_yakin';
   pernahPilihTarifUmum: boolean | 'tidak_yakin';
   jugaPegawaiTetap: boolean;
 };
-
-type HasilKelayakan = {
-  skema: Array<{
-    id: 'PPH_FINAL_05' | 'NPPN' | 'TARIF_UMUM';
-    status: 'BOLEH' | 'TIDAK_BOLEH' | 'PERLU_DIPASTIKAN';
-    alasan: string;
-    dasarHukum: string;
-    konsekuensiJangkaPanjang?: string;
-  }>;
-  peringatan: string[];
-  langkahTindakLanjut: string[];
-};
 ```
 
-**`omzetPribadi` dan omzet konsolidasi punya fungsi berbeda.** Jangan pernah mencampurnya:
-- Perhitungan pajak → `omzetPribadi`
-- Uji ambang Rp4,8 M → jumlah ketiganya
+Bukti potong dipisahkan dari profil lewat `InputAuditPajak = { profil, kreditPajak }`, supaya OCR tidak pernah mencampuri data profil.
+
+Hasil per skema memakai **discriminated union** pada `statusKalkulasi`: hanya `TERSEDIA` yang boleh membawa `pajakTerutang` dan `rincianKalkulasi`; `BELUM_TERSEDIA` dan `TIDAK_RELEVAN` wajib membawa `alasanKalkulasi` dan tidak boleh membawa nominal.
+
+**Dua himpunan omzet punya fungsi berbeda.** Jangan pernah mencampurnya:
+- Perhitungan pajak dan uji ambang NPPN memakai `omzetPribadiTahunPajak`
+- Uji ambang PPh Final Rp4,8 M memakai jumlah ketiga field `...ThnSebelumnya`
 
 Status **`PERLU_DIPASTIKAN`** dipakai saat pengguna menjawab "tidak yakin". Sistem tidak boleh memberi vonis pasti dari data yang tidak pasti.
 
@@ -171,23 +184,25 @@ Status **`PERLU_DIPASTIKAN`** dipakai saat pengguna menjawab "tidak yakin". Sist
 
 **PPh Final UMKM**
 ```
-dasar = max(0, omzetPribadi − 500_000_000)
+dasar = max(0, omzetPribadiTahunPajak − 500_000_000)
 pajak = dasar × 0,005
 ```
 
 **Norma NPPN**
 ```
-netto = omzetPribadi × persenNorma(klu, wilayah)
+netto = omzetPribadiTahunPajak × persenNorma(klu, wilayah)
 pkp   = max(0, netto − ptkp)
-pajak = tarifProgresifBerlapis(pkp) − kreditBupot
+pajak = max(0, tarifProgresifBerlapis(pkp) − kreditBupot)
 ```
 
 **Tarif Umum**
 ```
-netto = omzetPribadi − biayaOperasional
+netto = max(0, omzetPribadiTahunPajak − biayaOperasional)
 pkp   = max(0, netto − ptkp)
-pajak = tarifProgresifBerlapis(pkp) − kreditBupot
+pajak = max(0, tarifProgresifBerlapis(pkp) − kreditBupot)
 ```
+
+Contoh resmi untuk menguji tarif berlapis ada pada penjelasan UU HPP atas Pasal 17 ayat (1) huruf a: PKP Rp6.000.000.000 menghasilkan PPh terutang **Rp1.794.000.000**. Angka itu dipakai sebagai fixture di `tests/calculator.test.ts`.
 
 **Tarif progresif dihitung berlapis**, bukan satu tarif untuk seluruh PKP. Ini kesalahan paling umum. Contoh: PKP Rp337 juta melewati tiga lapisan, bukan langsung dikalikan 25%.
 
@@ -209,7 +224,7 @@ Bekerja di cabang: `feat/rule-engine` (Sheva), `feat/ui-eligibility` (Mikail), `
 
 ## Penulisan antarmuka
 
-- **Hindari istilah birokrasi sebagai label.** Tulis "Apakah Anda pernah memberi tahu DJP bahwa Anda memakai Norma?" dengan keterangan kecil "(Formulir LA.04-01)".
+- **Hindari istilah birokrasi sebagai label.** Tulis "Apakah Anda pernah memberi tahu DJP bahwa Anda memakai Norma?" dengan keterangan kecil "(layanan AS.04-01 di Coretax)". Kode layanannya **AS.04-01**, bukan LA.04-01.
 - **Kata kerja aktif.** "Hitung pajak saya", bukan "Submit".
 - **Nama tindakan konsisten** dari tombol sampai hasilnya.
 - **Pesan galat menjelaskan** apa yang salah dan cara memperbaikinya. Tidak minta maaf, tidak kabur.
@@ -221,8 +236,11 @@ Bekerja di cabang: `feat/rule-engine` (Sheva), `feat/ui-eligibility` (Mikail), `
 
 - ❌ Memakai LLM untuk memutuskan kelayakan atau menghitung pajak
 - ❌ Mengarang isi pasal atau nomor regulasi
-- ❌ Menulis "permanen" untuk konsekuensi tarif umum sebelum terverifikasi
+- ❌ Menyitasi **Pasal 59 PP 20/2026** — pasal itu dihapus; pintu satu arah ada di Pasal 57 ayat (4)
 - ❌ Memakai omzet konsolidasi sebagai dasar perhitungan
+- ❌ Memakai omzet tahun berjalan untuk uji ambang Rp4,8 miliar; ambang itu memakai tahun sebelumnya
+- ❌ Menganggap `biayaOperasionalRiil` yang kosong sebagai Rp0
+- ❌ Mengalikan omzet gabungan dengan satu persentase norma bila kegiatannya lebih dari satu (PER-17/PJ/2015 Pasal 5)
 - ❌ Menghitung tarif progresif dengan satu tarif tunggal
 - ❌ Meng-commit `.env` atau kunci API
 - ❌ Menyembunyikan skema yang TIDAK BOLEH — tetap tampilkan, redam saja

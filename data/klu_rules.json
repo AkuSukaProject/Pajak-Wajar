@@ -1,8 +1,28 @@
 {
   "versiRegulasi": "PP-20-2026",
-  "statusDokumen": "Dalam review (Granular per Aturan)",
-  "tahunPajakDidukung": [2025, 2026],
+  "berlakuSejak": "2026-04-22",
+  "lembaranNegara": "LN RI Tahun 2026 Nomor 43, TLN RI Nomor 7173",
+  "statusDokumen": "Terverifikasi terhadap teks asli PP 20/2026, UU 7/2021, UU 36/2008, dan PER-17/PJ/2015 beserta Lampiran I",
+  "tanggalVerifikasiTerakhir": "2026-09-06",
+  "tahunPajakDidukung": [
+    2025,
+    2026
+  ],
   "lingkupWajibPajak": "ORANG_PRIBADI",
+  "kelompokWilayah": {
+    "kelompok1": {
+      "nama": "10 ibukota provinsi",
+      "deskripsi": "Medan, Palembang, Jakarta, Bandung, Semarang, Surabaya, Denpasar, Manado, Makassar, Pontianak"
+    },
+    "kelompok2": {
+      "nama": "Ibukota provinsi lainnya",
+      "deskripsi": "Ibukota provinsi selain sepuluh kota pada kelompok 1"
+    },
+    "kelompok3": {
+      "nama": "Daerah lainnya",
+      "deskripsi": "Kabupaten atau kota selain ibukota provinsi"
+    }
+  },
   "parameterPajak": {
     "pphFinal": {
       "tarif": {
@@ -12,34 +32,50 @@
           {
             "namaRegulasi": "PP No. 20 Tahun 2026",
             "pasalAtauLampiran": "Pasal 56 ayat (2)",
-            "fungsi": "Penetapan tarif PPh Final 0,5%",
-            "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+            "fungsi": "Tarif Pajak Penghasilan yang bersifat final sebesar 0,5%",
+            "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
             "statusVerifikasi": "TERVERIFIKASI"
           }
         ]
       },
-      "ambangOmzet": {
+      "ambangPeredaranBruto": {
         "nilai": 4800000000,
         "operator": "LTE",
+        "basisTahun": "TAHUN_PAJAK_SEBELUMNYA",
         "statusVerifikasi": "TERVERIFIKASI",
         "dasarHukum": [
           {
             "namaRegulasi": "PP No. 20 Tahun 2026",
             "pasalAtauLampiran": "Pasal 57 ayat (1)",
-            "fungsi": "Ambang peredaran bruto fasilitas PPh Final (tidak melebihi)",
-            "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+            "fungsi": "Batas peredaran bruto tidak melebihi Rp4.800.000.000 dalam 1 Tahun Pajak",
+            "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PP No. 20 Tahun 2026",
+            "pasalAtauLampiran": "Pasal 58 ayat (1) huruf a",
+            "fungsi": "Peredaran bruto diukur dari Tahun Pajak terakhir sebelum Tahun Pajak bersangkutan",
+            "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
             "statusVerifikasi": "TERVERIFIKASI"
           }
         ]
       },
       "pembebasanOmzetOp": {
         "nilai": 500000000,
-        "statusVerifikasi": "DALAM_REVIEW",
+        "basisTahun": "TAHUN_PAJAK_BERJALAN",
+        "statusVerifikasi": "TERVERIFIKASI",
         "dasarHukum": [
           {
-            "namaRegulasi": "PP No. 55 Tahun 2022 jo. PP No. 20 Tahun 2026",
+            "namaRegulasi": "UU No. 7 Tahun 2021 (HPP)",
+            "pasalAtauLampiran": "Pasal 7 ayat (2a) UU PPh",
+            "fungsi": "Bagian peredaran bruto sampai dengan Rp500.000.000 dalam 1 Tahun Pajak tidak dikenai PPh bagi WP orang pribadi",
+            "url": "https://jdih.kemenkeu.go.id/dok/uu-7-tahun-2021",
+            "statusVerifikasi": "TERVERIFIKASI"
+          },
+          {
+            "namaRegulasi": "PP No. 55 Tahun 2022",
             "pasalAtauLampiran": "Pasal 60",
-            "fungsi": "Dasar pembebasan omzet Rp 500 Juta bagi WP OP",
+            "fungsi": "Pelaksanaan pembebasan Rp500.000.000 bagi WP orang pribadi; tidak diubah oleh PP 20/2026",
             "url": "https://jdih.kemenkeu.go.id/dok/pp-55-tahun-2022",
             "statusVerifikasi": "DALAM_REVIEW"
           }
@@ -47,28 +83,30 @@
       }
     },
     "nppn": {
-      "ambangOmzet": {
+      "ambangPeredaranBruto": {
         "nilai": 4800000000,
         "operator": "LT",
+        "basisTahun": "TAHUN_PAJAK_BERJALAN",
         "statusVerifikasi": "TERVERIFIKASI",
         "dasarHukum": [
           {
             "namaRegulasi": "PER-17/PJ/2015",
             "pasalAtauLampiran": "Pasal 1 dan Pasal 2 ayat (1)",
-            "fungsi": "Ambang peredaran bruto NPPN tahun berjalan (kurang dari)",
+            "fungsi": "Peredaran bruto kurang dari Rp4.800.000.000 dalam 1 tahun wajib pencatatan sehingga dapat memakai Norma",
             "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
             "statusVerifikasi": "TERVERIFIKASI"
           }
         ]
       },
-      "batasPemberitahuanBulan": {
-        "nilai": 3,
+      "batasWaktuPemberitahuan": {
+        "keterangan": "paling lama 3 bulan sejak awal Tahun Pajak yang bersangkutan",
+        "layananCoretax": "AS.04-01",
         "statusVerifikasi": "TERVERIFIKASI",
         "dasarHukum": [
           {
             "namaRegulasi": "PER-17/PJ/2015",
             "pasalAtauLampiran": "Pasal 2 ayat (1)",
-            "fungsi": "Batas waktu pemberitahuan NPPN (3 bulan pertama tahun pajak)",
+            "fungsi": "Kewajiban memberitahukan penggunaan Norma dalam 3 bulan pertama Tahun Pajak",
             "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
             "statusVerifikasi": "TERVERIFIKASI"
           }
@@ -77,35 +115,66 @@
     },
     "tarifProgresif": {
       "lapisan": [
-        { "batasBawah": 0, "batasAtas": 60000000, "tarif": 0.05 },
-        { "batasBawah": 60000000, "batasAtas": 250000000, "tarif": 0.15 },
-        { "batasBawah": 250000000, "batasAtas": 500000000, "tarif": 0.25 },
-        { "batasBawah": 500000000, "batasAtas": 5000000000, "tarif": 0.30 },
-        { "batasBawah": 5000000000, "batasAtas": null, "tarif": 0.35 }
+        {
+          "lapisan": 1,
+          "batasBawah": 0,
+          "batasAtas": 60000000,
+          "tarif": 0.05
+        },
+        {
+          "lapisan": 2,
+          "batasBawah": 60000000,
+          "batasAtas": 250000000,
+          "tarif": 0.15
+        },
+        {
+          "lapisan": 3,
+          "batasBawah": 250000000,
+          "batasAtas": 500000000,
+          "tarif": 0.25
+        },
+        {
+          "lapisan": 4,
+          "batasBawah": 500000000,
+          "batasAtas": 5000000000,
+          "tarif": 0.3
+        },
+        {
+          "lapisan": 5,
+          "batasBawah": 5000000000,
+          "batasAtas": null,
+          "tarif": 0.35
+        }
       ],
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
-          "namaRegulasi": "UU No. 7 Tahun 2021 (UU HPP)",
-          "pasalAtauLampiran": "Pasal 17 ayat (1) huruf a",
-          "fungsi": "Tarif progresif PPh Orang Pribadi",
-          "url": "https://jdih.kemenkeu.go.id/download/c12be04a-670f-4dae-8b52-13f30d24a8c6/2021uu007.pdf",
+          "namaRegulasi": "UU No. 7 Tahun 2021 (HPP)",
+          "pasalAtauLampiran": "Pasal 17 ayat (1) huruf a UU PPh",
+          "fungsi": "Lapisan tarif progresif Pajak Penghasilan orang pribadi",
+          "url": "https://jdih.kemenkeu.go.id/dok/uu-7-tahun-2021",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
     },
     "ptkp": {
       "nilai": {
-        "TK/0": 54000000, "TK/1": 58500000, "TK/2": 63000000, "TK/3": 67500000,
-        "K/0": 58500000, "K/1": 63000000, "K/2": 67500000, "K/3": 72000000
+        "TK/0": 54000000,
+        "TK/1": 58500000,
+        "TK/2": 63000000,
+        "TK/3": 67500000,
+        "K/0": 58500000,
+        "K/1": 63000000,
+        "K/2": 67500000,
+        "K/3": 72000000
       },
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
-          "namaRegulasi": "UU No. 7 Tahun 2021 (UU HPP)",
-          "pasalAtauLampiran": "Pasal 7 ayat (1)",
-          "fungsi": "Penghasilan Tidak Kena Pajak",
-          "url": "https://jdih.kemenkeu.go.id/download/c12be04a-670f-4dae-8b52-13f30d24a8c6/2021uu007.pdf",
+          "namaRegulasi": "UU No. 7 Tahun 2021 (HPP)",
+          "pasalAtauLampiran": "Pasal 7 ayat (1) UU PPh",
+          "fungsi": "Besaran Penghasilan Tidak Kena Pajak tahunan",
+          "url": "https://jdih.kemenkeu.go.id/dok/uu-7-tahun-2021",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
@@ -113,488 +182,1422 @@
   },
   "aturanKelayakan": {
     "pekerjaanBebas": {
+      "kode": "PEKERJAAN_BEBAS",
+      "pesanTidakBoleh": "Penghasilan dari jasa sehubungan dengan pekerjaan bebas dikecualikan dari PPh Final 0,5%.",
+      "pesanPerluDipastikan": "Profesi ini belum disebut satu per satu dalam daftar pekerjaan bebas, tetapi bisa masuk kategori tenaga ahli atau seniman lainnya. Perlu dipastikan ke DJP.",
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
           "namaRegulasi": "PP No. 20 Tahun 2026",
           "pasalAtauLampiran": "Pasal 56 ayat (3) huruf a jo. ayat (4)",
-          "fungsi": "Pengecualian pekerjaan bebas dari PPh Final",
-          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "fungsi": "Pengecualian penghasilan dari jasa sehubungan dengan pekerjaan bebas dan daftar jenis pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
     },
     "ambangKonsolidasi": {
+      "kode": "AMBANG_KONSOLIDASI",
+      "pesanTidakBoleh": "Peredaran bruto gabungan pada Tahun Pajak sebelumnya melebihi Rp4.800.000.000.",
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
           "namaRegulasi": "PP No. 20 Tahun 2026",
-          "pasalAtauLampiran": "Pasal 57 ayat (1) dan ayat (2) huruf e",
-          "fungsi": "Subjek, ambang Rp 4,8 M, dan pengecualian omzet keseluruhan",
-          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "pasalAtauLampiran": "Pasal 57 ayat (2) huruf e",
+          "fungsi": "WP orang pribadi beserta seluruh perseroan perorangannya yang peredaran brutonya secara keseluruhan melebihi Rp4.800.000.000 dikecualikan",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "penggabunganSuamiIstriPisah": {
+      "kode": "PENGGABUNGAN_PISAH",
+      "pesan": "Untuk pasangan dengan pisah harta atau istri yang menjalankan kewajiban pajaknya sendiri, peredaran bruto suami dan istri digabungkan, termasuk seluruh perseroan perorangan yang mereka dirikan.",
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 58 ayat (2) dan ayat (3)",
+          "fungsi": "Penggabungan peredaran bruto suami-istri dan seluruh perseroan perorangan yang didirikan keduanya",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
           "statusVerifikasi": "TERVERIFIKASI"
         },
         {
-          "namaRegulasi": "PP No. 20 Tahun 2026",
-          "pasalAtauLampiran": "Pasal 58 ayat (1)–(3)",
-          "fungsi": "Definisi peredaran bruto tahun sebelumnya dan penggabungan suami-istri-perseroan",
-          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "namaRegulasi": "UU No. 36 Tahun 2008 (UU PPh)",
+          "pasalAtauLampiran": "Pasal 8 ayat (2) dan ayat (4)",
+          "fungsi": "Pemisahan pengenaan pajak suami-istri dan penggabungan penghasilan anak yang belum dewasa",
+          "url": "https://jdih.kemenkeu.go.id/dok/uu-36-tahun-2008",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
     },
-    "pilihanTarifUmum": {
+    "penggabunganSuamiIstriGabung": {
+      "kode": "PENGGABUNGAN_GABUNG",
+      "pesan": "Untuk pasangan yang menjalankan kewajiban pajak secara gabungan, seluruh penghasilan istri dianggap penghasilan suami, kecuali gaji dari satu pemberi kerja yang sudah dipotong PPh 21 dan tidak berhubungan dengan usaha keluarga. Omzet usaha istri tidak termasuk pengecualian itu, sehingga ikut dihitung.",
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "UU No. 36 Tahun 2008 (UU PPh)",
+          "pasalAtauLampiran": "Pasal 8 ayat (1)",
+          "fungsi": "Seluruh penghasilan istri dianggap penghasilan suami, kecuali gaji dari satu pemberi kerja yang telah dipotong PPh Pasal 21",
+          "url": "https://jdih.kemenkeu.go.id/dok/uu-36-tahun-2008",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "pintuSatuArahTarifUmum": {
+      "kode": "PINTU_SATU_ARAH_TARIF_UMUM",
+      "pesanTidakBoleh": "Wajib Pajak yang memilih dikenai PPh berdasarkan tarif Pasal 17 tidak dapat dikenai PPh Final untuk Tahun Pajak-Tahun Pajak berikutnya.",
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
           "namaRegulasi": "PP No. 20 Tahun 2026",
-          "pasalAtauLampiran": "Pasal 57 ayat (3) dan ayat (4)",
-          "fungsi": "Pintu satu arah — WP yang memilih tarif umum tidak dapat kembali ke PPh Final",
-          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "pasalAtauLampiran": "Pasal 57 ayat (2) huruf a jo. ayat (3) dan ayat (4)",
+          "fungsi": "Pilihan tarif Pasal 17 wajib diberitahukan dan menutup PPh Final untuk Tahun Pajak berikutnya",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
     },
-    "administrasiNppn": {
+    "pintuSatuArahLewatAmbang": {
+      "kode": "PINTU_SATU_ARAH_AMBANG",
+      "pesan": "Sekali peredaran bruto gabungan melewati Rp4.800.000.000, hak PPh Final tertutup untuk Tahun Pajak-Tahun Pajak berikutnya, bukan hanya satu tahun.",
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 57 ayat (4)",
+          "fungsi": "Akibat lanjutan bagi WP yang dikecualikan karena melewati ambang peredaran bruto",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
+    },
+    "pemberitahuanNppn": {
+      "kode": "PEMBERITAHUAN_NPPN",
+      "pesanTidakBoleh": "Tanpa pemberitahuan penggunaan Norma dalam 3 bulan pertama Tahun Pajak, Wajib Pajak dianggap menyelenggarakan pembukuan.",
       "statusVerifikasi": "TERVERIFIKASI",
       "dasarHukum": [
         {
           "namaRegulasi": "PER-17/PJ/2015",
           "pasalAtauLampiran": "Pasal 2 ayat (1)",
-          "fungsi": "Kewajiban pemberitahuan NPPN sebelum akhir bulan ketiga tahun pajak",
+          "fungsi": "Syarat pemberitahuan penggunaan Norma Penghitungan Penghasilan Neto",
           "url": "https://pajak.go.id/sites/default/files/2019-03/PER%20-%2017.PJ_.2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
       ]
     },
-    "ketentuanPeralihan": {
+    "ketentuanPeralihanAgregat2026": {
+      "kode": "PERALIHAN_AGREGAT_2026",
       "statusVerifikasi": "DALAM_REVIEW",
-      "catatanReview": "Sheva perlu mengekstrak PP 20/2026 Pasal II: angka 1 huruf a butir 1-2, huruf c (surat keterangan), huruf f (WP OP), angka 2 (tanggal berlaku).",
       "dasarHukum": [
         {
           "namaRegulasi": "PP No. 20 Tahun 2026",
-          "pasalAtauLampiran": "Pasal II (Ketentuan Peralihan)",
-          "fungsi": "Ketentuan peralihan Tahun Pajak 2025–2026",
-          "url": "https://jdih.kemenkeu.go.id/api/download/d057ff82-50e7-4127-b66b-f704a36f071d/2026pp020.pdf",
+          "pasalAtauLampiran": "Pasal II angka 1 huruf f",
+          "fungsi": "Pemeriksaan riwayat peralihan pengecualian Pasal 57 ayat (2) huruf e sampai akhir 2026",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
           "statusVerifikasi": "DALAM_REVIEW"
         }
       ]
-    }
-  },
-  "kelompokWilayah": {
-    "kelompok1": {
-      "nama": "10 Ibukota Provinsi",
-      "deskripsi": "Medan, Palembang, Jakarta, Bandung, Semarang, Surabaya, Denpasar, Manado, Makassar, Pontianak"
     },
-    "kelompok2": {
-      "nama": "Ibukota Provinsi Lainnya",
-      "deskripsi": "Ibukota provinsi selain 10 kota di atas"
-    },
-    "kelompok3": {
-      "nama": "Daerah Lainnya",
-      "deskripsi": "Seluruh kabupaten/kota non-ibukota provinsi"
+    "ketentuanPeralihan2025": {
+      "kode": "PERALIHAN_2025",
+      "pesan": "Untuk Tahun Pajak 2025, PP 20/2026 hanya dapat dipakai oleh Wajib Pajak orang pribadi yang jangka waktu PPh Final-nya menurut PP 55/2022 berakhir pada Tahun Pajak 2024. Pastikan kapan jangka waktu tujuh tahun Anda berakhir sebelum memakai hasil ini.",
+      "statusVerifikasi": "TERVERIFIKASI",
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal II angka 1 huruf a",
+          "fungsi": "Ketentuan peralihan pengenaan PPh Final untuk Tahun Pajak 2025 dan 2026",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ]
     }
   },
   "klu": [
     {
-      "kluKode": "74201",
-      "nama": "Aktivitas Desain Komunikasi Visual / Desain Grafis",
-      "kategori": "Jasa Kreatif & Desain",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.50,
-        "kelompok3": 0.475
+      "kluKode": "90002",
+      "nama": "Pekerja seni dan kreator konten (kegiatan seni)",
+      "uraianLampiran": "KEGIATAN PEKERJA SENI",
+      "alias": [
+        "penulis",
+        "musisi",
+        "aktor",
+        "youtuber",
+        "kreator konten seni",
+        "penyanyi",
+        "pengarang",
+        "novelis"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf b",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 74201",
-          "fungsi": "Persentase norma perhitungan penghasilan neto jasa desain",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf b",
+          "fungsi": "Pembuat atau pencipta konten pada media daring, serta seniman lainnya, termasuk jasa sehubungan dengan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"KEGIATAN PEKERJA SENI\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "90021",
+            "nama": "PELAKU KREATIF SENI PERTUNJUKAN",
+            "halamanPdf": 795
+          },
+          {
+            "kode": "90022",
+            "nama": "PELAKU KREATIF SENI MUSIK",
+            "halamanPdf": 795
+          },
+          {
+            "kode": "90023",
+            "nama": "AKTIVITAS PELAKU KREATIF SENI RUPA",
+            "halamanPdf": 795
+          },
+          {
+            "kode": "90024",
+            "nama": "AKTIVITAS PENULIS DAN PEKERJA SASTRA",
+            "halamanPdf": 796
+          },
+          {
+            "kode": "90029",
+            "nama": "AKTIVITAS PEKERJA SENI DAN PEKERJA KREATIF LAINNYA",
+            "halamanPdf": 796
+          }
+        ],
+        "catatan": "Pekerja seni terurai menurut bidang pertunjukan, musik, rupa, sastra, atau kreatif lainnya. Nama platform atau sebutan influencer tidak menentukan satu KBLI. Padanan 90029 lebih luas; komisi afiliasi, perdagangan, dan jasa iklan tidak otomatis masuk kegiatan pekerja seni.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 360
+      }
+    },
+    {
+      "kluKode": "90005",
+      "nama": "Jurnalis berita independen",
+      "uraianLampiran": "JURNALIS BERITA INDEPENDEN",
+      "alias": [
+        "jurnalis lepas",
+        "jurnalis independen",
+        "wartawan lepas",
+        "reporter lepas",
+        "kontributor berita"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf e",
+      "normaPersen": {
+        "kelompok1": 35,
+        "kelompok2": 32.5,
+        "kelompok3": 31.5
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf e",
+          "fungsi": "Pengarang, peneliti, penerjemah, dan profesi sejenis lainnya termasuk pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JURNALIS BERITA INDEPENDEN\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "90025",
+            "nama": "JURNALIS BERITA INDEPENDEN",
+            "halamanPdf": 796
+          }
+        ],
+        "catatan": "Jurnalis berita independen berpadanan dengan 90025. Jangan memakai 90005 sebagai kode KBLI 2020.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 360
+      }
     },
     {
       "kluKode": "62010",
-      "nama": "Aktivitas Pemrograman Komputer (Software Developer / Web Engineer)",
-      "kategori": "Teknologi Informasi",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.45,
-        "kelompok3": 0.40
+      "nama": "Pemrograman komputer lepas (programmer, software engineer)",
+      "uraianLampiran": "KEGIATAN PEMROGRAMAN KOMPUTER",
+      "alias": [
+        "programmer",
+        "software engineer",
+        "web developer",
+        "frontend developer",
+        "backend developer",
+        "mobile developer",
+        "fullstack developer",
+        "devops",
+        "data engineer"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "PERLU_DIPASTIKAN",
+      "rujukanPasal56Ayat4": "huruf a (tenaga ahli sejenis lainnya)",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 62010",
-          "fungsi": "Persentase norma programmer/pengembang perangkat lunak",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Penjelasan Pasal 56 ayat (4) huruf a",
+          "fungsi": "Definisi tenaga ahli sebagai orang pribadi berkeahlian khusus yang jasanya tidak terikat hubungan kerja; profesi ini tidak disebut satu per satu",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"KEGIATAN PEMROGRAMAN KOMPUTER\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "62011",
+            "nama": "AKTIVITAS PENGEMBANGAN VIDEO GAME",
+            "halamanPdf": 633
+          },
+          {
+            "kode": "62012",
+            "nama": "AKTIVITAS PENGEMBANGAN APLIKASI PERDAGANGAN MELALUI INTERNET (E- COMMERCE)",
+            "halamanPdf": 633
+          },
+          {
+            "kode": "62013",
+            "nama": "AKTIVITAS PEMROGRAMAN DAN PRODUKSI KONTEN MEDIA IMERSIF",
+            "halamanPdf": 633
+          },
+          {
+            "kode": "62014",
+            "nama": "AKTIVITAS PENGEMBANGAN TEKNOLOGI BLOCKCHAIN",
+            "halamanPdf": 634
+          },
+          {
+            "kode": "62015",
+            "nama": "AKTIVITAS PEMROGRAMAN BERBASIS KECERDASAN ARTIFISIAL",
+            "halamanPdf": 634
+          },
+          {
+            "kode": "62019",
+            "nama": "AKTIVITAS PEMROGRAMAN KOMPUTER LAINNYA",
+            "halamanPdf": 634
+          }
+        ],
+        "catatan": "Pilih rincian pengembangan gim, e-commerce, media imersif, blockchain, AI, atau pemrograman lainnya sesuai pekerjaan. Kode 62010 adalah rujukan lampiran Norma; konsultasi perangkat keras dan pengelolaan fasilitas komputer berbeda dari pemrograman.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 300
+      }
     },
     {
-      "kluKode": "62020",
-      "nama": "Aktivitas Konsultasi Komputer dan Manajemen Fasilitas Komputer",
-      "kategori": "Teknologi Informasi",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.45,
-        "kelompok3": 0.40
+      "kluKode": "74100",
+      "nama": "Perancangan khusus (desain grafis, interior, dan produk)",
+      "uraianLampiran": "JASA PERANCANGAN KHUSUS",
+      "alias": [
+        "desainer grafis",
+        "desain interior",
+        "desainer produk",
+        "perancang mode"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "PERLU_DIPASTIKAN",
+      "rujukanPasal56Ayat4": "huruf b (seniman lainnya)",
+      "normaPersen": {
+        "kelompok1": 32,
+        "kelompok2": 31,
+        "kelompok3": 29
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 62020",
-          "fungsi": "Persentase norma konsultan IT",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf b",
+          "fungsi": "Daftar seniman memuat pemahat dan pelukis serta seniman lainnya; profesi perancangan tidak disebut satu per satu",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA PERANCANGAN KHUSUS\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "74111",
+            "nama": "AKTIVITAS DESAIN ALAT TRANSPORTASI DAN PERMESINAN",
+            "halamanPdf": 696
+          },
+          {
+            "kode": "74112",
+            "nama": "AKTIVITAS DESAIN PERALATAN RUMAH TANGGA DAN FURNITUR",
+            "halamanPdf": 696
+          },
+          {
+            "kode": "74113",
+            "nama": "AKTIVITAS DESAIN TEKSTIL, FASHION DAN APPAREL",
+            "halamanPdf": 697
+          },
+          {
+            "kode": "74114",
+            "nama": "AKTIVITAS DESAIN INDUSTRI STRATEGIS DAN PERTAHANAN",
+            "halamanPdf": 697
+          },
+          {
+            "kode": "74115",
+            "nama": "AKTIVITAS DESAIN ALAT KOMUNIKASI DAN ELEKTRONIKA",
+            "halamanPdf": 697
+          },
+          {
+            "kode": "74116",
+            "nama": "AKTIVITAS DESAIN PERALATAN OLAHRAGA DAN PERMAINAN",
+            "halamanPdf": 697
+          },
+          {
+            "kode": "74117",
+            "nama": "AKTIVITAS DESAIN PRODUK KESEHATAN, KOSMETIK DAN PERLENGKAPAN LABORATORIUM",
+            "halamanPdf": 697
+          },
+          {
+            "kode": "74118",
+            "nama": "AKTIVITAS DESAIN PENGEMASAN",
+            "halamanPdf": 698
+          },
+          {
+            "kode": "74119",
+            "nama": "AKTIVITAS DESAIN INDUSTRI LAINNYA",
+            "halamanPdf": 698
+          },
+          {
+            "kode": "74120",
+            "nama": "AKTIVITAS DESAIN INTERIOR",
+            "halamanPdf": 698
+          },
+          {
+            "kode": "74130",
+            "nama": "AKTIVITAS DESAIN KOMUNIKASI VISUAL/ DESAIN GRAFIS",
+            "halamanPdf": 699
+          },
+          {
+            "kode": "74141",
+            "nama": "AKTIVITAS DESAIN KHUSUS FILM, VIDEO, PROGRAM TV, ANIMASI DAN KOMIK",
+            "halamanPdf": 700
+          },
+          {
+            "kode": "74142",
+            "nama": "AKTIVITAS DESAIN KONTEN GAME",
+            "halamanPdf": 700
+          },
+          {
+            "kode": "74149",
+            "nama": "AKTIVITAS DESAIN KONTEN KREATIF LAINYA",
+            "halamanPdf": 700
+          }
+        ],
+        "catatan": "Desain terurai menjadi desain industri, interior, komunikasi visual, dan konten kreatif. Cakupan kode baru tidak selalu identik: perencanaan desain berbeda dari produksi film/gim, pemrograman web, arsitektur, dan karya seni. Pemetaan ini bukan pemberian persentase Norma otomatis bagi seluruh isi kode baru.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 323
+      }
     },
     {
-      "kluKode": "90002",
-      "nama": "Aktivitas Pekerja Seni (Content Creator, Influencer, Selebgram, Vlogger)",
-      "kategori": "Seni & Hiburan",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.45,
-        "kelompok3": 0.40
+      "kluKode": "74201",
+      "nama": "Fotografi dan perekaman video acara",
+      "uraianLampiran": "JASA FOTOGRAFI",
+      "alias": [
+        "fotografer",
+        "foto pernikahan",
+        "video acara",
+        "fotografi komersial"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "PERLU_DIPASTIKAN",
+      "rujukanPasal56Ayat4": "huruf b (kru film, seniman lainnya)",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015 jo. PMK 168/2023",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 90002",
-          "fungsi": "Persentase norma pekerja seni/kreator konten digital",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf b",
+          "fungsi": "Daftar memuat kru film dan seniman lainnya; fotografer tidak disebut satu per satu",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
           "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "73100",
-      "nama": "Aktivitas Periklanan dan Pemasaran Digital (Digital Marketing)",
-      "kategori": "Pemasaran & Iklan",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.475,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
+        },
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 73100",
-          "fungsi": "Persentase norma jasa periklanan/digital marketer",
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA FOTOGRAFI\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
-    },
-    {
-      "kluKode": "86201",
-      "nama": "Aktivitas Praktik Dokter Umum dan Dokter Spesialis",
-      "kategori": "Kesehatan",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.50,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 86201",
-          "fungsi": "Persentase norma praktik dokter",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "86202",
-      "nama": "Aktivitas Praktik Dokter Gigi",
-      "kategori": "Kesehatan",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.50,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 86202",
-          "fungsi": "Persentase norma praktik dokter gigi",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "69100",
-      "nama": "Aktivitas Jasa Hukum / Konsultan Hukum / Pengacara",
-      "kategori": "Jasa Profesional Hukum",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.51,
-        "kelompok2": 0.50,
-        "kelompok3": 0.475
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 69100",
-          "fungsi": "Persentase norma jasa hukum dan advokat",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "69200",
-      "nama": "Aktivitas Akuntansi, Pembukuan, dan Konsultan Pajak",
-      "kategori": "Jasa Profesional Keuangan",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.475,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 69200",
-          "fungsi": "Persentase norma akuntan dan konsultan pajak",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "71100",
-      "nama": "Aktivitas Arsitektur dan Keinsinyuran serta Konsultasi Teknis",
-      "kategori": "Jasa Profesional Teknik",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.50,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 71100",
-          "fungsi": "Persentase norma arsitek dan insinyur teknik",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "74902",
-      "nama": "Aktivitas Penerjemahan dan Penjurubahasaan (Translator / Interpreter)",
-      "kategori": "Jasa Bahasa",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.475,
-        "kelompok3": 0.45
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 74902",
-          "fungsi": "Persentase norma penerjemah",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "74202",
-      "nama": "Aktivitas Fotografi dan Videografi Komersial",
-      "kategori": "Jasa Kreatif & Media",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.45,
-        "kelompok3": 0.40
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 74202",
-          "fungsi": "Persentase norma fotografer/videografer",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "47111",
-      "nama": "Perdagangan Eceran Berbagai Macam Barang (Toko Kelontong / Minimarket)",
-      "kategori": "Perdagangan Eceran",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.25,
-        "kelompok3": 0.20
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 47111",
-          "fungsi": "Persentase norma toko kelontong/minimarket",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "47911",
-      "nama": "Perdagangan Eceran Melalui Media Internet (Online Shop / E-Commerce Seller)",
-      "kategori": "Perdagangan Eceran",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.25,
-        "kelompok3": 0.20
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 47911",
-          "fungsi": "Persentase norma pedagang online/e-commerce",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "56101",
-      "nama": "Restoran dan Rumah Makan",
-      "kategori": "Penyediaan Makanan & Minuman",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.275,
-        "kelompok3": 0.25
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 56101",
-          "fungsi": "Persentase norma restoran dan rumah makan",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "56301",
-      "nama": "Kafe, Kedai Kopi, dan Bar Minuman",
-      "kategori": "Penyediaan Makanan & Minuman",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.275,
-        "kelompok3": 0.25
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 56301",
-          "fungsi": "Persentase norma kafe dan kedai kopi",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "85499",
-      "nama": "Jasa Bimbingan Belajar dan Kursus Privat (Tutor)",
-      "kategori": "Pendidikan Non-Formal",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.35,
-        "kelompok2": 0.30,
-        "kelompok3": 0.25
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 85499",
-          "fungsi": "Persentase norma kursus privat dan bimbel",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
-    },
-    {
-      "kluKode": "96112",
-      "nama": "Aktivitas Salon Kecantikan, Pangkas Rambut, dan Barbershop",
-      "kategori": "Jasa Perorangan",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.28,
-        "kelompok3": 0.25
-      },
-      "dasarHukum": [
-        {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 96112",
-          "fungsi": "Persentase norma salon dan barbershop",
-          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
-          "statusVerifikasi": "TERVERIFIKASI"
-        }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "74201",
+            "nama": "AKTIVITAS FOTOGRAFI",
+            "halamanPdf": 701
+          }
+        ],
+        "catatan": "Mencakup fotografi dan perekaman video acara seperti pernikahan atau rapat. Produksi film, video/program televisi, dan pascaproduksi yang masuk kelompok 591 berbeda dari jasa fotografi.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 323
+      }
     },
     {
       "kluKode": "70209",
-      "nama": "Aktivitas Konsultasi Manajemen Bisnis (Business Coach / Advisor)",
-      "kategori": "Jasa Profesional Bisnis",
-      "pekerjaanBebas": true,
-      "persenNorma": {
-        "kelompok1": 0.50,
-        "kelompok2": 0.475,
-        "kelompok3": 0.45
+      "nama": "Konsultasi manajemen dan bisnis",
+      "uraianLampiran": "KEGIATAN KONSULTASI MANAJEMEN LAINNYA",
+      "alias": [
+        "konsultan bisnis",
+        "konsultan manajemen",
+        "business advisor",
+        "konsultan strategi",
+        "konsultan marketing",
+        "penasihat"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a (konsultan) dan huruf d (penasihat)",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 70209",
-          "fungsi": "Persentase norma konsultan manajemen",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a dan huruf d",
+          "fungsi": "Konsultan dan penasihat termasuk jasa sehubungan dengan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"KEGIATAN KONSULTASI MANAJEMEN LAINNYA\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "70204",
+            "nama": "AKTIVITAS KONSULTANSI MANAJEMEN INDUSTRI",
+            "halamanPdf": 686
+          },
+          {
+            "kode": "70209",
+            "nama": "AKTIVITAS KONSULTASI MANAJEMEN LAINNYA",
+            "halamanPdf": 686
+          }
+        ],
+        "catatan": "Konsultansi manajemen industri dipisahkan menjadi 70204; konsultasi manajemen lainnya tetap 70209. Jasa menjalankan kampanye iklan bukan sekadar konsultasi manajemen.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 318
+      }
+    },
+    {
+      "kluKode": "69100",
+      "nama": "Jasa hukum (advokat, notaris, PPAT)",
+      "uraianLampiran": "JASA HUKUM",
+      "alias": [
+        "advokat",
+        "pengacara",
+        "notaris",
+        "ppat",
+        "konsultan hukum",
+        "legal consultant"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a",
+      "normaPersen": {
+        "kelompok1": 51,
+        "kelompok2": 50,
+        "kelompok3": 50
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a",
+          "fungsi": "Pengacara, notaris, dan pejabat pembuat akta tanah disebut sebagai tenaga ahli",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA HUKUM\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "69101",
+            "nama": "AKTIVITAS PENGACARA",
+            "halamanPdf": 683
+          },
+          {
+            "kode": "69102",
+            "nama": "AKTIVITAS KONSULTAN HUKUM",
+            "halamanPdf": 683
+          },
+          {
+            "kode": "69103",
+            "nama": "AKTIVITAS KONSULTAN KEKAYAAN INTELEKTUAL",
+            "halamanPdf": 683
+          },
+          {
+            "kode": "69104",
+            "nama": "AKTIVITAS NOTARIS DAN PEJABAT PEMBUAT AKTA TANAH",
+            "halamanPdf": 683
+          },
+          {
+            "kode": "69109",
+            "nama": "AKTIVITAS HUKUM LAINNYA",
+            "halamanPdf": 683
+          }
+        ],
+        "catatan": "Jasa hukum terurai menjadi pengacara, konsultan hukum, konsultan kekayaan intelektual, notaris/PPAT, dan aktivitas hukum lainnya.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 317
+      }
+    },
+    {
+      "kluKode": "69200",
+      "nama": "Akuntansi, pembukuan, dan konsultan pajak",
+      "uraianLampiran": "JASA AKUNTANSI, PEMBUKUAN DAN PEMERIKSA; KONSULTASI PAJAK",
+      "alias": [
+        "akuntan",
+        "konsultan pajak",
+        "auditor",
+        "jasa pembukuan",
+        "tax consultant"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a",
+          "fungsi": "Akuntan dan konsultan disebut sebagai tenaga ahli yang melakukan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA AKUNTANSI, PEMBUKUAN DAN PEMERIKSA; KONSULTASI PAJAK505050121569200JASA AKUNTANSI, PEMBUKUAN DAN PEMERIKSA; KONSULTASI PAJAK\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "69201",
+            "nama": "AKTIVITAS AKUNTANSI, PEMBUKUAN DAN PEMERIKSA",
+            "halamanPdf": 684
+          },
+          {
+            "kode": "69202",
+            "nama": "AKTIVITAS KONSULTASI PAJAK",
+            "halamanPdf": 684
+          }
+        ],
+        "catatan": "Akuntansi, pembukuan dan pemeriksaan berpadanan dengan 69201; konsultasi pajak dengan 69202.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 317
+      }
+    },
+    {
+      "kluKode": "86201",
+      "nama": "Praktik dokter umum",
+      "uraianLampiran": "PRAKTIK DOKTER UMUM",
+      "alias": [
+        "dokter",
+        "dokter umum",
+        "praktik dokter"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a",
+          "fungsi": "Dokter disebut sebagai tenaga ahli yang melakukan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"PRAKTIK DOKTER UMUM\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "86201",
+            "nama": "AKTIVITAS PRAKTIK DOKTER",
+            "halamanPdf": 778
+          }
+        ],
+        "catatan": "Untuk praktik dokter yang berdiri sendiri. Rumah sakit, klinik, dan praktik dokter gigi mempunyai kelompok tersendiri.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 353
+      }
+    },
+    {
+      "kluKode": "86202",
+      "nama": "Praktik dokter spesialis (selain dokter gigi)",
+      "uraianLampiran": "PRAKTIK DOKTER SPESIALIS",
+      "alias": [
+        "dokter spesialis",
+        "spesialis mata",
+        "spesialis THT",
+        "spesialis penyakit dalam"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a",
+          "fungsi": "Dokter disebut sebagai tenaga ahli yang melakukan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"PRAKTIK DOKTER SPESIALIS\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "86202",
+            "nama": "AKTIVITAS PRAKTIK DOKTER SPESIALIS",
+            "halamanPdf": 779
+          }
+        ],
+        "catatan": "Untuk praktik dokter spesialis yang berdiri sendiri. Praktik dokter gigi, termasuk dokter gigi spesialis, berada pada 86203 dan tidak diwakili pilihan ini.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 353
+      }
+    },
+    {
+      "kluKode": "71100",
+      "nama": "Arsitektur dan teknik sipil",
+      "uraianLampiran": "JASA ARSITEKUR DAN TEKNIK SIPIL SERTA KONSULTASI TEKNIS YANG BERHUBUNGAN DENGAN ITU",
+      "alias": [
+        "arsitek",
+        "insinyur",
+        "konsultan teknik",
+        "civil engineer",
+        "drafter freelance"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf a",
+      "normaPersen": {
+        "kelompok1": 50,
+        "kelompok2": 50,
+        "kelompok3": 50
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf a",
+          "fungsi": "Arsitek disebut sebagai tenaga ahli yang melakukan pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA ARSITEKUR DAN TEKNIK SIPIL SERTA KONSULTASI TEKNIS YANGBERHUBUNGAN DENGAN ITU\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "71101",
+            "nama": "AKTIVITAS ARSITEKTUR",
+            "halamanPdf": 687
+          },
+          {
+            "kode": "71102",
+            "nama": "AKTIVITAS KEINSINYURAN DAN KONSULTASI TEKNIS YBDI",
+            "halamanPdf": 688
+          }
+        ],
+        "catatan": "Arsitektur berpadanan dengan 71101; keinsinyuran dan konsultasi teknis dengan 71102. Desain interior mempunyai kelompok berbeda.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 319
+      }
+    },
+    {
+      "kluKode": "85499",
+      "nama": "Pendidikan lainnya swasta (misalnya public speaking)",
+      "uraianLampiran": "JASA PENDIDIKAN LAINNYA SWASTA",
+      "alias": [
+        "pelatihan public speaking",
+        "pelatihan keselamatan",
+        "pelatihan jurnalistik",
+        "kursus ujian profesional"
+      ],
+      "bentukKegiatan": "PEKERJAAN_BEBAS",
+      "pekerjaanBebas": "YA",
+      "rujukanPasal56Ayat4": "huruf d",
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 27.5,
+        "kelompok3": 25
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (4) huruf d",
+          "fungsi": "Pengajar, pelatih, moderator, dan penceramah termasuk pekerjaan bebas",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA PENDIDIKAN LAINNYA SWASTA\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "85440",
+            "nama": "SATUAN PENDIDIKAN KERJASAMA PENDIDIKAN NONFORMAL",
+            "halamanPdf": 770
+          },
+          {
+            "kode": "85451",
+            "nama": "PENDIDIKAN PESANTREN LAINNYA",
+            "halamanPdf": 770
+          },
+          {
+            "kode": "85452",
+            "nama": "PENDIDIKAN KEAGAMAAN ISLAM NON FORMAL",
+            "halamanPdf": 770
+          },
+          {
+            "kode": "85459",
+            "nama": "PENDIDIKAN KEAGAMAAN LAINNYA YTDL",
+            "halamanPdf": 770
+          },
+          {
+            "kode": "85499",
+            "nama": "PENDIDIKAN LAINNYA SWASTA",
+            "halamanPdf": 773
+          }
+        ],
+        "catatan": "Tabel BPS memecah kelompok pendidikan lainnya swasta ke beberapa kode. Rincian baru dapat menggabungkan bagian kegiatan lain; tidak semuanya otomatis memakai baris Norma ini. Bimbingan belajar adalah 85495, kursus bahasa 85493, dan kursus komputer 85492. Pilihan aplikasi ini dibatasi pada pendidikan lainnya, misalnya pelatihan public speaking.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 351
+      }
+    },
+    {
+      "kluKode": "47919",
+      "nama": "Perdagangan daring berbagai barang lainnya",
+      "uraianLampiran": "PERDAGANGAN ECERAN MELALUI MEDIA UNTUK BERBAGAI MACAM BARANG LAINNYA",
+      "alias": [
+        "perdagangan melalui media",
+        "berbagai barang lainnya",
+        "pesanan melalui internet"
+      ],
+      "bentukKegiatan": "USAHA_DAGANG",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 25,
+        "kelompok3": 20
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"PERDAGANGAN ECERAN MELALUI MEDIA UNTUK BERBAGAI MACAM BARANGLAINNYA\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "47919",
+            "nama": "PERDAGANGAN ECERAN MELALUI MEDIA UNTUK BERBAGAI MACAM BARANG LAINNYA",
+            "halamanPdf": 570
+          }
+        ],
+        "catatan": "Hanya perdagangan melalui media untuk berbagai barang lainnya. Barang tertentu mempunyai rincian 47911–47914; sebutan toko online, reseller, atau marketplace saja belum menentukan kelompoknya.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 263
+      }
     },
     {
       "kluKode": "47711",
-      "nama": "Perdagangan Eceran Pakaian dan Fashion Retail",
-      "kategori": "Perdagangan Eceran",
-      "pekerjaanBebas": false,
-      "persenNorma": {
-        "kelompok1": 0.30,
-        "kelompok2": 0.25,
-        "kelompok3": 0.20
+      "nama": "Perdagangan eceran pakaian",
+      "uraianLampiran": "PERDAGANGAN ECERAN PAKAIAN",
+      "alias": [
+        "toko baju",
+        "butik",
+        "distro",
+        "jual pakaian",
+        "fashion store"
+      ],
+      "bentukKegiatan": "USAHA_DAGANG",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 25,
+        "kelompok3": 20
       },
       "dasarHukum": [
         {
-          "namaRegulasi": "Lampiran I PER-17/PJ/2015",
-          "pasalAtauLampiran": "Daftar Persentase Norma KLU 47711",
-          "fungsi": "Persentase norma perdagangan eceran pakaian",
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"PERDAGANGAN ECERAN PAKAIAN\"",
           "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
           "statusVerifikasi": "TERVERIFIKASI"
         }
-      ]
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "47711",
+            "nama": "PERDAGANGAN ECERAN PAKAIAN",
+            "halamanPdf": 547
+          }
+        ],
+        "catatan": "Perdagangan eceran khusus pakaian. Penjualan melalui media dan pembuatan pakaian mempunyai kelompok berbeda.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 226
+      }
+    },
+    {
+      "kluKode": "47111",
+      "nama": "Minimarket, supermarket, dan hypermarket",
+      "uraianLampiran": "PERDAGANGAN ECERAN BERBAGAI MACAM BARANG YANG UTAMANYA MAKANAN, MINUMAN ATAU TEMBAKAU DI SUPERMARKET/MINIMARKET",
+      "alias": [
+        "minimarket",
+        "supermarket",
+        "hypermarket",
+        "toko swalayan"
+      ],
+      "bentukKegiatan": "USAHA_DAGANG",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 25,
+        "kelompok3": 20
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"PERDAGANGAN ECERAN BERBAGAI MACAM BARANG YANG UTAMANYAMAKANAN, MINUMAN ATAU TEMBAKAU DI SUPERMARKET/MINIMARKET\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "47111",
+            "nama": "PERDAGANGAN ECERAN BERBAGAI MACAM BARANG YANG UTAMANYA MAKANAN, MINUMAN ATAU TEMBAKAU DI MINIMARKET/SUPERMARKET/HYPERMARKET",
+            "halamanPdf": 535
+          }
+        ],
+        "catatan": "Untuk perdagangan swalayan di minimarket/supermarket/hypermarket. Warung kelontong dan toko sembako tradisional masuk 47112, bukan pilihan ini.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 215
+      }
+    },
+    {
+      "kluKode": "56101",
+      "nama": "Restoran",
+      "uraianLampiran": "RESTORAN",
+      "alias": [
+        "restoran",
+        "layanan memasak dan menyajikan sesuai pesanan"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 25,
+        "kelompok2": 20,
+        "kelompok3": 20
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"RESTORAN\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "BEBERAPA_PADANAN",
+        "padanan": [
+          {
+            "kode": "56101",
+            "nama": "RESTORAN",
+            "halamanPdf": 609
+          },
+          {
+            "kode": "56102",
+            "nama": "RUMAH/WARUNG MAKAN",
+            "halamanPdf": 609
+          }
+        ],
+        "catatan": "Restoran lama terhubung dengan 56101 dan sebagian 56102 menurut perubahan cakupan BPS. Kode 56102 juga menerima kegiatan dari warung makan lama, sehingga tidak seluruhnya memakai Norma 56101. Kafe utama minuman adalah 56303 dan katering 56210/56290. Pilihan aplikasi dibatasi pada restoran.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 287
+      }
+    },
+    {
+      "kluKode": "96111",
+      "nama": "Jasa pangkas rambut (barbershop)",
+      "uraianLampiran": "JASA PANGKAS RAMBUT",
+      "alias": [
+        "barbershop",
+        "pangkas rambut",
+        "jasa potong rambut",
+        "tukang cukur"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 28,
+        "kelompok3": 27
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA PANGKAS RAMBUT\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "96111",
+            "nama": "AKTIVITAS PANGKAS RAMBUT",
+            "halamanPdf": 823
+          }
+        ],
+        "catatan": "Pangkas dan perawatan rambut, termasuk barbershop. Salon kecantikan mempunyai rincian 96112.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 375
+      }
+    },
+    {
+      "kluKode": "96112",
+      "nama": "Jasa salon kecantikan",
+      "uraianLampiran": "JASA SALON KECANTIKAN",
+      "alias": [
+        "salon kecantikan",
+        "salon",
+        "perawatan wajah",
+        "jasa rias"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 30,
+        "kelompok2": 28,
+        "kelompok3": 27
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA SALON KECANTIKAN\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "96112",
+            "nama": "AKTIVITAS SALON KECANTIKAN",
+            "halamanPdf": 823
+          }
+        ],
+        "catatan": "Perawatan kecantikan dan rambut pada salon. Layanan medis atau klinik kecantikan tidak otomatis termasuk salon.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 376
+      }
+    },
+    {
+      "kluKode": "96200",
+      "nama": "Jasa binatu (laundry)",
+      "uraianLampiran": "JASA BINATU",
+      "alias": [
+        "laundry",
+        "laundry kiloan",
+        "jasa cuci",
+        "dry cleaning",
+        "binatu"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 40,
+        "kelompok2": 38,
+        "kelompok3": 36
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"JASA BINATU\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "96200",
+            "nama": "AKTIVITAS PENATU",
+            "halamanPdf": 824
+          }
+        ],
+        "catatan": "Kode tetap 96200; judul berubah dari binatu menjadi penatu. Untuk jasa pencucian/perawatan tekstil sesuai uraian kegiatan.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 376
+      }
+    },
+    {
+      "kluKode": "45407",
+      "nama": "Reparasi dan perawatan sepeda motor",
+      "uraianLampiran": "REPARASI DAN PERAWATAN SEPEDA MOTOR",
+      "alias": [
+        "bengkel motor",
+        "servis motor",
+        "reparasi motor",
+        "tambal ban"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 20,
+        "kelompok2": 18.5,
+        "kelompok3": 17.5
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"REPARASI DAN PERAWATAN SEPEDA MOTOR\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "45407",
+            "nama": "REPARASI DAN PERAWATAN SEPEDA MOTOR",
+            "halamanPdf": 516
+          }
+        ],
+        "catatan": "Untuk reparasi dan perawatan sepeda motor; reparasi mobil berada pada kelompok berbeda.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 202
+      }
+    },
+    {
+      "kluKode": "14111",
+      "nama": "Konveksi pakaian jadi dari tekstil",
+      "uraianLampiran": "INDUSTRI PAKAIAN JADI KONVEKSI DARI TEKSTIL",
+      "alias": [
+        "konveksi tekstil",
+        "produksi pakaian jadi",
+        "industri pakaian"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 13.5,
+        "kelompok2": 13,
+        "kelompok3": 12.5
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"INDUSTRI PAKAIAN JADI KONVEKSI DARI TEKSTIL\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "14111",
+            "nama": "INDUSTRI PAKAIAN JADI (KONVEKSI) DARI TEKSTIL",
+            "halamanPdf": 339
+          }
+        ],
+        "catatan": "Untuk produksi pakaian jadi/konveksi dari tekstil. Penjahitan pakaian sesuai pesanan berada pada 14120 dan tidak diwakili pilihan ini.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 84
+      }
+    },
+    {
+      "kluKode": "10710",
+      "nama": "Pembuatan produk roti dan kue",
+      "uraianLampiran": "INDUSTRI PRODUK ROTI DAN KUE",
+      "alias": [
+        "produksi roti",
+        "produksi kue",
+        "pembuatan biskuit",
+        "industri bakeri"
+      ],
+      "bentukKegiatan": "USAHA_JASA",
+      "pekerjaanBebas": "TIDAK",
+      "rujukanPasal56Ayat4": null,
+      "normaPersen": {
+        "kelompok1": 15,
+        "kelompok2": 12.5,
+        "kelompok3": 10
+      },
+      "dasarHukum": [
+        {
+          "namaRegulasi": "PP No. 20 Tahun 2026",
+          "pasalAtauLampiran": "Pasal 56 ayat (1) jo. Pasal 57 ayat (1) huruf a",
+          "fungsi": "Penghasilan dari usaha WP orang pribadi dikenai PPh Final",
+          "url": "https://jdih.kemenkeu.go.id/dok/pp-20-tahun-2026",
+          "statusVerifikasi": "TERVERIFIKASI"
+        },
+        {
+          "namaRegulasi": "PER-17/PJ/2015",
+          "pasalAtauLampiran": "Lampiran I",
+          "fungsi": "Persentase norma penghitungan penghasilan neto untuk \"INDUSTRI PRODUK ROTI DAN KUE\"",
+          "url": "https://www.pajak.go.id/sites/default/files/2019-06/Lampiran%201_PER_17_PJ_2015.pdf",
+          "statusVerifikasi": "TERVERIFIKASI"
+        }
+      ],
+      "pemetaanKbli2020": {
+        "metode": "PENCOCOKAN_URAIAN_DAN_TABEL_BPS",
+        "tanggalPemeriksaan": "2026-09-06",
+        "hubungan": "SATU_PADANAN",
+        "padanan": [
+          {
+            "kode": "10710",
+            "nama": "INDUSTRI PRODUK ROTI DAN KUE",
+            "halamanPdf": 320
+          }
+        ],
+        "catatan": "Untuk membuat produk roti dan kue. Toko yang hanya menjual kembali roti dan jasa katering mempunyai kegiatan berbeda.",
+        "sumberKbli": "https://ppid.bps.go.id/upload/doc/Klasifikasi_Baku_Lapangan_Usaha_Indonesia_2020_1718251770.pdf",
+        "halamanNorma": 69
+      }
     }
   ]
 }

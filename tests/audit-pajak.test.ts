@@ -1,229 +1,208 @@
-import { describe, it, expect } from 'vitest';
-import { auditPajakMandiri } from '../src/lib/index';
-import { InputAuditPajak, ProfilWajibPajak, DatabaseRegulasi } from '../src/types/pajak';
+import { describe, expect, it } from 'vitest';
+import { GalatMasukan, auditPajakMandiri } from '../src/lib/index';
+import type {
+  HasilAuditPajak,
+  HasilSkema,
+  IdSkema,
+  InputAuditPajak,
+  ProfilWajibPajak
+} from '../src/types/pajak';
 
-const mockRegulasi: DatabaseRegulasi = {
-  versiRegulasi: "PP-20-2026",
-  statusDokumen: "TERVERIFIKASI",
-  tahunPajakDidukung: [2025, 2026],
-  lingkupWajibPajak: "ORANG_PRIBADI",
-  parameterPajak: {
-    pphFinal: {
-      tarif: { nilai: 0.005, statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-      ambangOmzet: { nilai: 4800000000, operator: "LTE", statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-      pembebasanOmzetOp: { nilai: 500000000, statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    },
-    nppn: {
-      ambangOmzet: { nilai: 4800000000, operator: "LT", statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-      batasPemberitahuanBulan: { nilai: 3, statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    },
-    tarifProgresif: {
-      lapisan: [
-        { batasBawah: 0, batasAtas: 60000000, tarif: 0.05 },
-        { batasBawah: 60000000, batasAtas: 250000000, tarif: 0.15 },
-        { batasBawah: 250000000, batasAtas: 500000000, tarif: 0.25 },
-        { batasBawah: 500000000, batasAtas: 5000000000, tarif: 0.30 },
-        { batasBawah: 5000000000, batasAtas: null, tarif: 0.35 }
-      ],
-      statusVerifikasi: "TERVERIFIKASI",
-      dasarHukum: []
-    },
-    ptkp: {
-      nilai: {
-        "TK/0": 54000000, "TK/1": 58500000, "TK/2": 63000000, "TK/3": 67500000,
-        "K/0": 58500000, "K/1": 63000000, "K/2": 67500000, "K/3": 72000000
-      },
-      statusVerifikasi: "TERVERIFIKASI",
-      dasarHukum: []
-    }
-  },
-  aturanKelayakan: {
-    pekerjaanBebas: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    ambangKonsolidasi: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    pilihanTarifUmum: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    administrasiNppn: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-    ketentuanPeralihan: { statusVerifikasi: "TERVERIFIKASI", dasarHukum: [] },
-  },
-  kelompokWilayah: {
-    kelompok1: { nama: "10 Ibukota Provinsi", deskripsi: "Jakarta, Surabaya, Medan, dll." },
-    kelompok2: { nama: "Ibukota Provinsi Lainnya", deskripsi: "Ibukota provinsi lainnya" },
-    kelompok3: { nama: "Daerah Lainnya", deskripsi: "Kabupaten/kota non-ibukota" }
-  },
-  klu: [
-    {
-      kluKode: "74201",
-      nama: "Aktivitas Desain Komunikasi Visual / Desain Grafis",
-      kategori: "Jasa Kreatif",
-      pekerjaanBebas: true,
-      persenNorma: {
-        kelompok1: 0.50,
-        kelompok2: 0.50,
-        kelompok3: 0.475
-      },
-      dasarHukum: []
-    },
-    {
-      kluKode: "86201",
-      nama: "Aktivitas Praktik Dokter",
-      kategori: "Kesehatan",
-      pekerjaanBebas: true,
-      persenNorma: {
-        kelompok1: 0.50,
-        kelompok2: 0.50,
-        kelompok3: 0.45
-      },
-      dasarHukum: []
-    },
-    {
-      kluKode: "47911",
-      nama: "Perdagangan Eceran Melalui Media Internet",
-      kategori: "Perdagangan",
-      pekerjaanBebas: false,
-      persenNorma: {
-        kelompok1: 0.30,
-        kelompok2: 0.25,
-        kelompok3: 0.20
-      },
-      dasarHukum: []
-    }
-  ]
-};
-
-const baseProfil: ProfilWajibPajak = {
+const profilDagang: ProfilWajibPajak = {
   tahunPajak: 2026,
-  kluKode: '74201',
+  kluKode: '47919',
   wilayah: 'kelompok1',
   statusPtkp: 'TK/0',
   bentukKegiatan: 'USAHA_DAGANG',
   statusPerpajakanPasangan: 'TIDAK_ADA_PASANGAN',
   punyaLebihDariSatuKegiatan: false,
-  omzetPribadiTahunPajak: 300000000,
-  omzetPribadiThnSebelumnya: 300000000,
+  omzetPribadiTahunPajak: 900_000_000,
+  biayaOperasionalRiil: 620_000_000,
+  omzetPribadiThnSebelumnya: 780_000_000,
   omzetPasanganThnSebelumnya: 0,
   omzetSeluruhPerseroanPeroranganThnSebelumnya: 0,
   sudahMemberitahukanNppn: true,
   pernahPilihTarifUmum: false,
-  jugaPegawaiTetap: false
+  jugaPegawaiTetap: false,
+  pernahMelewatiAmbang: false
 };
 
-describe('auditPajakMandiri & Kalkulasi Norma Dinamis', () => {
-  it('should set Tarif Umum statusKalkulasi to BELUM_TERSEDIA if biayaOperasionalRiil is undefined', () => {
-    const input: InputAuditPajak = {
-      profil: { ...baseProfil, biayaOperasionalRiil: undefined },
-      kreditPajak: []
-    };
-    const result = auditPajakMandiri(input, mockRegulasi);
-    
-    const tarifUmum = result.skema.find(s => s.id === 'TARIF_UMUM');
-    expect(tarifUmum?.statusKelayakan).toBe('BOLEH');
-    expect(tarifUmum?.statusKalkulasi).toBe('BELUM_TERSEDIA');
-    expect((tarifUmum as any).pajakTerutang).toBeUndefined();
+const input = (profil: ProfilWajibPajak, kreditPajak: InputAuditPajak['kreditPajak'] = []) => ({
+  profil,
+  kreditPajak
+});
+
+/** Mengambil satu skema sambil mempertahankan penyempitan tipe menurut `id`. */
+function skemaDari<T extends IdSkema>(hasil: HasilAuditPajak, id: T): Extract<HasilSkema, { id: T }> {
+  const ditemukan = hasil.skema.find(
+    (item): item is Extract<HasilSkema, { id: T }> => item.id === id
+  );
+  if (!ditemukan) throw new Error(`Skema ${id} tidak ada`);
+  return ditemukan;
+}
+
+describe('validasi masukan', () => {
+  it('menolak omzet negatif dengan pesan yang menyebut kolomnya', () => {
+    expect(() =>
+      auditPajakMandiri(input({ ...profilDagang, omzetPribadiTahunPajak: -1 }))
+    ).toThrowError(GalatMasukan);
   });
 
-  it('should block NPPN calculation if punyaLebihDariSatuKegiatan is true', () => {
-    const input: InputAuditPajak = {
-      profil: { ...baseProfil, punyaLebihDariSatuKegiatan: true },
-      kreditPajak: []
-    };
-    const result = auditPajakMandiri(input, mockRegulasi);
-    
-    const nppn = result.skema.find(s => s.id === 'NPPN');
-    expect(nppn?.statusKelayakan).toBe('BOLEH');
-    expect(nppn?.statusKalkulasi).toBe('BELUM_TERSEDIA');
+  it('menolak profil tanpa pilihan pekerjaan', () => {
+    expect(() => auditPajakMandiri(input({ ...profilDagang, kluKode: '' }))).toThrowError(
+      /Pilih profesi/
+    );
   });
 
-  it('should block NPPN calculation if punyaLebihDariSatuKegiatan is tidak_yakin', () => {
-    const input: InputAuditPajak = {
-      profil: { ...baseProfil, punyaLebihDariSatuKegiatan: 'tidak_yakin' },
-      kreditPajak: []
-    };
-    const result = auditPajakMandiri(input, mockRegulasi);
-    
-    const nppn = result.skema.find(s => s.id === 'NPPN');
-    expect(nppn?.statusKalkulasi).toBe('BELUM_TERSEDIA');
+  it('menerima kredit pajak terpisah dari profil', () => {
+    const hasil = auditPajakMandiri(
+      input(profilDagang, [
+        {
+          nomorBuktiPotong: 'BP-1',
+          pemotong: 'PT Contoh',
+          penghasilanBruto: 50_000_000,
+          pphDipotong: 1_000_000,
+          sumber: 'MANUAL'
+        }
+      ])
+    );
+    expect(hasil.totalKreditBupot).toBe(1_000_000);
+  });
+});
+
+describe('konsistensi status kalkulasi', () => {
+  it('TERSEDIA selalu membawa nominal dan rincian sesuai skemanya', () => {
+    const hasil = auditPajakMandiri(input(profilDagang));
+    const final = skemaDari(hasil, 'PPH_FINAL_05');
+    expect(final.statusKelayakan).toBe('BOLEH');
+    expect(final.statusKalkulasi).toBe('TERSEDIA');
+    if (final.statusKalkulasi !== 'TERSEDIA') throw new Error('status tidak sesuai');
+    expect(final.rincianKalkulasi.skema).toBe('PPH_FINAL_05');
+    expect(final.rincianKalkulasi.dasarPengenaan).toBe(400_000_000);
+    expect(final.pajakTerutang).toBe(2_000_000);
   });
 
-  it('should calculate distinct NPPN percentage and tax for different regions of the same KLU', () => {
-    // Dokter di Kelompok 1 (10 Ibukota Provinsi) -> 50%
-    const inputKelompok1: InputAuditPajak = {
-      profil: {
-        ...baseProfil,
-        kluKode: '86201',
-        wilayah: 'kelompok1',
-        omzetPribadiTahunPajak: 400000000,
-        statusPtkp: 'TK/0'
-      },
-      kreditPajak: []
-    };
-    const resultKel1 = auditPajakMandiri(inputKelompok1, mockRegulasi);
-    const nppnKel1 = resultKel1.skema.find(s => s.id === 'NPPN');
-    expect(nppnKel1?.statusKalkulasi).toBe('TERSEDIA');
-    if (nppnKel1?.statusKalkulasi === 'TERSEDIA') {
-      expect(nppnKel1.rincianKalkulasi.persenNorma).toBe(0.50);
-      expect(nppnKel1.rincianKalkulasi.penghasilanNeto).toBe(200000000); // 400jt * 50%
-      // PKP = 200jt - 54jt = 146jt
-      // Pajak: (60jt * 5%) + (86jt * 15%) = 3jt + 12.9jt = 15.9jt
-      expect(nppnKel1.pajakTerutang).toBe(15900000);
-    }
-
-    // Dokter di Kelompok 3 (Daerah Lainnya) -> 45%
-    const inputKelompok3: InputAuditPajak = {
-      profil: {
-        ...baseProfil,
-        kluKode: '86201',
-        wilayah: 'kelompok3',
-        omzetPribadiTahunPajak: 400000000,
-        statusPtkp: 'TK/0'
-      },
-      kreditPajak: []
-    };
-    const resultKel3 = auditPajakMandiri(inputKelompok3, mockRegulasi);
-    const nppnKel3 = resultKel3.skema.find(s => s.id === 'NPPN');
-    expect(nppnKel3?.statusKalkulasi).toBe('TERSEDIA');
-    if (nppnKel3?.statusKalkulasi === 'TERSEDIA') {
-      expect(nppnKel3.rincianKalkulasi.persenNorma).toBe(0.45);
-      expect(nppnKel3.rincianKalkulasi.penghasilanNeto).toBe(180000000); // 400jt * 45%
-      // PKP = 180jt - 54jt = 126jt
-      // Pajak: (60jt * 5%) + (66jt * 15%) = 3jt + 9.9jt = 12.9jt
-      expect(nppnKel3.pajakTerutang).toBe(12900000);
-      expect(nppnKel3.pajakTerutang).not.toBe(nppnKel1 && 'pajakTerutang' in nppnKel1 ? nppnKel1.pajakTerutang : 0);
-    }
+  it('status selain TERSEDIA tidak pernah membawa nominal', () => {
+    const hasil = auditPajakMandiri(
+      input({ ...profilDagang, kluKode: '90002', bentukKegiatan: 'PEKERJAAN_BEBAS' })
+    );
+    const final = skemaDari(hasil, 'PPH_FINAL_05');
+    expect(final.statusKelayakan).toBe('TIDAK_BOLEH');
+    expect(final.statusKalkulasi).toBe('TIDAK_RELEVAN');
+    expect('pajakTerutang' in final).toBe(false);
+    expect('rincianKalkulasi' in final).toBe(false);
   });
 
-  it('should calculate distinct percentage for trade/online shop vs professional services', () => {
-    const inputOnlineShop: InputAuditPajak = {
-      profil: {
-        ...baseProfil,
-        kluKode: '47911',
-        wilayah: 'kelompok1',
-        omzetPribadiTahunPajak: 500000000,
-        statusPtkp: 'TK/0'
-      },
-      kreditPajak: []
-    };
-    const res = auditPajakMandiri(inputOnlineShop, mockRegulasi);
-    const nppn = res.skema.find(s => s.id === 'NPPN');
-    expect(nppn?.statusKalkulasi).toBe('TERSEDIA');
-    if (nppn?.statusKalkulasi === 'TERSEDIA') {
-      expect(nppn.rincianKalkulasi.persenNorma).toBe(0.30); // Online shop 30% in Kel 1
-      expect(nppn.rincianKalkulasi.penghasilanNeto).toBe(150000000); // 500jt * 30%
+  it('kalkulasi yang diblokir tidak menurunkan status kelayakan', () => {
+    const hasil = auditPajakMandiri(
+      input({ ...profilDagang, punyaLebihDariSatuKegiatan: true })
+    );
+    const nppn = skemaDari(hasil, 'NPPN');
+    expect(nppn.statusKelayakan).toBe('BOLEH');
+    expect(nppn.statusKalkulasi).toBe('BELUM_TERSEDIA');
+    expect('pajakTerutang' in nppn).toBe(false);
+  });
+});
+
+describe('batasan kalkulasi', () => {
+  it('multi kegiatan memblokir NPPN agar omzet gabungan tidak dikalikan satu norma', () => {
+    for (const jawaban of [true, 'tidak_yakin'] as const) {
+      const hasil = auditPajakMandiri(
+        input({ ...profilDagang, punyaLebihDariSatuKegiatan: jawaban })
+      );
+      expect(skemaDari(hasil, 'NPPN').statusKalkulasi).toBe('BELUM_TERSEDIA');
     }
   });
 
-  it('should return BELUM_TERSEDIA when KLU is not in database (no arbitrary fallback)', () => {
-    const inputUnrecognizedKlu: InputAuditPajak = {
-      profil: {
-        ...baseProfil,
-        kluKode: '99999', // Unknown KLU
-        wilayah: 'kelompok1',
-      },
-      kreditPajak: []
-    };
-    const res = auditPajakMandiri(inputUnrecognizedKlu, mockRegulasi);
-    const nppn = res.skema.find(s => s.id === 'NPPN');
-    expect(nppn?.statusKelayakan).toBe('BOLEH');
-    expect(nppn?.statusKalkulasi).toBe('BELUM_TERSEDIA');
-    expect(nppn?.alasanKalkulasi).toContain('Data persentase norma untuk KLU atau kelompok wilayah yang dipilih belum tersedia');
-    expect((nppn as any).pajakTerutang).toBeUndefined();
+  it('tarif umum tanpa biaya usaha berstatus BELUM_TERSEDIA, bukan memakai Rp0', () => {
+    const hasil = auditPajakMandiri(
+      input({ ...profilDagang, biayaOperasionalRiil: undefined })
+    );
+    const tarifUmum = skemaDari(hasil, 'TARIF_UMUM');
+    expect(tarifUmum.statusKelayakan).toBe('BOLEH');
+    expect(tarifUmum.statusKalkulasi).toBe('BELUM_TERSEDIA');
+  });
+
+  it('biaya usaha Rp0 yang diisi sengaja tetap dihitung', () => {
+    const hasil = auditPajakMandiri(input({ ...profilDagang, biayaOperasionalRiil: 0 }));
+    expect(skemaDari(hasil, 'TARIF_UMUM').statusKalkulasi).toBe('TERSEDIA');
+  });
+});
+
+describe('rekomendasi dan keluaran akhir', () => {
+  it('memilih skema termurah di antara yang terhitung', () => {
+    const hasil = auditPajakMandiri(input(profilDagang));
+    const terhitung = hasil.skema.filter((skema) => skema.statusKalkulasi === 'TERSEDIA');
+    expect(terhitung.length).toBeGreaterThan(1);
+    expect(hasil.rekomendasiHemat?.id).toBe('PPH_FINAL_05');
+    expect(hasil.rekomendasiHemat?.pajakTerutang).toBe(2_000_000);
+  });
+
+  it('tidak memberi rekomendasi bila tidak ada skema yang terhitung', () => {
+    const hasil = auditPajakMandiri(
+      input({
+        ...profilDagang,
+        kluKode: '90002',
+        bentukKegiatan: 'PEKERJAAN_BEBAS',
+        sudahMemberitahukanNppn: 'tidak_yakin',
+        biayaOperasionalRiil: undefined
+      })
+    );
+    expect(hasil.rekomendasiHemat).toBeUndefined();
+  });
+
+  it('menyertakan versi regulasi dan tanggal audit', () => {
+    const hasil = auditPajakMandiri(input(profilDagang));
+    expect(hasil.versiRegulasi).toBe('PP-20-2026');
+    expect(hasil.tanggalAudit).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('kredit bukti potong mengurangi tarif umum, bukan PPh Final', () => {
+    const hasil = auditPajakMandiri(
+      input(profilDagang, [
+        {
+          nomorBuktiPotong: 'BP-2',
+          pemotong: 'PT Contoh',
+          penghasilanBruto: 100_000_000,
+          pphDipotong: 2_000_000,
+          sumber: 'MANUAL'
+        }
+      ])
+    );
+    const tarifUmum = skemaDari(hasil, 'TARIF_UMUM');
+    const final = skemaDari(hasil, 'PPH_FINAL_05');
+    if (tarifUmum.statusKalkulasi !== 'TERSEDIA' || final.statusKalkulasi !== 'TERSEDIA') {
+      throw new Error('kedua skema seharusnya terhitung');
+    }
+    expect(tarifUmum.rincianKalkulasi.kreditBupot).toBe(2_000_000);
+    expect(final.pajakTerutang).toBe(2_000_000);
+  });
+});
+
+// Adaptasi tujuan uji efd2976 (Sheva): lookup Norma per KLU/wilayah,
+// memakai angka Lampiran I yang diverifikasi, bukan angka fixture sementara.
+describe('integrasi Norma wilayah dari engine tim', () => {
+  it.each([
+    ['kelompok1', 30, 120_000_000, 3_900_000],
+    ['kelompok2', 25, 100_000_000, 2_300_000],
+    ['kelompok3', 20, 80_000_000, 1_300_000]
+  ] as const)('KLU 47919 memakai Norma dan pajak yang sesuai untuk %s', (wilayah, norma, neto, pajak) => {
+    const nppn = skemaDari(auditPajakMandiri(input({ ...profilDagang, wilayah, omzetPribadiTahunPajak: 400_000_000 })), 'NPPN');
+    expect(nppn.statusKalkulasi).toBe('TERSEDIA');
+    if (nppn.statusKalkulasi !== 'TERSEDIA') throw new Error('NPPN seharusnya terhitung');
+    expect(nppn.rincianKalkulasi.persenNorma).toBe(norma);
+    expect(nppn.rincianKalkulasi.penghasilanNetoUsaha).toBe(neto);
+    expect(nppn.pajakTerutang).toBe(pajak);
+    expect(nppn.dasarHukum.some(d => d.namaRegulasi.includes('PER-17'))).toBe(true);
+  });
+
+  it('dokter 86201 tetap 50% pada semua wilayah sesuai Lampiran, bukan fixture sementara 45%', () => {
+    for (const wilayah of ['kelompok1', 'kelompok2', 'kelompok3'] as const) {
+      const nppn = skemaDari(auditPajakMandiri(input({ ...profilDagang, kluKode: '86201', bentukKegiatan: 'PEKERJAAN_BEBAS', wilayah, omzetPribadiTahunPajak: 400_000_000 })), 'NPPN');
+      expect(nppn.statusKalkulasi).toBe('TERSEDIA');
+      if (nppn.statusKalkulasi !== 'TERSEDIA') throw new Error('NPPN seharusnya terhitung');
+      expect(nppn.rincianKalkulasi.persenNorma).toBe(50);
+      expect(nppn.pajakTerutang).toBe(15_900_000);
+    }
   });
 });

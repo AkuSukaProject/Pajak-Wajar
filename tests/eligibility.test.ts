@@ -1,368 +1,313 @@
-import { describe, it, expect } from 'vitest';
-import {
-  evaluasiKelayakanPphFinal,
-  evaluasiKelayakanNppn,
-  evaluasiKelayakanTarifUmum,
-} from '../src/lib/eligibility';
-import { auditPajakMandiri } from '../src/lib/index';
-import { inputAuditPajakSchema } from '../src/lib/schemas';
-import { DatabaseRegulasi, ProfilWajibPajak } from '../src/types/pajak';
+import { describe, expect, it } from 'vitest';
+import { agregasiPrioritas, hitungOmzetKonsolidasi, periksaKelayakan } from '../src/lib/eligibility';
+import type { IdSkema, ProfilWajibPajak, StatusKelayakan } from '../src/types/pajak';
 
-const mockRegulasi: DatabaseRegulasi = {
-  versiRegulasi: 'PP-20-2026',
-  statusDokumen: 'TERVERIFIKASI',
-  tahunPajakDidukung: [2025, 2026],
-  lingkupWajibPajak: 'ORANG_PRIBADI',
-  parameterPajak: {
-    pphFinal: {
-      tarif: {
-        nilai: 0.005,
-        statusVerifikasi: 'TERVERIFIKASI',
-        dasarHukum: [
-          {
-            namaRegulasi: 'PP No. 20 Tahun 2026',
-            pasalAtauLampiran: 'Pasal 56 ayat (2)',
-            fungsi: 'Penetapan tarif PPh Final 0,5%',
-            url: 'https://jdih.kemenkeu.go.id',
-            statusVerifikasi: 'TERVERIFIKASI',
-          },
-        ],
-      },
-      ambangOmzet: {
-        nilai: 4800000000,
-        operator: 'LTE',
-        statusVerifikasi: 'TERVERIFIKASI',
-        dasarHukum: [
-          {
-            namaRegulasi: 'PP No. 20 Tahun 2026',
-            pasalAtauLampiran: 'Pasal 57 ayat (1)',
-            fungsi: 'Ambang peredaran bruto PPh Final',
-            url: 'https://jdih.kemenkeu.go.id',
-            statusVerifikasi: 'TERVERIFIKASI',
-          },
-        ],
-      },
-      pembebasanOmzetOp: {
-        nilai: 500000000,
-        statusVerifikasi: 'TERVERIFIKASI',
-        dasarHukum: [
-          {
-            namaRegulasi: 'PP No. 55 Tahun 2022 jo. PP No. 20 Tahun 2026',
-            pasalAtauLampiran: 'Pasal 60',
-            fungsi: 'Dasar pembebasan omzet Rp 500 Juta',
-            url: 'https://jdih.kemenkeu.go.id',
-            statusVerifikasi: 'TERVERIFIKASI',
-          },
-        ],
-      },
-    },
-    nppn: {
-      ambangOmzet: {
-        nilai: 4800000000,
-        operator: 'LT',
-        statusVerifikasi: 'TERVERIFIKASI',
-        dasarHukum: [
-          {
-            namaRegulasi: 'PER-17/PJ/2015',
-            pasalAtauLampiran: 'Pasal 1',
-            fungsi: 'Ambang NPPN',
-            url: 'https://pajak.go.id',
-            statusVerifikasi: 'TERVERIFIKASI',
-          },
-        ],
-      },
-      batasPemberitahuanBulan: {
-        nilai: 3,
-        statusVerifikasi: 'TERVERIFIKASI',
-        dasarHukum: [
-          {
-            namaRegulasi: 'PER-17/PJ/2015',
-            pasalAtauLampiran: 'Pasal 2 ayat (1)',
-            fungsi: 'Batas 3 bulan pemberitahuan NPPN',
-            url: 'https://pajak.go.id',
-            statusVerifikasi: 'TERVERIFIKASI',
-          },
-        ],
-      },
-    },
-    tarifProgresif: {
-      lapisan: [
-        { batasBawah: 0, batasAtas: 60000000, tarif: 0.05 },
-        { batasBawah: 60000000, batasAtas: 250000000, tarif: 0.15 },
-        { batasBawah: 250000000, batasAtas: 500000000, tarif: 0.25 },
-        { batasBawah: 500000000, batasAtas: 5000000000, tarif: 0.30 },
-        { batasBawah: 5000000000, batasAtas: null, tarif: 0.35 },
-      ],
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'UU No. 7 Tahun 2021',
-          pasalAtauLampiran: 'Pasal 17 ayat (1) huruf a',
-          fungsi: 'Tarif progresif PPh Orang Pribadi',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-    ptkp: {
-      nilai: {
-        'TK/0': 54000000,
-        'TK/1': 58500000,
-        'TK/2': 63000000,
-        'TK/3': 67500000,
-        'K/0': 58500000,
-        'K/1': 63000000,
-        'K/2': 67500000,
-        'K/3': 72000000,
-      },
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'UU No. 7 Tahun 2021',
-          pasalAtauLampiran: 'Pasal 7 ayat (1)',
-          fungsi: 'Besaran PTKP',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-  },
-  aturanKelayakan: {
-    pekerjaanBebas: {
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'PP No. 20 Tahun 2026',
-          pasalAtauLampiran: 'Pasal 56 ayat (3) huruf a jo ayat (4)',
-          fungsi: 'Larangan pekerjaan bebas memakai PPh Final',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-    ambangKonsolidasi: {
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'PP No. 20 Tahun 2026',
-          pasalAtauLampiran: 'Pasal 58 ayat (1) dan (3)',
-          fungsi: 'Penggabungan omzet keluarga & perseroan perorangan',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-    pilihanTarifUmum: {
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'PP No. 20 Tahun 2026',
-          pasalAtauLampiran: 'Pasal 57 ayat (4)',
-          fungsi: 'Pintu satu arah tarif umum',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-    administrasiNppn: {
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'PER-17/PJ/2015',
-          pasalAtauLampiran: 'Pasal 2 ayat (1)',
-          fungsi: 'Pemberitahuan NPPN 3 bulan pertama',
-          url: 'https://pajak.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-    ketentuanPeralihan: {
-      statusVerifikasi: 'TERVERIFIKASI',
-      dasarHukum: [
-        {
-          namaRegulasi: 'PP No. 20 Tahun 2026',
-          pasalAtauLampiran: 'Pasal II Ketentuan Peralihan',
-          fungsi: 'Ketentuan peralihan tahun pajak 2025-2026',
-          url: 'https://jdih.kemenkeu.go.id',
-          statusVerifikasi: 'TERVERIFIKASI',
-        },
-      ],
-    },
-  },
-  kelompokWilayah: {
-    kelompok1: { nama: '10 Ibukota Provinsi', deskripsi: 'Jakarta, Surabaya, Bandung, dll.' },
-    kelompok2: { nama: 'Ibukota Provinsi Lainnya', deskripsi: 'Ibukota provinsi lainnya' },
-    kelompok3: { nama: 'Daerah Lainnya', deskripsi: 'Kabupaten/kota non-ibukota' },
-  },
-  klu: [
-    {
-      kluKode: '74201',
-      nama: 'Aktivitas Desain Komunikasi Visual / Desain Grafis',
-      kategori: 'Jasa Kreatif',
-      pekerjaanBebas: true,
-      persenNorma: {
-        kelompok1: 0.5,
-        kelompok2: 0.5,
-        kelompok3: 0.475,
-      },
-      dasarHukum: [],
-    },
-  ],
-};
+/**
+ * Kasus uji saringan kelayakan. Setiap kasus mewakili satu keputusan hukum
+ * yang harus dapat dijelaskan pemiliknya di depan juri.
+ */
 
-const baseProfil: ProfilWajibPajak = {
+const dasar: ProfilWajibPajak = {
   tahunPajak: 2026,
-  kluKode: '74201',
+  kluKode: '47919',
   wilayah: 'kelompok1',
   statusPtkp: 'TK/0',
   bentukKegiatan: 'USAHA_DAGANG',
   statusPerpajakanPasangan: 'TIDAK_ADA_PASANGAN',
   punyaLebihDariSatuKegiatan: false,
-  omzetPribadiTahunPajak: 100000000,
-  omzetPribadiThnSebelumnya: 100000000,
+  omzetPribadiTahunPajak: 600_000_000,
+  biayaOperasionalRiil: 200_000_000,
+  omzetPribadiThnSebelumnya: 500_000_000,
   omzetPasanganThnSebelumnya: 0,
   omzetSeluruhPerseroanPeroranganThnSebelumnya: 0,
-  sudahMemberitahukanNppn: true,
+  sudahMemberitahukanNppn: false,
   pernahPilihTarifUmum: false,
   jugaPegawaiTetap: false,
+  pernahMelewatiAmbang: false
 };
 
-describe('Daftar 15 Kasus Uji Kelayakan & Mesin Regulasi PajakWajar', () => {
-  it('1. Pekerjaan bebas tidak mendapat PPh Final', () => {
-    const profil: ProfilWajibPajak = { ...baseProfil, bentukKegiatan: 'PEKERJAAN_BEBAS' };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('TIDAK_BOLEH');
-    expect(hasil.alasan[0]).toContain('pekerjaan bebas tidak diperbolehkan');
+function status(profil: ProfilWajibPajak, id: IdSkema): StatusKelayakan {
+  const hasil = periksaKelayakan(profil);
+  const skema = hasil.skema.find((item) => item.id === id);
+  if (!skema) throw new Error(`Skema ${id} tidak ditemukan`);
+  return skema.statusKelayakan;
+}
+
+describe('agregasi prioritas', () => {
+  it('satu TIDAK_BOLEH menggugurkan seluruh syarat lain', () => {
+    expect(
+      agregasiPrioritas([
+        { kode: 'A', status: 'BOLEH', alasan: '', dasarHukum: [] },
+        { kode: 'B', status: 'PERLU_DIPASTIKAN', alasan: '', dasarHukum: [] },
+        { kode: 'C', status: 'TIDAK_BOLEH', alasan: '', dasarHukum: [] }
+      ])
+    ).toBe('TIDAK_BOLEH');
   });
 
-  it('2. Usaha yang memenuhi syarat mendapat PPh Final', () => {
-    const profil: ProfilWajibPajak = { ...baseProfil, bentukKegiatan: 'USAHA_DAGANG' };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('BOLEH');
+  it('PERLU_DIPASTIKAN mengalahkan BOLEH', () => {
+    expect(
+      agregasiPrioritas([
+        { kode: 'A', status: 'BOLEH', alasan: '', dasarHukum: [] },
+        { kode: 'B', status: 'PERLU_DIPASTIKAN', alasan: '', dasarHukum: [] }
+      ])
+    ).toBe('PERLU_DIPASTIKAN');
   });
 
-  it('3. Omzet konsolidasi melewati ambang (Rp 5 M > Rp 4,8 M)', () => {
+  it('seluruh syarat BOLEH menghasilkan BOLEH', () => {
+    expect(agregasiPrioritas([{ kode: 'A', status: 'BOLEH', alasan: '', dasarHukum: [] }])).toBe(
+      'BOLEH'
+    );
+  });
+});
+
+describe('saringan pekerjaan bebas', () => {
+  it('kreator konten tidak mendapat PPh Final karena disebut Pasal 56 ayat (4) huruf b', () => {
     const profil: ProfilWajibPajak = {
-      ...baseProfil,
+      ...dasar,
+      kluKode: '90002',
+      bentukKegiatan: 'PEKERJAAN_BEBAS'
+    };
+    expect(status(profil, 'PPH_FINAL_05')).toBe('TIDAK_BOLEH');
+  });
+
+  it('usaha dagang yang memenuhi syarat mendapat PPh Final', () => {
+    expect(status(dasar, 'PPH_FINAL_05')).toBe('BOLEH');
+  });
+
+  it('profesi yang tidak disebut satu per satu menghasilkan PERLU_DIPASTIKAN, bukan vonis pasti', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      kluKode: '62010',
+      bentukKegiatan: 'PEKERJAAN_BEBAS'
+    };
+    expect(status(profil, 'PPH_FINAL_05')).toBe('PERLU_DIPASTIKAN');
+  });
+
+  it('pekerjaan bebas yang dijalankan sebagai usaha berpegawai menjadi PERLU_DIPASTIKAN', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      kluKode: '90002',
+      bentukKegiatan: 'USAHA_JASA'
+    };
+    expect(status(profil, 'PPH_FINAL_05')).toBe('PERLU_DIPASTIKAN');
+  });
+
+  it('bentuk kegiatan yang belum pasti tidak menghasilkan vonis pasti', () => {
+    expect(status({ ...dasar, bentukKegiatan: 'BELUM_PASTI' }, 'PPH_FINAL_05')).toBe(
+      'PERLU_DIPASTIKAN'
+    );
+  });
+
+  it('KLU yang belum dikenal tidak menghasilkan vonis pasti', () => {
+    const belumDikenal: ProfilWajibPajak = {
+      ...dasar,
+      kluKode: 'BELUM-ADA',
+      sudahMemberitahukanNppn: true
+    };
+    expect(status(belumDikenal, 'PPH_FINAL_05')).toBe('PERLU_DIPASTIKAN');
+    expect(status(belumDikenal, 'NPPN')).toBe('PERLU_DIPASTIKAN');
+  });
+});
+
+describe('saringan ambang peredaran bruto', () => {
+  it('omzet konsolidasi melewati ambang menutup PPh Final', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
       statusPerpajakanPasangan: 'PISAH_HARTA',
-      omzetPribadiThnSebelumnya: 3000000000,
-      omzetPasanganThnSebelumnya: 2000000000,
+      omzetPribadiThnSebelumnya: 3_000_000_000,
+      omzetPasanganThnSebelumnya: 2_000_000_000
     };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('TIDAK_BOLEH');
-    expect(hasil.alasan[0]).toContain('melebihi batas ambang PPh Final');
+    expect(hitungOmzetKonsolidasi(profil)).toBe(5_000_000_000);
+    expect(status(profil, 'PPH_FINAL_05')).toBe('TIDAK_BOLEH');
   });
 
-  it('4. Omzet konsolidasi tepat di ambang (Rp 4.800.000.000 inklusif)', () => {
+  it('omzet konsolidasi tepat di ambang masih berhak karena batasnya inklusif', () => {
     const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      omzetPribadiThnSebelumnya: 4800000000,
+      ...dasar,
+      statusPerpajakanPasangan: 'PISAH_HARTA',
+      omzetPribadiThnSebelumnya: 4_000_000_000,
+      omzetPasanganThnSebelumnya: 800_000_000
     };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('BOLEH');
+    expect(hitungOmzetKonsolidasi(profil)).toBe(4_800_000_000);
+    expect(status(profil, 'PPH_FINAL_05')).toBe('BOLEH');
   });
 
-  it('5. Omzet pribadi tidak dicampur dalam dasar hitung', () => {
+  it('agregat perseroan melewati ambang memerlukan pemeriksaan transisi 2026', () => {
     const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      omzetPribadiTahunPajak: 600000000,
-      omzetPribadiThnSebelumnya: 2000000000,
+      ...dasar,
+      omzetPribadiThnSebelumnya: 4_000_000_000,
+      omzetSeluruhPerseroanPeroranganThnSebelumnya: 1_000_000_000
     };
-    const hasil = auditPajakMandiri({ profil, kreditPajak: [] }, mockRegulasi);
-    const pphFinal = hasil.skema.find((s) => s.id === 'PPH_FINAL_05');
-    if (pphFinal && pphFinal.statusKalkulasi === 'TERSEDIA') {
-      expect(pphFinal.rincianKalkulasi.omzetPribadi).toBe(600000000);
-      expect(pphFinal.rincianKalkulasi.dasarPengenaan).toBe(100000000); // 600jt - 500jt
-      expect(pphFinal.pajakTerutang).toBe(500000); // 0.5% x 100jt
-    } else {
-      throw new Error('Kalkulasi PPh Final harus TERSEDIA');
+    expect(status(profil, 'PPH_FINAL_05')).toBe('PERLU_DIPASTIKAN');
+  });
+
+  it('omzet pasangan diabaikan bila pengguna belum menikah', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      omzetPasanganThnSebelumnya: 4_500_000_000
+    };
+    expect(hitungOmzetKonsolidasi(profil)).toBe(500_000_000);
+    expect(status(profil, 'PPH_FINAL_05')).toBe('BOLEH');
+  });
+
+  it('status pasangan tidak yakin hanya menimbulkan keraguan bila mengubah vonis', () => {
+    const mengubah: ProfilWajibPajak = {
+      ...dasar,
+      statusPerpajakanPasangan: 'TIDAK_YAKIN',
+      omzetPribadiThnSebelumnya: 4_000_000_000,
+      omzetPasanganThnSebelumnya: 1_500_000_000
+    };
+    expect(status(mengubah, 'PPH_FINAL_05')).toBe('PERLU_DIPASTIKAN');
+
+    const tidakMengubah: ProfilWajibPajak = {
+      ...dasar,
+      statusPerpajakanPasangan: 'TIDAK_YAKIN',
+      omzetPasanganThnSebelumnya: 100_000_000
+    };
+    expect(status(tidakMengubah, 'PPH_FINAL_05')).toBe('BOLEH');
+  });
+
+  it('pasangan yang melapor gabungan tetap digabungkan omzetnya', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      statusPerpajakanPasangan: 'GABUNG',
+      omzetPribadiThnSebelumnya: 3_000_000_000,
+      omzetPasanganThnSebelumnya: 2_000_000_000
+    };
+    expect(hitungOmzetKonsolidasi(profil)).toBe(5_000_000_000);
+    expect(status(profil, 'PPH_FINAL_05')).toBe('TIDAK_BOLEH');
+  });
+
+  it('pasangan yang berpisah menurut putusan hakim tidak digabungkan', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      statusPerpajakanPasangan: 'PISAH_PUTUSAN_HAKIM',
+      omzetPribadiThnSebelumnya: 3_000_000_000,
+      omzetPasanganThnSebelumnya: 2_000_000_000
+    };
+    expect(hitungOmzetKonsolidasi(profil)).toBe(3_000_000_000);
+    expect(status(profil, 'PPH_FINAL_05')).toBe('BOLEH');
+  });
+
+  it('omzet tahun berjalan tidak dipakai untuk uji ambang PPh Final', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      omzetPribadiTahunPajak: 9_000_000_000,
+      omzetPribadiThnSebelumnya: 100_000_000
+    };
+    expect(status(profil, 'PPH_FINAL_05')).toBe('BOLEH');
+  });
+});
+
+describe('saringan pintu satu arah', () => {
+  it('pernah memilih tarif umum menutup PPh Final', () => {
+    expect(status({ ...dasar, pernahPilihTarifUmum: true }, 'PPH_FINAL_05')).toBe('TIDAK_BOLEH');
+  });
+
+  it('tidak yakin soal tarif umum menghasilkan PERLU_DIPASTIKAN', () => {
+    expect(status({ ...dasar, pernahPilihTarifUmum: 'tidak_yakin' }, 'PPH_FINAL_05')).toBe(
+      'PERLU_DIPASTIKAN'
+    );
+  });
+
+  it('pekerjaan bebas ditambah pasangan tidak yakin tetap TIDAK_BOLEH', () => {
+    const profil: ProfilWajibPajak = {
+      ...dasar,
+      kluKode: '90002',
+      bentukKegiatan: 'PEKERJAAN_BEBAS',
+      statusPerpajakanPasangan: 'TIDAK_YAKIN',
+      omzetPribadiThnSebelumnya: 4_000_000_000,
+      omzetPasanganThnSebelumnya: 1_500_000_000
+    };
+    expect(status(profil, 'PPH_FINAL_05')).toBe('TIDAK_BOLEH');
+  });
+});
+
+describe('saringan NPPN', () => {
+  it('pemberitahuan Norma yang belum disampaikan menutup NPPN', () => {
+    expect(status(dasar, 'NPPN')).toBe('TIDAK_BOLEH');
+  });
+
+  it('pemberitahuan Norma tidak yakin menghasilkan PERLU_DIPASTIKAN', () => {
+    expect(status({ ...dasar, sudahMemberitahukanNppn: 'tidak_yakin' }, 'NPPN')).toBe(
+      'PERLU_DIPASTIKAN'
+    );
+  });
+
+  it('sudah memberitahukan Norma dan di bawah ambang menghasilkan BOLEH', () => {
+    expect(status({ ...dasar, sudahMemberitahukanNppn: true }, 'NPPN')).toBe('BOLEH');
+  });
+
+  it('ambang NPPN memakai omzet tahun berjalan dan bersifat eksklusif', () => {
+    const tepatDiAmbang: ProfilWajibPajak = {
+      ...dasar,
+      sudahMemberitahukanNppn: true,
+      omzetPribadiTahunPajak: 4_800_000_000
+    };
+    expect(status(tepatDiAmbang, 'NPPN')).toBe('TIDAK_BOLEH');
+
+    const sedikitDiBawah: ProfilWajibPajak = {
+      ...tepatDiAmbang,
+      omzetPribadiTahunPajak: 4_799_999_999
+    };
+    expect(status(sedikitDiBawah, 'NPPN')).toBe('BOLEH');
+  });
+});
+
+describe('tarif umum dan keluaran umum', () => {
+  it('tarif umum tetap ditampilkan dan selalu terbuka', () => {
+    const hasil = periksaKelayakan({ ...dasar, kluKode: '90002', bentukKegiatan: 'PEKERJAAN_BEBAS' });
+    expect(hasil.skema.map((skema) => skema.id)).toEqual(['PPH_FINAL_05', 'NPPN', 'TARIF_UMUM']);
+    expect(hasil.skema[2].statusKelayakan).toBe('BOLEH');
+  });
+
+  it('setiap skema membawa dasar hukum, tanpa kecuali', () => {
+    const hasil = periksaKelayakan(dasar);
+    for (const skema of hasil.skema) {
+      expect(skema.dasarHukum.length).toBeGreaterThan(0);
+      for (const dasarHukum of skema.dasarHukum) {
+        expect(dasarHukum.pasalAtauLampiran.length).toBeGreaterThan(0);
+        expect(dasarHukum.url).toMatch(/^https:\/\//);
+      }
     }
   });
 
-  it('6. LA.04-01 / AS.04-01 tidak yakin menghasilkan PERLU_DIPASTIKAN', () => {
+  it('omzet nol ditangani tanpa galat', () => {
     const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      sudahMemberitahukanNppn: 'tidak_yakin',
-    };
-    const hasil = evaluasiKelayakanNppn(profil, mockRegulasi);
-    expect(hasil.status).toBe('PERLU_DIPASTIKAN');
-  });
-
-  it('7. Pilihan tarif umum tidak yakin menghasilkan PERLU_DIPASTIKAN', () => {
-    const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      pernahPilihTarifUmum: 'tidak_yakin',
-    };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('PERLU_DIPASTIKAN');
-  });
-
-  it('8. Peringatan penghasilan campuran muncul di profil', () => {
-    const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      jugaPegawaiTetap: true,
-    };
-    expect(profil.jugaPegawaiTetap).toBe(true);
-  });
-
-  it('9. Tahun pajak 2025 memakai aturan yang didukung', () => {
-    const profil: ProfilWajibPajak = { ...baseProfil, tahunPajak: 2025 };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(['BOLEH', 'PERLU_DIPASTIKAN']).toContain(hasil.status);
-  });
-
-  it('10. Tahun pajak 2026 memakai aturan terbaru', () => {
-    const profil: ProfilWajibPajak = { ...baseProfil, tahunPajak: 2026 };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('BOLEH');
-  });
-
-  it('11. KLU / Bentuk kegiatan BELUM_PASTI menghasilkan status PERLU_DIPASTIKAN', () => {
-    const profil: ProfilWajibPajak = {
-      ...baseProfil,
-      bentukKegiatan: 'BELUM_PASTI',
-    };
-    const hasil = evaluasiKelayakanPphFinal(profil, mockRegulasi);
-    expect(hasil.status).toBe('PERLU_DIPASTIKAN');
-  });
-
-  it('12. Semua hasil evaluasi memiliki dasar hukum bersitasi lengkap', () => {
-    const hasilFinal = evaluasiKelayakanPphFinal(baseProfil, mockRegulasi);
-    const hasilNppn = evaluasiKelayakanNppn(baseProfil, mockRegulasi);
-    const hasilTarifUmum = evaluasiKelayakanTarifUmum(baseProfil, mockRegulasi);
-
-    expect(hasilFinal.dasarHukum.length).toBeGreaterThan(0);
-    expect(hasilNppn.dasarHukum.length).toBeGreaterThan(0);
-    expect(hasilTarifUmum.dasarHukum.length).toBeGreaterThan(0);
-  });
-
-  it('13. Omzet nol ditangani tanpa error dan menghasilkan pajak Rp 0', () => {
-    const profil: ProfilWajibPajak = {
-      ...baseProfil,
+      ...dasar,
+      sudahMemberitahukanNppn: true,
       omzetPribadiTahunPajak: 0,
-      biayaOperasionalRiil: 0,
+      omzetPribadiThnSebelumnya: 0,
+      biayaOperasionalRiil: 0
     };
-    const hasil = auditPajakMandiri({ profil, kreditPajak: [] }, mockRegulasi);
-    const pphFinal = hasil.skema.find((s) => s.id === 'PPH_FINAL_05');
-    if (pphFinal && pphFinal.statusKalkulasi === 'TERSEDIA') {
-      expect(pphFinal.pajakTerutang).toBe(0);
-    }
+    expect(status(profil, 'PPH_FINAL_05')).toBe('BOLEH');
+    expect(status(profil, 'NPPN')).toBe('BOLEH');
   });
 
-  it('14. Nilai negatif ditolak oleh schema Zod', () => {
-    const invalidInput = {
-      profil: {
-        ...baseProfil,
-        omzetPribadiTahunPajak: -500000,
-      },
-      kreditPajak: [],
-    };
-    const result = inputAuditPajakSchema.safeParse(invalidInput);
-    expect(result.success).toBe(false);
+  it('tahun pajak 2025 memunculkan peringatan ketentuan peralihan', () => {
+    const hasil = periksaKelayakan({ ...dasar, tahunPajak: 2025 });
+    expect(hasil.peringatan.some((teks) => teks.includes('2025'))).toBe(true);
   });
 
-  it('15. Tarif umum selalu berstatus BOLEH sebagai hak dasar pembukuan', () => {
-    const hasil = evaluasiKelayakanTarifUmum(baseProfil, mockRegulasi);
-    expect(hasil.status).toBe('BOLEH');
+  it('tahun pajak 2026 tidak memunculkan peringatan peralihan', () => {
+    const hasil = periksaKelayakan(dasar);
+    expect(hasil.peringatan.some((teks) => teks.includes('PP 55/2022'))).toBe(false);
+  });
+
+  it('penghasilan campuran dengan gaji memunculkan peringatan SPT gabungan', () => {
+    const hasil = periksaKelayakan({ ...dasar, jugaPegawaiTetap: true });
+    expect(hasil.peringatan.some((teks) => teks.includes('SPT Tahunan'))).toBe(true);
+  });
+
+  it('melewati ambang memunculkan peringatan akibat lanjutan tahun berikutnya', () => {
+    const hasil = periksaKelayakan({ ...dasar, omzetPribadiThnSebelumnya: 5_000_000_000 });
+    expect(hasil.peringatan.some((teks) => teks.includes('Tahun Pajak-Tahun Pajak berikutnya'))).toBe(
+      true
+    );
+  });
+
+  it('selalu mengarahkan verifikasi ke DJP', () => {
+    const hasil = periksaKelayakan(dasar);
+    expect(hasil.langkahTindakLanjut.some((teks) => teks.includes('Coretax'))).toBe(true);
   });
 });

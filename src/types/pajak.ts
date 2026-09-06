@@ -1,142 +1,116 @@
+/**
+ * Kontrak tipe bersama untuk frontend, mesin aturan, kalkulator, OCR, dan berkas PDF.
+ * Tipe `any` dilarang di seluruh berkas ini.
+ */
+
 export type TahunPajak = 2025 | 2026;
+
 export type KelompokWilayahKey = 'kelompok1' | 'kelompok2' | 'kelompok3';
+
 export type StatusPtkp = 'TK/0' | 'TK/1' | 'TK/2' | 'TK/3' | 'K/0' | 'K/1' | 'K/2' | 'K/3';
 
+export type JawabanKepatuhan = boolean | 'tidak_yakin';
+
 export type StatusPerpajakanPasangan =
+  | 'TIDAK_ADA_PASANGAN'
   | 'GABUNG'
   | 'PISAH_HARTA'
   | 'PISAH_KEWAJIBAN'
-  | 'TIDAK_YAKIN'
-  | 'TIDAK_ADA_PASANGAN';
+  /** Hidup berpisah berdasarkan putusan hakim, UU PPh Pasal 8 ayat (2) huruf a. */
+  | 'PISAH_PUTUSAN_HAKIM'
+  | 'TIDAK_YAKIN';
 
-export type BentukKegiatan =
-  | 'PEKERJAAN_BEBAS'
-  | 'USAHA_JASA'
-  | 'USAHA_DAGANG'
-  | 'BELUM_PASTI';
+export type BentukKegiatan = 'PEKERJAAN_BEBAS' | 'USAHA_JASA' | 'USAHA_DAGANG' | 'BELUM_PASTI';
 
 export type StatusVerifikasi = 'TERVERIFIKASI' | 'DALAM_REVIEW';
+
 export type OperatorAmbang = 'LT' | 'LTE';
 
+export type BasisTahun = 'TAHUN_PAJAK_BERJALAN' | 'TAHUN_PAJAK_SEBELUMNYA';
+
+export type IdSkema = 'PPH_FINAL_05' | 'NPPN' | 'TARIF_UMUM';
+
+export type StatusKelayakan = 'BOLEH' | 'TIDAK_BOLEH' | 'PERLU_DIPASTIKAN';
+
 export type StatusKalkulasi =
+  /** Seluruh parameter tersedia dan sudah dihitung. */
   | 'TERSEDIA'
+  /** Parameter wajib masih dalam review atau melebihi batas sistem. */
   | 'BELUM_TERSEDIA'
+  /** Skema tidak berhak dipakai, sehingga nominal tidak ditampilkan. */
   | 'TIDAK_RELEVAN';
 
-export interface DasarHukumDetail {
+export type DasarHukumDetail = {
   namaRegulasi: string;
   pasalAtauLampiran: string;
   fungsi: string;
   url: string;
   statusVerifikasi: StatusVerifikasi;
-}
+};
 
-export interface ParameterBerStatus<T> {
-  nilai: T;
-  statusVerifikasi: StatusVerifikasi;
-  dasarHukum: DasarHukumDetail[];
-}
+// ---------------------------------------------------------------------------
+// Masukan
+// ---------------------------------------------------------------------------
 
-export interface ParameterAmbang {
-  nilai: number;
-  operator: OperatorAmbang;
-  statusVerifikasi: StatusVerifikasi;
-  dasarHukum: DasarHukumDetail[];
-}
-
-export interface AturanPajak {
-  statusVerifikasi: StatusVerifikasi;
-  dasarHukum: DasarHukumDetail[];
-}
-
-export interface LapisanTarif {
-  batasBawah: number;
-  batasAtas: number | null;
-  tarif: number;
-}
-
-export interface ParameterTarifProgresif {
-  lapisan: LapisanTarif[];
-  statusVerifikasi: StatusVerifikasi;
-  dasarHukum: DasarHukumDetail[];
-}
-
-export interface ParameterPtkp {
-  nilai: Record<StatusPtkp, number>;
-  statusVerifikasi: StatusVerifikasi;
-  dasarHukum: DasarHukumDetail[];
-}
-
-export interface KluItem {
-  kluKode: string;
-  nama?: string;
-  kategori?: string;
-  pekerjaanBebas?: boolean;
-  persenNorma?: Record<KelompokWilayahKey, number>;
-  dasarHukum: DasarHukumDetail[];
-}
-
-export interface DatabaseRegulasi {
-  versiRegulasi: string;
-  statusDokumen: string;
-  tahunPajakDidukung: number[];
-  lingkupWajibPajak: string;
-  parameterPajak: {
-    pphFinal: {
-      tarif: ParameterBerStatus<number>;
-      ambangOmzet: ParameterAmbang;
-      pembebasanOmzetOp: ParameterBerStatus<number>;
-    };
-    nppn: {
-      ambangOmzet: ParameterAmbang;
-      batasPemberitahuanBulan: ParameterBerStatus<number>;
-    };
-    tarifProgresif: ParameterTarifProgresif;
-    ptkp: ParameterPtkp;
-  };
-  aturanKelayakan: {
-    pekerjaanBebas: AturanPajak;
-    ambangKonsolidasi: AturanPajak;
-    pilihanTarifUmum: AturanPajak;
-    administrasiNppn: AturanPajak;
-    ketentuanPeralihan: AturanPajak & { catatanReview?: string };
-  };
-  kelompokWilayah: Record<KelompokWilayahKey, { nama: string; deskripsi: string }>;
-  klu: KluItem[];
-}
-
-export interface ProfilWajibPajak {
+export type ProfilWajibPajak = {
   tahunPajak: TahunPajak;
   kluKode: string;
   wilayah: KelompokWilayahKey;
   statusPtkp: StatusPtkp;
+  /**
+   * Cara kegiatan dijalankan. Penjelasan PP 20/2026 Pasal 56 ayat (4)
+   * membedakan orang yang menjual keahliannya sendiri dari orang yang
+   * menjalankan usaha dan mempekerjakan orang lain.
+   */
   bentukKegiatan: BentukKegiatan;
   statusPerpajakanPasangan: StatusPerpajakanPasangan;
-  punyaLebihDariSatuKegiatan: boolean | 'tidak_yakin';
+  punyaLebihDariSatuKegiatan: JawabanKepatuhan;
 
-  // Tahun pajak berjalan
+  /** Tahun pajak berjalan — dasar KALKULASI dan uji ambang NPPN. */
   omzetPribadiTahunPajak: number;
+  /** Biaya usaha riil; wajib diisi agar Tarif Umum dapat dihitung. */
   biayaOperasionalRiil?: number;
 
-  // Tahun sebelumnya
+  /** Tahun pajak sebelumnya — dasar UJI AMBANG PPh Final (Pasal 58 ayat (1)). */
   omzetPribadiThnSebelumnya: number;
   omzetPasanganThnSebelumnya: number;
   omzetSeluruhPerseroanPeroranganThnSebelumnya: number;
 
-  sudahMemberitahukanNppn: boolean | 'tidak_yakin';
-  pernahPilihTarifUmum: boolean | 'tidak_yakin';
+  sudahMemberitahukanNppn: JawabanKepatuhan;
+  pernahPilihTarifUmum: JawabanKepatuhan;
   jugaPegawaiTetap: boolean;
-}
+  /** Neto gaji setahun dari bukti potong pegawai, sebelum pengurangan PTKP. */
+  penghasilanNetoPegawai?: number;
+  /** Riwayat ambang untuk tahun sebelum tahun pembanding; kosong berarti belum pasti. */
+  pernahMelewatiAmbang?: JawabanKepatuhan;
+  /**
+   * Menentukan apakah penggabungan penghasilan keluarga benar-benar punya isi.
+   * UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu
+   * kesatuan; bila pasangan tidak berpenghasilan, tidak ada yang perlu digabungkan
+   * dan PTKP kawin sudah memperhitungkan keluarga. Kosong berarti belum dijawab.
+   */
+  pasanganPunyaPenghasilan?: JawabanKepatuhan;
+};
 
-export interface KreditPajakItem {
-  jenis: string;
-  nominal: number;
-}
+export type KreditPajakItem = {
+  /** Nomor bukti potong; kosong bila pengguna belum menyalinnya. */
+  nomorBuktiPotong: string;
+  /** Nama pemberi penghasilan yang memotong. */
+  pemotong: string;
+  penghasilanBruto: number;
+  pphDipotong: number;
+  /** `MANUAL` bila diketik pengguna, `OCR` bila dibaca dari foto dengan persetujuan. */
+  sumber: 'MANUAL' | 'OCR';
+};
 
-export interface InputAuditPajak {
+export type InputAuditPajak = {
   profil: ProfilWajibPajak;
   kreditPajak: KreditPajakItem[];
-}
+};
+
+// ---------------------------------------------------------------------------
+// Rincian kalkulasi (discriminated union berdasarkan `skema`)
+// ---------------------------------------------------------------------------
 
 export type RincianPphFinal = {
   skema: 'PPH_FINAL_05';
@@ -144,6 +118,16 @@ export type RincianPphFinal = {
   batasPembebasan: number;
   dasarPengenaan: number;
   tarif: number;
+  pajakTerutang: number;
+};
+
+export type LapisanTerpakai = {
+  lapisan: number;
+  batasBawah: number;
+  batasAtas: number | null;
+  tarif: number;
+  bagianPkp: number;
+  pajakLapisan: number;
 };
 
 export type RincianNppn = {
@@ -151,9 +135,15 @@ export type RincianNppn = {
   omzetPribadi: number;
   persenNorma: number;
   penghasilanNeto: number;
+  penghasilanNetoUsaha: number;
+  penghasilanNetoPegawai: number;
   ptkp: number;
   pkp: number;
+  pajakSebelumKredit: number;
   kreditBupot: number;
+  pajakTerutang: number;
+  kelebihanKredit: number;
+  lapisanTerpakai: LapisanTerpakai[];
 };
 
 export type RincianTarifUmum = {
@@ -161,44 +151,80 @@ export type RincianTarifUmum = {
   omzetPribadi: number;
   biayaOperasional: number;
   penghasilanNeto: number;
+  penghasilanNetoUsaha: number;
+  penghasilanNetoPegawai: number;
   ptkp: number;
   pkp: number;
+  pajakSebelumKredit: number;
   kreditBupot: number;
+  pajakTerutang: number;
+  kelebihanKredit: number;
+  lapisanTerpakai: LapisanTerpakai[];
 };
 
-export type StatusKelayakan = 'BOLEH' | 'TIDAK_BOLEH' | 'PERLU_DIPASTIKAN';
+export type RincianKalkulasi = RincianPphFinal | RincianNppn | RincianTarifUmum;
 
-export type BaseHasilSkema = {
-  statusKelayakan: StatusKelayakan;
-  alasanKelayakan: string[];
+// ---------------------------------------------------------------------------
+// Hasil per skema
+// ---------------------------------------------------------------------------
+
+/** Satu syarat yang diuji mesin aturan, lengkap dengan rujukannya. */
+export type SyaratKelayakan = {
+  kode: string;
+  status: StatusKelayakan;
+  alasan: string;
   dasarHukum: DasarHukumDetail[];
 };
 
-export type HasilSkemaTersedia<T extends RincianPphFinal | RincianNppn | RincianTarifUmum> = BaseHasilSkema & {
+type KelayakanBersama = {
+  statusKelayakan: StatusKelayakan;
+  syarat: SyaratKelayakan[];
+  alasanKelayakan: string[];
+  dasarHukum: DasarHukumDetail[];
+  konsekuensiJangkaPanjang?: string;
+};
+
+/**
+ * Status kalkulasi dibentuk sebagai discriminated union agar nominal dan
+ * rincian mustahil muncul pada status yang melarangnya.
+ */
+type KalkulasiTersedia<TRincian extends RincianKalkulasi> = {
   statusKalkulasi: 'TERSEDIA';
   pajakTerutang: number;
-  rincianKalkulasi: T;
+  rincianKalkulasi: TRincian;
 };
 
-export type HasilSkemaTidakTersedia = BaseHasilSkema & {
+type KalkulasiTidakAda = {
   statusKalkulasi: 'BELUM_TERSEDIA' | 'TIDAK_RELEVAN';
-  alasanKalkulasi?: string;
-  // pajakTerutang dan rincianKalkulasi tidak boleh ada di sini
+  alasanKalkulasi: string;
 };
 
-export type HasilSkemaPphFinal = (BaseHasilSkema & { id: 'PPH_FINAL_05' }) &
-  (HasilSkemaTersedia<RincianPphFinal> | HasilSkemaTidakTersedia);
+type Kalkulasi<TRincian extends RincianKalkulasi> = KalkulasiTersedia<TRincian> | KalkulasiTidakAda;
 
-export type HasilSkemaNppn = (BaseHasilSkema & { id: 'NPPN' }) &
-  (HasilSkemaTersedia<RincianNppn> | HasilSkemaTidakTersedia);
+export type HasilSkemaPphFinal = KelayakanBersama &
+  Kalkulasi<RincianPphFinal> & { id: 'PPH_FINAL_05' };
 
-export type HasilSkemaTarifUmum = (BaseHasilSkema & { id: 'TARIF_UMUM' }) &
-  (HasilSkemaTersedia<RincianTarifUmum> | HasilSkemaTidakTersedia);
+export type HasilSkemaNppn = KelayakanBersama & Kalkulasi<RincianNppn> & { id: 'NPPN' };
+
+export type HasilSkemaTarifUmum = KelayakanBersama &
+  Kalkulasi<RincianTarifUmum> & { id: 'TARIF_UMUM' };
 
 export type HasilSkema = HasilSkemaPphFinal | HasilSkemaNppn | HasilSkemaTarifUmum;
 
-export interface HasilAuditPajakLengkap {
-  rekomendasiUtama?: string;
+export type HasilKelayakan = {
   skema: HasilSkema[];
-  peringatanTaxLeakage?: string[];
-}
+  peringatan: string[];
+  langkahTindakLanjut: string[];
+};
+
+export type HasilAuditPajak = {
+  versiRegulasi: string;
+  tanggalAudit: string;
+  profil: ProfilWajibPajak;
+  totalKreditBupot: number;
+  skema: HasilSkema[];
+  peringatan: string[];
+  langkahTindakLanjut: string[];
+  /** Skema termurah di antara yang berstatus BOLEH dan sudah terhitung. */
+  rekomendasiHemat?: { id: IdSkema; pajakTerutang: number };
+};

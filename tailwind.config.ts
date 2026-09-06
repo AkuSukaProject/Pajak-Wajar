@@ -5,22 +5,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: '#F4F7FB',
-        ink: '#172033',
-        stamp: '#9B3038',
-        verified: '#176B5B',
-        pending: '#8A6518',
-        margin: '#667085',
-        line: '#D9E1EC',
-        blue: '#2457C5'
+        paper: '#F4F6F8', ink: '#14202E', blue: '#17497D', stamp: '#A32E28',
+        pending: '#7A5C15', margin: '#5E6B7A', line: '#CBD3DC', white: '#FFFFFF'
       },
       fontFamily: {
-        display: ['Georgia', 'Cambria', 'serif'],
-        body: ['Arial', 'Helvetica', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'monospace']
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        body: ['var(--font-body)', 'Arial', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'monospace']
       },
       boxShadow: {
-        sheet: '0 18px 50px rgba(23, 32, 51, 0.10)'
+        sheet: '0 20px 55px rgba(20, 32, 46, 0.09)',
+        lift: '0 8px 24px rgba(20, 32, 46, 0.08)'
       }
     }
   },
