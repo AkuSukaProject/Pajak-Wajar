@@ -1,3 +1,5 @@
+> **Pembaruan implementasi 6 September 2026:** PH/MT dan panel investasi sudah diimplementasikan. Gunakan [hasil verifikasi terbaru](VERIFIKASI-PH-MT-INVESTASI.md); dokumen di bawah dipertahankan sebagai serah terima historis. Koreksi penting: pengecualian gaji satu pemberi kerja tidak berlaku pada PH/MT.
+
 # Perintah kerja lanjutan — batas 2 dan batas 3
 
 Ditulis 6 September 2026, 22.55 WIB, sebagai serah terima ke sesi berikutnya.

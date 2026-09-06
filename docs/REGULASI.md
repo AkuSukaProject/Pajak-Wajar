@@ -100,3 +100,8 @@ Fixture ke-22 KLU dikunci di `tests/schema.test.ts`, sehingga perubahan angka ta
 - [x] Persentase norma per KLU dicocokkan ke Lampiran I, baris per baris.
 - [x] 22 kegiatan KLU lampiran Norma dicocokkan ke KBLI 2020; padanan tidak dianggap selalu satu-ke-satu.
 - [ ] PP 55/2022 Pasal 60 dikutip dari salinan berlapis teks.
+
+
+## PH/MT dan penghasilan investasi — 6 September 2026
+
+Pembagian pajak PH/MT serta parameter bunga simpanan, transaksi saham bursa, dan dividen dalam negeri telah diverifikasi dari publikasi teks peraturan resmi DJP. Sumber, koreksi terhadap serah terima, hitungan tangan, dan batas penerapannya ada di [register verifikasi PH/MT dan investasi](VERIFIKASI-PH-MT-INVESTASI.md). Parameter baru beserta status verifikasi dan dasar hukumnya berada di `parameterPajak.investasi`; JSON Schema diperbarui bersama data.

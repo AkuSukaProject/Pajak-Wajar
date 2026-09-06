@@ -80,6 +80,13 @@ export type BasisAturan = {
   lingkupWajibPajak: 'ORANG_PRIBADI';
   kelompokWilayah: Record<KelompokWilayahKey, { nama: string; deskripsi: string }>;
   parameterPajak: {
+    investasi: {
+      tarifDeposito: Parameter<number>;
+      batasSimpananTanpaPotongan: Parameter<number>;
+      tarifPenjualanSaham: Parameter<number>;
+      tarifDividenDalamNegeri: Parameter<number>;
+      tahunInvestasiDividen: Parameter<number>;
+    };
     pphFinal: {
       tarif: Parameter<number>;
       ambangPeredaranBruto: Ambang;
