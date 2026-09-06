@@ -1,10 +1,11 @@
-import { hitungNppn, hitungPphFinal, hitungTarifUmum, totalKreditBupot } from '@/lib/calculator';
+import { bagiPajakKeluarga, hitungNppn, hitungPphFinal, hitungTarifUmum, totalKreditBupot } from '@/lib/calculator';
 import { periksaKelayakan } from '@/lib/eligibility';
 import { barisNormaPerKegiatan, kegiatanSudahDirinci, omzetSeluruhKegiatan } from '@/lib/kegiatan';
 import type { KelayakanSkema } from '@/lib/eligibility';
 import { basisAturan, cariKlu, persenNorma } from '@/lib/regulasi';
 import { inputAuditPajakSchema } from '@/lib/schemas';
 import { susunSaran } from '@/lib/saran';
+import { periksaInvestasi } from '@/lib/investasi';
 import type {
   HasilAuditPajak,
   HasilSkema,
@@ -79,18 +80,20 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   // kesatuan. Bila pasangan tidak berpenghasilan, tidak ada yang perlu digabungkan
   // dan PTKP kawin sudah memperhitungkan keluarga, sehingga perhitungan dapat lanjut.
   const gabung = statusPasangan === 'GABUNG';
+  const pisah = statusPasangan === 'PISAH_HARTA' || statusPasangan === 'PISAH_KEWAJIBAN';
   const pasanganTanpaPenghasilan = profil.pasanganPunyaPenghasilan === false;
   // UU PPh Pasal 8 ayat (1) mengecualikan gaji istri dari satu pemberi kerja
   // yang sudah dipotong PPh Pasal 21: penghasilan itu tidak digabungkan.
   const pasanganGajiSatuPemberiKerja = profil.pasanganHanyaGajiSatuPemberiKerja === true;
   const netoPasanganDigabung =
-    gabung &&
+    (gabung || pisah) &&
     profil.pasanganPunyaPenghasilan === true &&
-    profil.pasanganHanyaGajiSatuPemberiKerja === false &&
+    (pisah || profil.pasanganHanyaGajiSatuPemberiKerja === false) &&
     profil.penghasilanNetoPasangan !== undefined;
 
   const keluargaTerhitung =
-    gabung && (pasanganTanpaPenghasilan || pasanganGajiSatuPemberiKerja || netoPasanganDigabung);
+    (gabung && (pasanganTanpaPenghasilan || pasanganGajiSatuPemberiKerja || netoPasanganDigabung)) ||
+    (pisah && (pasanganTanpaPenghasilan || netoPasanganDigabung));
   const batasKeluarga = adaPasangan && !keluargaTerhitung;
 
   // PMK 101/PMK.010/2016 Pasal 1 huruf c menambah PTKP hanya ketika penghasilan
@@ -98,7 +101,7 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   const netoPasangan = netoPasanganDigabung ? profil.penghasilanNetoPasangan ?? 0 : 0;
   const ptkpDipakai =
     PARAMETER.ptkp.nilai[profil.statusPtkp] +
-    (netoPasanganDigabung ? PARAMETER.ptkp.tambahanIstriDigabung.nilai : 0);
+    ((netoPasanganDigabung || pisah) ? PARAMETER.ptkp.tambahanIstriDigabung.nilai : 0);
 
   // Tiap keadaan keluarga yang menahan perhitungan menjelaskan sebabnya sendiri;
   // tidak ada cabang yang berhenti tanpa alasan yang dapat ditindaklanjuti.
@@ -113,12 +116,19 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
             ? 'Jawab dulu apakah penghasilan pasangan hanya berupa gaji dari satu pemberi kerja yang sudah dipotong PPh Pasal 21. Keadaan itu tidak digabungkan, sedangkan penghasilan lain digabungkan.'
             : 'Isi penghasilan neto pasangan setahun agar dapat digabungkan. Neto tidak bisa diturunkan dari omzet, jadi angkanya perlu Anda ambil dari catatan atau bukti potong pasangan.'
       : statusPasangan === 'PISAH_HARTA' || statusPasangan === 'PISAH_KEWAJIBAN'
-        ? 'Pada pisah harta atau pisah kewajiban, pajak dihitung dari penghasilan neto gabungan lalu dibagi menurut perbandingan neto masing-masing. Neto pasangan tidak dapat diturunkan dari omzet, sehingga pembagian itu perlu diperiksa bersama petugas.'
+        ? 'Untuk pembagian menurut perbandingan neto PH/MT, pastikan penghasilan pasangan dan isi netonya sebelum PTKP. Gaji pasangan dari satu pemberi kerja tetap digabung. Masukkan hanya kredit pajak milik Anda.'
         : 'Cara Anda dan pasangan melapor pajak belum dipastikan. Tentukan dulu status pelaporan keluarga, karena penggabungan penghasilan dan pembagian pajaknya berbeda untuk tiap status.';
 
   const alasanBatas = profil.statusPtkp.startsWith('K/') && statusPasangan === 'TIDAK_ADA_PASANGAN'
     ? 'Status PTKP kawin belum sesuai dengan jawaban tidak ada pasangan. Periksa keadaan keluarga pada awal tahun pajak sebelum menghitung.'
-    : alasanKeluarga
+    : adaPasangan && !profil.statusPtkp.startsWith('K/')
+      ? 'Pelaporan keluarga memerlukan status PTKP kawin dan jumlah tanggungan yang sesuai.'
+      : (pisah || netoPasanganDigabung) && (
+        PARAMETER.ptkp.tambahanIstriDigabung.statusVerifikasi !== 'TERVERIFIKASI' ||
+        PARAMETER.ptkp.tambahanIstriDigabung.dasarHukum.some(d => d.statusVerifikasi !== 'TERVERIFIKASI') ||
+        (pisah && basisAturan.aturanKelayakan.penggabunganSuamiIstriPisah.dasarHukum.some(d => d.statusVerifikasi !== 'TERVERIFIKASI'))
+      ) ? 'Parameter atau dasar hukum perhitungan keluarga sedang diperiksa. Nominal ditahan sampai verifikasi selesai.'
+      : alasanKeluarga
     ?? (profil.jugaPegawaiTetap && netoPegawai === undefined
       ? 'Isi penghasilan neto dari bukti potong pegawai sebelum menghitung gabungan gaji dan usaha. PTKP hanya dikurangkan satu kali.'
       : undefined);
@@ -200,7 +210,7 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
         'Ada kegiatan yang persentase Normanya belum tersedia. Periksa kembali pilihan kegiatan tambahan Anda.'
     };
   } else {
-    const rincian = hitungNppn({
+    const hitungan = hitungNppn({
       omzetPribadi: profil.omzetPribadiTahunPajak,
       persenNorma: persenNorma(klu, profil.wilayah),
       kegiatan: barisKegiatan,
@@ -210,6 +220,7 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       penghasilanNetoPasangan: netoPasangan,
       lapisan: PARAMETER.tarifProgresif.lapisan
     });
+    const rincian = pisah ? bagiPajakKeluarga(hitungan, profil.peranDalamKeluarga ?? 'SUAMI') : hitungan;
     skemaNppn = {
       id: 'NPPN',
       ...bagianKelayakan(kelayakanNppn),
@@ -240,10 +251,10 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       alasanKalkulasi:
         'Isi dulu total biaya usaha setahun. Biaya yang dikosongkan tidak boleh dianggap Rp0 karena membuat pajaknya terlihat jauh lebih besar dari seharusnya.'
     };
-  } else if (profil.jugaPegawaiTetap && profil.biayaOperasionalRiil > omzetKegiatan) {
-    skemaTarifUmum = { id: 'TARIF_UMUM', ...bagianKelayakan(kelayakanTarifUmum), statusKalkulasi: 'BELUM_TERSEDIA', alasanKalkulasi: 'Biaya usaha melebihi omzet. Perlakuan rugi usaha terhadap penghasilan pegawai perlu diperiksa sebelum pajak gabungan dihitung.' };
+  } else if ((profil.jugaPegawaiTetap || netoPasangan > 0) && profil.biayaOperasionalRiil > omzetKegiatan) {
+    skemaTarifUmum = { id: 'TARIF_UMUM', ...bagianKelayakan(kelayakanTarifUmum), statusKalkulasi: 'BELUM_TERSEDIA', alasanKalkulasi: 'Biaya usaha melebihi omzet. Perlakuan rugi usaha terhadap penghasilan pegawai atau pasangan perlu diperiksa sebelum pajak gabungan dihitung.' };
   } else {
-    const rincian = hitungTarifUmum({
+    const hitungan = hitungTarifUmum({
       omzetPribadi: omzetKegiatan,
       biayaOperasional: profil.biayaOperasionalRiil,
       ptkp: ptkpDipakai,
@@ -252,6 +263,7 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
       penghasilanNetoPasangan: netoPasangan,
       lapisan: PARAMETER.tarifProgresif.lapisan
     });
+    const rincian = pisah ? bagiPajakKeluarga(hitungan, profil.peranDalamKeluarga ?? 'SUAMI') : hitungan;
     skemaTarifUmum = {
       id: 'TARIF_UMUM',
       ...bagianKelayakan(kelayakanTarifUmum),
@@ -261,6 +273,14 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
     };
   }
 
+  if (pisah || netoPasanganDigabung) {
+    const dasarKeluarga = pisah
+      ? basisAturan.aturanKelayakan.penggabunganSuamiIstriPisah.dasarHukum
+      : basisAturan.aturanKelayakan.penggabunganSuamiIstriGabung.dasarHukum;
+    for (const item of [skemaNppn, skemaTarifUmum]) {
+      item.dasarHukum = [...item.dasarHukum, ...dasarKeluarga, ...PARAMETER.ptkp.tambahanIstriDigabung.dasarHukum];
+    }
+  }
   const skema: HasilSkema[] = [skemaFinal, skemaNppn, skemaTarifUmum];
 
   const terhitung = skema.filter(
@@ -272,19 +292,20 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   // Jangan membandingkan sisa bayar dengan pajak bruto atau total gaji dengan usaha saja.
   // Dua skema sudah cukup untuk dibandingkan; yang menentukan kesetaraan angka adalah
   // tidak adanya kredit bupot dan penghasilan pegawai, bukan banyaknya skema terhitung.
-  const rekomendasiHemat = terhitung.length >= 2 && kreditBupot === 0 && !profil.jugaPegawaiTetap
+  const rekomendasiHemat = terhitung.length >= 2 && kreditBupot === 0 && !profil.jugaPegawaiTetap && !adaPasangan
     ? terhitung.reduce((termurah, kandidat) =>
         kandidat.pajakTerutang < termurah.pajakTerutang ? kandidat : termurah
       )
     : undefined;
 
   const hasil: HasilAuditPajak = {
+    investasi: (tervalidasi.data.penghasilanInvestasi ?? []).map(periksaInvestasi),
     versiRegulasi: basisAturan.versiRegulasi,
     tanggalAudit: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()),
     profil,
     totalKreditBupot: kreditBupot,
     skema,
-    peringatan: [...kelayakan.peringatan, ...(alasanBatas ? [alasanBatas] : []),
+    peringatan: [...kelayakan.peringatan, ...(pisah ? ['PH/MT: nominal menunjukkan bagian pajak Anda setelah pembagian pajak keluarga. Kredit yang dikurangkan hanya milik Anda; kredit pasangan dilaporkan pada SPT pasangan.'] : []), ...(alasanBatas ? [alasanBatas] : []),
       ...(skema.some((s) => s.statusKalkulasi === 'TERSEDIA' && s.rincianKalkulasi.skema !== 'PPH_FINAL_05' && s.rincianKalkulasi.kelebihanKredit > 0) ? ['Kredit pajak melebihi perkiraan pajak pada salah satu skema. Selisih ditampilkan untuk dicocokkan dalam SPT; bukan janji pengembalian pajak.'] : [])],
     langkahTindakLanjut: kelayakan.langkahTindakLanjut,
     rekomendasiHemat: rekomendasiHemat

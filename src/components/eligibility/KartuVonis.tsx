@@ -1,3 +1,4 @@
+import { HasilInvestasi } from '@/components/eligibility/HasilInvestasi';
 import type { ReactNode } from 'react';
 import { TombolUnduhKertasKerja } from '@/components/berkas/TombolUnduhKertasKerja';
 import { Istilah } from '@/components/ui/Istilah';
@@ -45,7 +46,7 @@ function Perhitungan({ skema }: { skema: HasilSkema }) {
   return (
     <div className="mt-5 border border-line bg-paper/70 px-4 py-4 text-sm">
       <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-margin">
-        {r.skema === 'PPH_FINAL_05' ? 'Pajak usaha setahun sebelum setoran' : 'Perkiraan sisa pajak setelah kredit'}
+        {r.skema === 'PPH_FINAL_05' ? 'Pajak usaha setahun sebelum setoran' : r.pembagianProporsional ? 'Perkiraan sisa bagian pajak Anda setelah kredit' : 'Perkiraan sisa pajak setelah kredit'}
       </p>
       <p className="mb-3 break-all font-display text-2xl font-semibold sm:text-3xl">{formatCurrency(r.pajakTerutang)}</p>
       {r.skema === 'PPH_FINAL_05' && <p className="mb-3 text-xs leading-5 text-margin">Belum dikurangi setoran atau potongan pajak final. Kredit nonfinal pada formulir tidak mengurangi angka ini.</p>}
@@ -110,9 +111,15 @@ function Perhitungan({ skema }: { skema: HasilSkema }) {
                   nilai={formatCurrency(lapis.pajakLapisan)}
                 />
               ))}
-              <BarisHitung kunci="Pajak sebelum kredit" nilai={formatCurrency(r.pajakSebelumKredit)} />
-              <BarisHitung kunci="Pajak yang sudah dipotong" nilai={`− ${formatCurrency(r.kreditBupot)}`} />
-              <BarisHitung kunci="Masih harus dibayar" nilai={formatCurrency(r.pajakTerutang)} tebal />
+              {r.pembagianProporsional && <>
+                <BarisHitung kunci="Pajak seluruh keluarga sebelum pembagian" nilai={formatCurrency(r.pembagianProporsional.pajakGabungan)} tebal />
+                <BarisHitung kunci="Neto Anda / neto gabungan" nilai={`${formatCurrency(r.pembagianProporsional.netoWajibPajak)} / ${formatCurrency(r.pembagianProporsional.netoGabungan)}`} />
+                <BarisHitung kunci="Porsi Anda" nilai={formatPersenNorma(r.pembagianProporsional.porsi * 100)} />
+                <BarisHitung kunci="Bagian pasangan sebelum kredit pasangan" nilai={formatCurrency(r.pembagianProporsional.bagianPasangan)} />
+              </>}
+              <BarisHitung kunci={r.pembagianProporsional ? 'Bagian pajak Anda sebelum kredit' : 'Pajak sebelum kredit'} nilai={formatCurrency(r.pajakSebelumKredit)} />
+              <BarisHitung kunci={r.pembagianProporsional ? 'Kredit pajak milik Anda' : 'Pajak yang sudah dipotong'} nilai={`− ${formatCurrency(r.kreditBupot)}`} />
+              <BarisHitung kunci={r.pembagianProporsional ? 'Sisa bagian pajak Anda' : 'Masih harus dibayar'} nilai={formatCurrency(r.pajakTerutang)} tebal />
             </>
           )}
         </div>
@@ -226,6 +233,8 @@ export function KartuVonis({ hasil }: { hasil: HasilAuditPajak }) {
           );
         })}
       </div>
+
+      <HasilInvestasi daftar={hasil.investasi ?? []} />
 
       {hasil.peringatan.length > 0 && (
         <div className="mt-5 space-y-2">

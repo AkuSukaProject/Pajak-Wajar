@@ -79,7 +79,8 @@
         "pphFinal",
         "nppn",
         "tarifProgresif",
-        "ptkp"
+        "ptkp",
+        "investasi"
       ],
       "properties": {
         "pphFinal": {
@@ -311,6 +312,127 @@
                 "nilai": {
                   "type": "integer",
                   "minimum": 0
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            }
+          }
+        },
+        "investasi": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tarifDeposito",
+            "batasSimpananTanpaPotongan",
+            "tarifPenjualanSaham",
+            "tarifDividenDalamNegeri",
+            "tahunInvestasiDividen"
+          ],
+          "properties": {
+            "tarifDeposito": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            },
+            "batasSimpananTanpaPotongan": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            },
+            "tarifPenjualanSaham": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            },
+            "tarifDividenDalamNegeri": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "statusVerifikasi": {
+                  "$ref": "#/$defs/statusVerifikasi"
+                },
+                "dasarHukum": {
+                  "$ref": "#/$defs/daftarDasarHukum"
+                }
+              }
+            },
+            "tahunInvestasiDividen": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nilai",
+                "statusVerifikasi",
+                "dasarHukum"
+              ],
+              "properties": {
+                "nilai": {
+                  "type": "integer",
+                  "minimum": 1
                 },
                 "statusVerifikasi": {
                   "$ref": "#/$defs/statusVerifikasi"

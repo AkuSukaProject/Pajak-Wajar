@@ -57,6 +57,7 @@ export const profilWajibPajakSchema = z.object({
   pasanganPunyaPenghasilan: jawabanKepatuhan.optional(),
   pasanganHanyaGajiSatuPemberiKerja: jawabanKepatuhan.optional(),
   penghasilanNetoPasangan: uang.optional(),
+  peranDalamKeluarga: z.enum(['SUAMI', 'ISTRI']).optional(),
   kegiatanTambahan: z
     .array(
       z.object({
@@ -126,15 +127,41 @@ export const kreditPajakItemSchema = z.object({
   sumber: z.enum(['MANUAL', 'OCR'])
 });
 
+const catatanInvestasi = {
+  id: z.string().min(1).max(80),
+  nama: z.string().trim().min(1, 'Isi nama bank, broker, atau pemberi dividen.').max(120),
+  pemilik: z.enum(['ANDA', 'PASANGAN']),
+  bruto: uang.optional(),
+  pajakDibayar: uang.optional(),
+  nomorBukti: z.string().trim().max(100).optional()
+};
+
+export const penghasilanInvestasiSchema = z.discriminatedUnion('jenis', [
+  z.object({ ...catatanInvestasi, jenis: z.literal('DEPOSITO'), simpananBiasa: jawabanKepatuhan, totalSimpanan: uang.optional(), tidakDipecah: jawabanKepatuhan }),
+  z.object({ ...catatanInvestasi, jenis: z.literal('SAHAM_BURSA'), sahamBursaIndonesiaNonPendiri: jawabanKepatuhan }),
+  z.object({ ...catatanInvestasi, jenis: z.literal('DIVIDEN_DN'), dividenResmiDalamNegeri: jawabanKepatuhan, reinvestasi: z.enum(['TIDAK', 'MEMENUHI', 'BELUM_PASTI']), jumlahReinvestasi: uang.optional() })
+]);
+
 export const inputAuditPajakSchema = z.object({
   profil: profilWajibPajakSchema,
-  kreditPajak: z.array(kreditPajakItemSchema).max(50, 'Maksimal 50 bukti potong per pemeriksaan.')
-}).superRefine(({ kreditPajak }, ctx) => {
+  kreditPajak: z.array(kreditPajakItemSchema).max(50, 'Maksimal 50 bukti potong per pemeriksaan.'),
+  penghasilanInvestasi: z.array(penghasilanInvestasiSchema).max(30, 'Maksimal 30 catatan investasi.').optional()
+}).superRefine(({ kreditPajak, penghasilanInvestasi }, ctx) => {
   const nomor = new Set<string>();
   kreditPajak.forEach((item, index) => {
     const kode = item.nomorBuktiPotong.replace(/\s/g, '').toUpperCase();
     if (kode && nomor.has(kode)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['kreditPajak', index, 'nomorBuktiPotong'], message: 'Bukti potong dengan nomor ini sudah ditambahkan.' });
     if (kode) nomor.add(kode);
+  });
+  const ids = new Set<string>();
+  const buktiFinal = new Set<string>();
+  (penghasilanInvestasi ?? []).forEach((item, index) => {
+    const kode = item.nomorBukti?.replace(/\s/g, '').toUpperCase();
+    if (ids.has(item.id)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['penghasilanInvestasi', index], message: 'Catatan investasi duplikat.' });
+    ids.add(item.id);
+    if (kode && (nomor.has(kode) || buktiFinal.has(kode))) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['penghasilanInvestasi', index, 'nomorBukti'], message: 'Bukti investasi sudah dicatat. Potongan final tidak boleh dicatat ulang sebagai kredit nonfinal.' });
+    if (kode) buktiFinal.add(kode);
+    if (item.jenis === 'DIVIDEN_DN' && item.reinvestasi === 'MEMENUHI' && item.bruto !== undefined && item.jumlahReinvestasi !== undefined && item.jumlahReinvestasi > item.bruto) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['penghasilanInvestasi', index, 'jumlahReinvestasi'], message: 'Bagian reinvestasi tidak boleh melebihi dividen bruto.' });
   });
 });
 

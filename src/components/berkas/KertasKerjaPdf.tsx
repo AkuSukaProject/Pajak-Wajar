@@ -1,6 +1,7 @@
 import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { formatCurrency, formatPersenNorma, formatTanggalIndonesia, formatTarif } from '@/lib/format';
 import { basisAturan, cariKlu } from '@/lib/regulasi';
+import { namaJenisInvestasi, labelKlasifikasiInvestasi } from '@/lib/label-investasi';
 import type { HasilAuditPajak, HasilSkema, IdSkema, StatusKelayakan } from '@/types/pajak';
 
 /**
@@ -173,10 +174,16 @@ function RincianSkema({ skema }: { skema: HasilSkema }) {
           nilai={formatCurrency(lapis.pajakLapisan)}
         />
       ))}
-      <Hitung kunci="Pajak sebelum kredit" nilai={formatCurrency(r.pajakSebelumKredit)} />
+      {r.pembagianProporsional && <>
+        <Hitung kunci="Pajak keluarga sebelum pembagian" nilai={formatCurrency(r.pembagianProporsional.pajakGabungan)} />
+        <Hitung kunci="Neto Anda / neto gabungan" nilai={`${formatCurrency(r.pembagianProporsional.netoWajibPajak)} / ${formatCurrency(r.pembagianProporsional.netoGabungan)}`} />
+        <Hitung kunci="Porsi Anda" nilai={formatPersenNorma(r.pembagianProporsional.porsi * 100)} />
+        <Hitung kunci="Bagian pasangan sebelum kredit pasangan" nilai={formatCurrency(r.pembagianProporsional.bagianPasangan)} />
+      </>}
+      <Hitung kunci={r.pembagianProporsional ? 'Bagian pajak Anda sebelum kredit' : 'Pajak sebelum kredit'} nilai={formatCurrency(r.pajakSebelumKredit)} />
       <Hitung kunci="Kredit bukti potong" nilai={`- ${formatCurrency(r.kreditBupot)}`} />
       <View style={s.hitungTotal}>
-        <Text>Sisa setelah kredit bukti potong</Text>
+        <Text>{r.pembagianProporsional ? 'Sisa bagian pajak Anda setelah kredit' : 'Sisa setelah kredit bukti potong'}</Text>
         <Text>{formatCurrency(r.pajakTerutang)}</Text>
       </View>
       {r.kelebihanKredit > 0 && <Text style={s.penafian}>Kredit melebihi perkiraan pajak sebesar {formatCurrency(r.kelebihanKredit)}. Cocokkan dalam SPT; bukan janji restitusi.</Text>}
@@ -266,7 +273,7 @@ export function KertasKerjaPdf({ hasil }: { hasil: HasilAuditPajak }) {
           {hasil.skema.map((skema) => <View key={skema.id} style={{ marginBottom: 9 }} wrap={false}>
             <Text style={{ fontFamily: 'Helvetica-Bold' }}>{namaSkema[skema.id]}</Text>
             <Text style={{ color: warnaStatus[skema.statusKelayakan], fontSize: 8 }}>{labelStatus[skema.statusKelayakan]}</Text>
-            <Text>{skema.statusKalkulasi === 'TERSEDIA' ? `${skema.id === 'PPH_FINAL_05' ? 'Pajak usaha sebelum setoran final' : 'Sisa setelah kredit'}: ${formatCurrency(skema.pajakTerutang)}` : 'Nominal belum ditampilkan. Lihat rincian skema.'}</Text>
+            <Text>{skema.statusKalkulasi === 'TERSEDIA' ? `${skema.id === 'PPH_FINAL_05' ? 'Pajak usaha sebelum setoran final' : skema.rincianKalkulasi.pembagianProporsional ? 'Sisa bagian pajak Anda setelah kredit' : 'Sisa setelah kredit'}: ${formatCurrency(skema.pajakTerutang)}` : 'Nominal belum ditampilkan. Lihat rincian skema.'}</Text>
           </View>)}
         </View>
 
@@ -337,6 +344,29 @@ export function KertasKerjaPdf({ hasil }: { hasil: HasilAuditPajak }) {
         </View>
         <Text style={{ marginBottom: 14 }}>{klu.pemetaanKbli2020.catatan}</Text>
         <Text style={s.penafian}>Daftar ini rujukan padanan kegiatan, bukan penetapan kode usaha Anda. Kode baru dapat memiliki cakupan berbeda dan tidak otomatis memperoleh persentase Norma yang sama. KBLI 2025 sudah diterbitkan; periksa versi kode yang digunakan pada layanan Anda.</Text>
+        <Text style={s.kaki} fixed render={({ pageNumber, totalPages }) => `PajakWajar / ${hasil.versiRegulasi} / Halaman ${pageNumber} dari ${totalPages}`} />
+      </Page>}
+
+      {(hasil.investasi ?? []).length > 0 && <Page size="A4" style={s.page}>
+        <Text style={s.judul}>Catatan pajak investasi</Text>
+        <Text style={s.penafian}>Terpisah dari omzet, neto Pasal 17, dan kredit pajak nonfinal. Pencocokan memakai catatan pengguna, bukan verifikasi pembayaran oleh DJP.</Text>
+        {hasil.investasi?.map(item => <View key={item.input.id} style={s.kartu} wrap={false}>
+          <Text style={{ fontFamily: 'Helvetica-Bold' }}>{item.input.nama} / {item.input.pemilik === 'ANDA' ? 'Anda' : 'Pasangan'}</Text>
+          <Text>{namaJenisInvestasi[item.input.jenis]}</Text>
+          {item.status === 'PERLU_DIPASTIKAN' ? <Text>Perlu dipastikan; nominal ditahan.</Text> : <>
+            <Text>{labelKlasifikasiInvestasi[item.klasifikasi]}</Text>
+            <Hitung kunci="Dasar pengenaan" nilai={formatCurrency(item.dasarPengenaan)} />
+            <Hitung kunci="Tarif" nilai={formatTarif(item.tarif)} />
+            <Hitung kunci="Bagian bukan objek" nilai={formatCurrency(item.bukanObjek)} />
+            <Hitung kunci="Perkiraan pajak / pemotongan" nilai={formatCurrency(item.pajakTerutang)} />
+            {item.pencocokan ? <>
+              <Hitung kunci={`Potongan / setoran (${item.input.nomorBukti})`} nilai={formatCurrency(item.pencocokan.dibayar)} />
+              <Hitung kunci="Selisih terhadap bukti (negatif: bukti lebih besar)" nilai={formatCurrency(item.pencocokan.selisih)} />
+            </> : <Text>Status pembayaran belum dipastikan. Lengkapi nominal dan referensi bukti.</Text>}
+          </>}
+          <Text style={s.sitasi}>{item.penjelasan}</Text>
+          {item.dasarHukum.map(d => <Link key={d.namaRegulasi + d.pasalAtauLampiran} src={d.url} style={s.sitasi}>{d.namaRegulasi} / {d.pasalAtauLampiran}</Link>)}
+        </View>)}
         <Text style={s.kaki} fixed render={({ pageNumber, totalPages }) => `PajakWajar / ${hasil.versiRegulasi} / Halaman ${pageNumber} dari ${totalPages}`} />
       </Page>}
 

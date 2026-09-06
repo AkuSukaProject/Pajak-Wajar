@@ -1,3 +1,5 @@
+import type { HasilInvestasi, PenghasilanInvestasi } from '@/types/investasi';
+
 /**
  * Kontrak tipe bersama untuk frontend, mesin aturan, kalkulator, OCR, dan berkas PDF.
  * Tipe `any` dilarang di seluruh berkas ini.
@@ -116,6 +118,8 @@ export type ProfilWajibPajak = {
    * harus datang dari pengguna.
    */
   penghasilanNetoPasangan?: number;
+  /** Menentukan pembulatan pembagian PH/MT secara konsisten untuk kedua SPT. */
+  peranDalamKeluarga?: 'SUAMI' | 'ISTRI';
   /**
    * Kegiatan selain kegiatan utama, bila `punyaLebihDariSatuKegiatan` bernilai
    * `true`. Kosong berarti pengguna belum merinci kegiatannya, sehingga Norma
@@ -138,6 +142,7 @@ export type KreditPajakItem = {
 export type InputAuditPajak = {
   profil: ProfilWajibPajak;
   kreditPajak: KreditPajakItem[];
+  penghasilanInvestasi?: PenghasilanInvestasi[];
 };
 
 // ---------------------------------------------------------------------------
@@ -162,6 +167,16 @@ export type LapisanTerpakai = {
   pajakLapisan: number;
 };
 
+export type PembagianProporsional = {
+  netoGabungan: number;
+  netoWajibPajak: number;
+  porsi: number;
+  pajakGabungan: number;
+  bagianWajibPajak: number;
+  /** Sisa pembagian agar jumlah kedua bagian tepat sama dengan pajak gabungan. */
+  bagianPasangan: number;
+};
+
 /** Satu baris perhitungan Norma: omzet kegiatan dikali persentasenya sendiri. */
 export type BarisKegiatanNorma = {
   kluKode: string;
@@ -172,6 +187,7 @@ export type BarisKegiatanNorma = {
 };
 
 export type RincianNppn = {
+  pembagianProporsional?: PembagianProporsional;
   skema: 'NPPN';
   omzetPribadi: number;
   /**
@@ -197,6 +213,7 @@ export type RincianNppn = {
 };
 
 export type RincianTarifUmum = {
+  pembagianProporsional?: PembagianProporsional;
   skema: 'TARIF_UMUM';
   omzetPribadi: number;
   biayaOperasional: number;
@@ -270,6 +287,7 @@ export type HasilKelayakan = {
 };
 
 export type HasilAuditPajak = {
+  investasi?: HasilInvestasi[];
   versiRegulasi: string;
   tanggalAudit: string;
   profil: ProfilWajibPajak;
