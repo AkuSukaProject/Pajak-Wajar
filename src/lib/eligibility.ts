@@ -1,3 +1,4 @@
+import { kegiatanSudahDirinci, omzetSeluruhKegiatan } from '@/lib/kegiatan';
 import { basisAturan, cariKlu, gabungDasarHukum } from '@/lib/regulasi';
 import type { AturanKelayakanEntri, EntriKlu } from '@/lib/regulasi';
 import type {
@@ -249,10 +250,15 @@ function saringPintuSatuArah(profil: ProfilWajibPajak): SyaratKelayakan {
 // Saringan NPPN
 // ---------------------------------------------------------------------------
 
-/** Ambang NPPN memakai peredaran bruto TAHUN PAJAK BERJALAN, kurang dari Rp4,8 miliar. */
+/**
+ * Ambang NPPN memakai peredaran bruto TAHUN PAJAK BERJALAN, kurang dari Rp4,8 miliar.
+ *
+ * Omzet dihitung dari seluruh kegiatan, bukan kegiatan utama saja. Memakai satu
+ * kegiatan akan membuat ambang dapat dihindari dengan memecah kegiatan.
+ */
 function saringAmbangNppn(profil: ProfilWajibPajak): SyaratKelayakan {
   const parameter = AMBANG.nppn.ambangPeredaranBruto;
-  const omzet = Math.max(0, profil.omzetPribadiTahunPajak);
+  const omzet = omzetSeluruhKegiatan(profil);
   const status: StatusKelayakan = memenuhiAmbangNppn(omzet) ? 'BOLEH' : 'TIDAK_BOLEH';
   return {
     kode: 'AMBANG_NPPN',
@@ -437,8 +443,17 @@ export function periksaKelayakan(profil: ProfilWajibPajak): HasilPemeriksaanKela
   }
 
   if (profil.punyaLebihDariSatuKegiatan !== false) {
+    // Pasal 56 ayat (3) huruf a mengecualikan penghasilan dari pekerjaan bebas,
+    // bukan orangnya. Vonis PPh Final atas kegiatan utama karena itu tidak
+    // otomatis berlaku untuk kegiatan lain milik Wajib Pajak yang sama.
     peringatan.push(
-      'Anda punya lebih dari satu jenis kegiatan atau belum yakin. Persentase Norma berbeda untuk tiap kegiatan, sehingga perkiraan Norma tidak dapat dihitung dari satu angka omzet gabungan.'
+      'Vonis tiap skema di halaman ini dinilai dari kegiatan utama yang Anda pilih. Pengecualian PPh Final melekat pada penghasilannya, bukan pada orangnya, sehingga kegiatan Anda yang lain perlu diperiksa tersendiri dan bisa saja berbeda hasilnya.'
+    );
+  }
+
+  if (profil.punyaLebihDariSatuKegiatan !== false && !kegiatanSudahDirinci(profil)) {
+    peringatan.push(
+      'Anda punya lebih dari satu jenis kegiatan atau belum yakin. Persentase Norma berbeda untuk tiap kegiatan, sehingga perkiraan Norma tidak dapat dihitung dari satu angka omzet gabungan. Rinci tiap kegiatan beserta omzetnya agar Norma dapat dihitung per kegiatan.'
     );
   }
 

@@ -135,7 +135,12 @@ function RincianSkema({ skema }: { skema: HasilSkema }) {
 
   const dasarNeto =
     r.skema === 'NPPN'
-      ? { label: `Norma ${formatPersenNorma(r.persenNorma)}`, nilai: formatCurrency(r.penghasilanNetoUsaha) }
+      ? {
+          label: r.rincianKegiatan
+            ? 'jumlah neto tiap kegiatan, PER-17/PJ/2015 Pasal 5'
+            : `Norma ${formatPersenNorma(r.persenNorma)}`,
+          nilai: formatCurrency(r.penghasilanNetoUsaha)
+        }
       : { label: 'Omzet dikurangi biaya usaha', nilai: formatCurrency(r.penghasilanNetoUsaha) };
 
   return (
@@ -144,6 +149,15 @@ function RincianSkema({ skema }: { skema: HasilSkema }) {
       {r.skema === 'TARIF_UMUM' && (
         <Hitung kunci="Biaya usaha" nilai={`- ${formatCurrency(r.biayaOperasional)}`} />
       )}
+      {r.skema === 'NPPN' && r.rincianKegiatan
+        ? r.rincianKegiatan.map((baris) => (
+            <Hitung
+              key={baris.kluKode}
+              kunci={`  ${baris.nama} (${baris.kluKode}) · ${formatCurrency(baris.omzet)} x Norma ${formatPersenNorma(baris.persenNorma)}`}
+              nilai={formatCurrency(baris.netoKegiatan)}
+            />
+          ))
+        : null}
       <Hitung kunci={`Penghasilan neto (${dasarNeto.label})`} nilai={dasarNeto.nilai} />
       {r.penghasilanNetoPegawai > 0 && <Hitung kunci="Neto pegawai sebelum PTKP" nilai={formatCurrency(r.penghasilanNetoPegawai)} />}
       <Hitung kunci="Total penghasilan neto" nilai={formatCurrency(r.penghasilanNeto)} />

@@ -26,7 +26,8 @@ import type {
 const KOLOM = {
   klu: 'kolom-klu',
   omzetTahunIni: 'kolom-omzet-tahun-ini',
-  netoPegawai: 'kolom-neto-pegawai'
+  netoPegawai: 'kolom-neto-pegawai',
+  kegiatanTambahan: 'kolom-kegiatan-tambahan'
 } as const;
 
 const profilAwal: ProfilWajibPajak = {
@@ -218,16 +219,18 @@ export function AlurKelayakan() {
     }
 
     if (nomor === 2) {
-      if (profil.omzetPribadiTahunPajak <= 0) {
+      // Omzet Rp0 sengaja tidak ditolak: tahun tanpa pemasukan adalah jawaban
+      // yang sah, dan hasilnya memang Rp0. Neto gaji yang belum diisi juga tidak
+      // menghalangi langkah berikutnya; orkestrator menahan nominalnya sendiri
+      // dengan alasan yang jelas, sehingga pengguna tidak perlu mengubah status
+      // kepegawaiannya hanya agar bisa melanjutkan.
+      const barisBelumLengkap = (profil.kegiatanTambahan ?? []).some(
+        (kegiatan) => (kegiatan.kluKode.length === 0) !== (kegiatan.omzet <= 0)
+      );
+      if (barisBelumLengkap) {
         daftar.push({
-          id: KOLOM.omzetTahunIni,
-          pesan: `Isi total uang masuk usaha Anda selama ${profil.tahunPajak}. Tanpa angka ini, tidak ada yang bisa dihitung.`
-        });
-      }
-      if (profil.jugaPegawaiTetap && profil.penghasilanNetoPegawai === undefined) {
-        daftar.push({
-          id: KOLOM.netoPegawai,
-          pesan: 'Anda menandai diri sebagai pegawai tetap, jadi isi penghasilan neto gaji setahun dari bukti potong A1 atau A2. Bila tidak punya, hapus centang pegawai tetap.'
+          id: KOLOM.kegiatanTambahan,
+          pesan: 'Ada kegiatan tambahan yang baru terisi sebagian. Lengkapi kegiatan dan uang masuknya, atau hapus barisnya.'
         });
       }
     }
@@ -523,6 +526,89 @@ export function AlurKelayakan() {
             <p className="-mt-4 text-xs leading-5 text-margin">
               Ini yang disebut <Istilah nama="peredaranBruto">peredaran bruto</Istilah> dalam bahasa aturan pajak.
             </p>
+
+            {profil.punyaLebihDariSatuKegiatan === true && (
+              <fieldset
+                id={KOLOM.kegiatanTambahan}
+                tabIndex={-1}
+                className={`border border-line p-4 outline-none ${kolomBergetar === KOLOM.kegiatanTambahan ? 'motion-shake' : ''} ${galatKolom[KOLOM.kegiatanTambahan] ? 'border-stamp' : ''}`}
+              >
+                <legend className="px-1 text-sm font-semibold">Kegiatan Anda yang lain</legend>
+                <p className="mb-4 text-xs leading-5 text-margin">
+                  Persentase <Istilah nama="norma">Norma</Istilah> berbeda untuk tiap kegiatan, jadi tiap kegiatan
+                  dihitung sendiri lalu dijumlahkan. Isi kegiatan selain yang sudah Anda pilih di langkah pekerjaan.
+                </p>
+
+                <div className="space-y-4">
+                  {(profil.kegiatanTambahan ?? []).map((kegiatan, urutan) => (
+                    <div key={urutan} className="border border-line bg-paper/60 p-3">
+                      <label className="block">
+                        <span className="mb-1 block text-xs font-semibold">Kegiatan {urutan + 2}</span>
+                        <select
+                          value={kegiatan.kluKode}
+                          onChange={(e) => {
+                            const daftar = [...(profil.kegiatanTambahan ?? [])];
+                            daftar[urutan] = { ...daftar[urutan], kluKode: e.target.value };
+                            ubah('kegiatanTambahan', daftar);
+                            bersihkanGalat(KOLOM.kegiatanTambahan);
+                          }}
+                          className="w-full border border-line bg-white p-3 text-sm outline-none focus:border-blue"
+                        >
+                          <option value="">— pilih kegiatan —</option>
+                          {pilihanKlu
+                            .filter((item) => item.kluKode === kegiatan.kluKode || (item.kluKode !== profil.kluKode && !(profil.kegiatanTambahan ?? []).some((lain, i) => i !== urutan && lain.kluKode === item.kluKode)))
+                            .map((item) => (
+                              <option key={item.kluKode} value={item.kluKode}>{item.nama}</option>
+                            ))}
+                        </select>
+                      </label>
+
+                      <div className="mt-3">
+                        <InputRupiah
+                          label={`Uang masuk kegiatan ini selama ${profil.tahunPajak}`}
+                          nilai={kegiatan.omzet}
+                          onChange={(nilai) => {
+                            const daftar = [...(profil.kegiatanTambahan ?? [])];
+                            daftar[urutan] = { ...daftar[urutan], omzet: nilai ?? 0 };
+                            ubah('kegiatanTambahan', daftar);
+                            bersihkanGalat(KOLOM.kegiatanTambahan);
+                          }}
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          ubah('kegiatanTambahan', (profil.kegiatanTambahan ?? []).filter((_, i) => i !== urutan));
+                          bersihkanGalat(KOLOM.kegiatanTambahan);
+                        }}
+                        className="mt-3 text-xs font-semibold text-stamp hover:underline"
+                      >
+                        Hapus kegiatan ini
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    ubah('kegiatanTambahan', [...(profil.kegiatanTambahan ?? []), { kluKode: '', omzet: 0 }]);
+                    bersihkanGalat(KOLOM.kegiatanTambahan);
+                  }}
+                  disabled={(profil.kegiatanTambahan ?? []).length >= 9}
+                  className="mt-4 border border-blue px-4 py-2.5 text-sm font-semibold text-blue hover:bg-blue/[0.06] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  + Tambah kegiatan
+                </button>
+
+                {galatKolom[KOLOM.kegiatanTambahan] && (
+                  <p role="alert" className="mt-3 border-l-2 border-stamp bg-red-50 px-3 py-2 text-xs font-semibold text-stamp">
+                    {galatKolom[KOLOM.kegiatanTambahan]}
+                  </p>
+                )}
+              </fieldset>
+            )}
 
             <InputRupiah
               label="Total biaya usaha selama setahun"
