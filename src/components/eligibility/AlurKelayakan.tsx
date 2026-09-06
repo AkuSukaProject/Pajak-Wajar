@@ -177,6 +177,10 @@ export function AlurKelayakan() {
   const ubah = <K extends keyof ProfilWajibPajak>(kunci: K, nilai: ProfilWajibPajak[K]) =>
     setProfil((lama) => ({ ...lama, [kunci]: nilai }));
 
+  /** Untuk jawaban yang harus berubah bersama agar tidak saling bertentangan. */
+  const ubahBanyak = (bagian: Partial<ProfilWajibPajak>) =>
+    setProfil((lama) => ({ ...lama, ...bagian }));
+
   const langkahValid = langkah !== 1 || Boolean(profil.kluKode);
 
   const lanjut = () => {
@@ -406,7 +410,7 @@ export function AlurKelayakan() {
               </span>
               <select
                 value={profil.statusPtkp}
-                onChange={(e) => { const nilai = e.target.value as StatusPtkp; ubah('statusPtkp', nilai); if (nilai.startsWith('K/') && profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN') ubah('statusPerpajakanPasangan', 'TIDAK_YAKIN'); }}
+                onChange={(e) => { const nilai = e.target.value as StatusPtkp; if (nilai.startsWith('K/') && profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN') { ubahBanyak({ statusPtkp: nilai, statusPerpajakanPasangan: 'TIDAK_YAKIN', pasanganPunyaPenghasilan: 'tidak_yakin' }); } else { ubah('statusPtkp', nilai); } }}
                 className="w-full border border-line bg-white p-3.5 outline-none focus:border-blue"
               >
                 {pilihanPtkp.map((pilihan) => (
@@ -477,7 +481,14 @@ export function AlurKelayakan() {
                       key={item.nilai}
                       className={`choice-control flex cursor-pointer items-start gap-3 border px-4 py-3 ${aktif ? 'border-blue bg-blue/[0.06]' : 'border-line hover:border-blue/60'}`}
                     >
-                      <input className="sr-only" type="radio" name="status-pasangan" checked={aktif} onChange={() => ubah('statusPerpajakanPasangan', item.nilai)} />
+                      <input className="sr-only" type="radio" name="status-pasangan" checked={aktif} onChange={() => ubahBanyak({
+                        statusPerpajakanPasangan: item.nilai,
+                        // Tanpa pasangan, jawaban penghasilan pasangan dan omzetnya ikut dikosongkan.
+                        pasanganPunyaPenghasilan: item.nilai === 'TIDAK_ADA_PASANGAN'
+                          ? undefined
+                          : profil.pasanganPunyaPenghasilan ?? 'tidak_yakin',
+                        omzetPasanganThnSebelumnya: item.nilai === 'TIDAK_ADA_PASANGAN' ? 0 : profil.omzetPasanganThnSebelumnya
+                      })} />
                       <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ${aktif ? 'border-blue bg-blue text-white' : 'border-line'}`} aria-hidden="true">
                         {aktif && <span className="h-2 w-2 rounded-full bg-white" />}
                       </span>
@@ -492,12 +503,35 @@ export function AlurKelayakan() {
             </fieldset>
 
             {profil.statusPerpajakanPasangan !== 'TIDAK_ADA_PASANGAN' && (
-              <InputRupiah
-                label={`Total uang masuk usaha pasangan selama ${profil.tahunPajak - 1}`}
-                nilai={profil.omzetPasanganThnSebelumnya}
-                onChange={(nilai) => ubah('omzetPasanganThnSebelumnya', nilai ?? 0)}
-                bantuan="Isi 0 jika pasangan tidak punya usaha."
-              />
+              <>
+                <fieldset>
+                  <legend className="text-lg font-semibold">Apakah pasangan Anda punya penghasilan sendiri?</legend>
+                  <p className="mb-4 mt-1 text-xs leading-5 text-margin">
+                    Termasuk gaji, usaha, maupun pekerjaan bebas. Bila pasangan tidak berpenghasilan, tidak ada
+                    penghasilan yang perlu digabungkan, sehingga perkiraan pajak Anda dapat langsung dihitung.
+                  </p>
+                  <PilihanTiga
+                    nama="penghasilan-pasangan"
+                    nilai={profil.pasanganPunyaPenghasilan ?? 'tidak_yakin'}
+                    onChange={(nilai) => ubahBanyak({
+                      pasanganPunyaPenghasilan: nilai,
+                      // Menjawab "tidak punya" sekaligus menyisakan omzet pasangan akan ditolak validasi.
+                      omzetPasanganThnSebelumnya: nilai === false ? 0 : profil.omzetPasanganThnSebelumnya
+                    })}
+                    labelYa="Punya"
+                    labelTidak="Tidak punya"
+                  />
+                </fieldset>
+
+                {profil.pasanganPunyaPenghasilan !== false && (
+                  <InputRupiah
+                    label={`Total uang masuk usaha pasangan selama ${profil.tahunPajak - 1}`}
+                    nilai={profil.omzetPasanganThnSebelumnya}
+                    onChange={(nilai) => ubah('omzetPasanganThnSebelumnya', nilai ?? 0)}
+                    bantuan="Isi 0 jika pasangan berpenghasilan tetapi tidak punya usaha, misalnya hanya menerima gaji."
+                  />
+                )}
+              </>
             )}
 
             <InputRupiah

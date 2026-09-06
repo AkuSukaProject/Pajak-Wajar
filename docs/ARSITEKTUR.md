@@ -59,6 +59,8 @@ Omzet konsolidasi **tidak pernah** menjadi dasar perhitungan, dan pembebasan Rp5
 
 Kalkulasi diblokir bila: kelayakan bukan `BOLEH`; pengguna punya lebih dari satu kegiatan (NPPN, karena satu persentase norma tidak boleh dikalikan ke omzet gabungan); biaya usaha belum diisi (tarif umum, karena `undefined` tidak boleh dianggap Rp0); atau parameter yang dibutuhkan masih `DALAM_REVIEW`.
 
+Keadaan keluarga diperlakukan terpisah. UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu kesatuan, sehingga perhitungan ditahan selama neto pasangan belum diketahui. Pengecualiannya satu: pelaporan **gabung** dengan pasangan yang **tidak berpenghasilan**, karena tidak ada yang perlu digabungkan dan PTKP kawin sudah memperhitungkan keluarga — hasilnya identik dengan profil tanpa penggabungan pada PTKP yang sama. Pisah harta dan pisah kewajiban tetap ditahan walau pasangan tidak berpenghasilan, sebab pembagian pajaknya mengikuti perbandingan neto masing-masing. Tiap keadaan yang ditahan wajib menyebut alasannya sendiri; tidak ada cabang yang berhenti tanpa langkah yang dapat ditindaklanjuti.
+
 ## Privasi
 
 Profil, omzet, dan seluruh perhitungan hidup di state peramban. Tidak ada basis data, tidak ada penyimpanan sesi, dan kertas kerja PDF dirakit di perangkat pengguna.

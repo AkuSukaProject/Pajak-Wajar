@@ -53,7 +53,27 @@ export const profilWajibPajakSchema = z.object({
   pernahPilihTarifUmum: jawabanKepatuhan,
   jugaPegawaiTetap: z.boolean(),
   penghasilanNetoPegawai: uang.optional(),
-  pernahMelewatiAmbang: jawabanKepatuhan.optional()
+  pernahMelewatiAmbang: jawabanKepatuhan.optional(),
+  pasanganPunyaPenghasilan: jawabanKepatuhan.optional()
+}).superRefine((profil, ctx) => {
+  // Menjawab "tidak punya" sekaligus mengisi omzet pasangan membuat uji ambang
+  // Pasal 58 dan perhitungan keluarga memakai dua premis yang bertentangan.
+  if (profil.pasanganPunyaPenghasilan === false && profil.omzetPasanganThnSebelumnya > 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['omzetPasanganThnSebelumnya'],
+      message:
+        'Anda menjawab pasangan tidak punya penghasilan, tetapi omzet pasangan masih terisi. Kosongkan omzetnya, atau ubah jawaban menjadi pasangan punya penghasilan.'
+    });
+  }
+  // Tidak ada pasangan berarti tidak ada pertanyaan penghasilan pasangan.
+  if (profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN' && profil.pasanganPunyaPenghasilan !== undefined) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['pasanganPunyaPenghasilan'],
+      message: 'Jawaban penghasilan pasangan tidak berlaku bila Anda menjawab tidak punya pasangan.'
+    });
+  }
 });
 
 /**

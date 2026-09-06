@@ -68,16 +68,34 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
   const klu = cariKlu(profil.kluKode);
   const kreditBupot = totalKreditBupot(kreditPajak);
   const netoPegawai = profil.jugaPegawaiTetap ? profil.penghasilanNetoPegawai : 0;
-  const batasKeluarga = profil.statusPerpajakanPasangan !== 'TIDAK_ADA_PASANGAN' &&
-    profil.statusPerpajakanPasangan !== 'PISAH_PUTUSAN_HAKIM';
-  // Neto pasangan dan pembagian pajak PH/MT tidak dapat diturunkan dari omzet.
-  const alasanBatas = profil.statusPtkp.startsWith('K/') && profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN'
+  const statusPasangan = profil.statusPerpajakanPasangan;
+  const adaPasangan = statusPasangan !== 'TIDAK_ADA_PASANGAN' && statusPasangan !== 'PISAH_PUTUSAN_HAKIM';
+  // UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu
+  // kesatuan. Bila pasangan tidak berpenghasilan, tidak ada yang perlu digabungkan
+  // dan PTKP kawin sudah memperhitungkan keluarga, sehingga perhitungan dapat lanjut.
+  const pasanganTanpaPenghasilan = profil.pasanganPunyaPenghasilan === false;
+  const batasKeluarga = adaPasangan && !(statusPasangan === 'GABUNG' && pasanganTanpaPenghasilan);
+
+  // Tiap keadaan keluarga yang menahan perhitungan menjelaskan sebabnya sendiri;
+  // tidak ada cabang yang berhenti tanpa alasan yang dapat ditindaklanjuti.
+  const alasanKeluarga = !batasKeluarga
+    ? undefined
+    : statusPasangan === 'GABUNG'
+      ? profil.pasanganPunyaPenghasilan === undefined
+        ? 'Jawab dulu apakah pasangan Anda punya penghasilan sendiri pada langkah keadaan keluarga. Tanpa jawaban itu, penggabungan penghasilan suami istri belum dapat dipastikan.'
+        : profil.pasanganPunyaPenghasilan === 'tidak_yakin'
+          ? 'Anda belum yakin apakah pasangan punya penghasilan sendiri. Periksa bukti potong atau catatan usaha pasangan, lalu perbarui jawaban agar perhitungan dapat dilanjutkan.'
+          : 'Perhitungan pajak keluarga belum tersedia. Neto pasangan, status penggabungan penghasilan, PTKP keluarga, dan pembagian pajak perlu diperiksa bersama; omzet pasangan saja tidak cukup.'
+      : statusPasangan === 'PISAH_HARTA' || statusPasangan === 'PISAH_KEWAJIBAN'
+        ? 'Pada pisah harta atau pisah kewajiban, pajak dihitung dari penghasilan neto gabungan lalu dibagi menurut perbandingan neto masing-masing. Neto pasangan tidak dapat diturunkan dari omzet, sehingga pembagian itu perlu diperiksa bersama petugas.'
+        : 'Cara Anda dan pasangan melapor pajak belum dipastikan. Tentukan dulu status pelaporan keluarga, karena penggabungan penghasilan dan pembagian pajaknya berbeda untuk tiap status.';
+
+  const alasanBatas = profil.statusPtkp.startsWith('K/') && statusPasangan === 'TIDAK_ADA_PASANGAN'
     ? 'Status PTKP kawin belum sesuai dengan jawaban tidak ada pasangan. Periksa keadaan keluarga pada awal tahun pajak sebelum menghitung.'
-    : batasKeluarga
-    ? 'Perhitungan pajak keluarga belum tersedia. Neto pasangan, status penggabungan penghasilan, PTKP keluarga, dan pembagian pajak perlu diperiksa bersama; omzet pasangan saja tidak cukup.'
-    : profil.jugaPegawaiTetap && netoPegawai === undefined
+    : alasanKeluarga
+    ?? (profil.jugaPegawaiTetap && netoPegawai === undefined
       ? 'Isi penghasilan neto dari bukti potong pegawai sebelum menghitung gabungan gaji dan usaha. PTKP hanya dikurangkan satu kali.'
-      : undefined;
+      : undefined);
 
   // ----- PPh Final 0,5% -----
   const kelayakanFinal = kelayakanDari(kelayakan.skema, 'PPH_FINAL_05');

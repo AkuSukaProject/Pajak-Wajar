@@ -83,6 +83,13 @@ export type ProfilWajibPajak = {
   penghasilanNetoPegawai?: number;
   /** Riwayat ambang untuk tahun sebelum tahun pembanding; kosong berarti belum pasti. */
   pernahMelewatiAmbang?: JawabanKepatuhan;
+  /**
+   * Menentukan apakah penggabungan penghasilan keluarga benar-benar punya isi.
+   * UU PPh Pasal 8 ayat (1) menggabungkan penghasilan istri ke suami sebagai satu
+   * kesatuan; bila pasangan tidak berpenghasilan, tidak ada yang perlu digabungkan
+   * dan PTKP kawin sudah memperhitungkan keluarga. Kosong berarti belum dijawab.
+   */
+  pasanganPunyaPenghasilan?: JawabanKepatuhan;
 };
 
 export type KreditPajakItem = {

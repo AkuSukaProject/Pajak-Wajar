@@ -32,7 +32,12 @@ export function susunSaran(hasil: HasilAuditPajak): string[] {
   if (hasil.profil.jugaPegawaiTetap && hasil.profil.penghasilanNetoPegawai === undefined) {
     saran.push('Salin penghasilan neto gaji sebelum PTKP dari bukti potong pegawai, lalu perbarui jawaban agar gabungan gaji dan usaha dapat dihitung.');
   }
-  if (!['TIDAK_ADA_PASANGAN', 'PISAH_PUTUSAN_HAKIM'].includes(hasil.profil.statusPerpajakanPasangan)) {
+  // Tidak relevan bila pasangan memang tidak berpenghasilan dan pelaporannya gabung:
+  // tidak ada neto pasangan yang perlu disiapkan maupun pajak yang perlu dibagi.
+  const adaPasangan = !['TIDAK_ADA_PASANGAN', 'PISAH_PUTUSAN_HAKIM'].includes(hasil.profil.statusPerpajakanPasangan);
+  const gabungTanpaPenghasilanPasangan =
+    hasil.profil.statusPerpajakanPasangan === 'GABUNG' && hasil.profil.pasanganPunyaPenghasilan === false;
+  if (adaPasangan && !gabungTanpaPenghasilanPasangan) {
     saran.push('Siapkan data penghasilan neto pasangan dan status pelaporan keluarga. Bawa ringkasan ini ke KPP untuk memeriksa penggabungan penghasilan atau pembagian pajak keluarga.');
   }
   if (hasil.totalKreditBupot > 0) {
