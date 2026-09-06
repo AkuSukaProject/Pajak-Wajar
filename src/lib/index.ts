@@ -232,7 +232,9 @@ export function auditPajakMandiri(input: InputAuditPajak): HasilAuditPajak {
 
   // Final adalah pajak usaha sebelum setoran, sementara skema umum dikurangi kredit.
   // Jangan membandingkan sisa bayar dengan pajak bruto atau total gaji dengan usaha saja.
-  const rekomendasiHemat = terhitung.length === skema.length && kreditBupot === 0 && !profil.jugaPegawaiTetap
+  // Dua skema sudah cukup untuk dibandingkan; yang menentukan kesetaraan angka adalah
+  // tidak adanya kredit bupot dan penghasilan pegawai, bukan banyaknya skema terhitung.
+  const rekomendasiHemat = terhitung.length >= 2 && kreditBupot === 0 && !profil.jugaPegawaiTetap
     ? terhitung.reduce((termurah, kandidat) =>
         kandidat.pajakTerutang < termurah.pajakTerutang ? kandidat : termurah
       )

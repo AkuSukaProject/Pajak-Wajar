@@ -15,7 +15,17 @@ export function susunSaran(hasil: HasilAuditPajak): string[] {
   const umum = hasil.skema.find(s => s.id === 'TARIF_UMUM');
 
   if (hasil.rekomendasiHemat) {
-    saran.push(`Pertimbangkan ${nama[hasil.rekomendasiHemat.id]}: dari ketiga skema yang boleh dipakai dan sudah dihitung, perkiraannya paling rendah (${formatCurrency(hasil.rekomendasiHemat.pajakTerutang)}). Pastikan persyaratan pencatatan dan riwayat pilihan pajak Anda sesuai; angka terendah bukan satu-satunya pertimbangan.`);
+    const termahal = terhitung.reduce((tertinggi, kandidat) =>
+      kandidat.statusKalkulasi === 'TERSEDIA' && tertinggi.statusKalkulasi === 'TERSEDIA' &&
+      kandidat.pajakTerutang > tertinggi.pajakTerutang ? kandidat : tertinggi
+    );
+    const selisihTerjauh = termahal.statusKalkulasi === 'TERSEDIA'
+      ? termahal.pajakTerutang - hasil.rekomendasiHemat.pajakTerutang
+      : 0;
+    const pembanding = selisihTerjauh > 0
+      ? ` Itu ${formatCurrency(selisihTerjauh)} lebih rendah daripada ${nama[termahal.id]}, yang perkiraannya paling tinggi di antara yang terhitung.`
+      : '';
+    saran.push(`Dari ${terhitung.length} skema yang boleh Anda pakai dan sudah dihitung, ${nama[hasil.rekomendasiHemat.id]} menghasilkan perkiraan pajak paling rendah (${formatCurrency(hasil.rekomendasiHemat.pajakTerutang)}).${pembanding} Angka terendah bukan satu-satunya pertimbangan: pastikan syarat pencatatan dan riwayat pilihan pajak Anda sesuai.`);
   } else if (nppn?.statusKalkulasi === 'TERSEDIA' && umum?.statusKalkulasi === 'TERSEDIA') {
     const selisih = umum.rincianKalkulasi.pajakSebelumKredit - nppn.rincianKalkulasi.pajakSebelumKredit;
     if (selisih === 0) {
