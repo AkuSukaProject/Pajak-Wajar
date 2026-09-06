@@ -92,6 +92,28 @@ const pilihanPasangan: Array<{ nilai: StatusPerpajakanPasangan; judul: string; k
   { nilai: 'TIDAK_YAKIN', judul: 'Tidak yakin', keterangan: 'Kami akan menandai bagian yang perlu dipastikan.' }
 ];
 
+/**
+ * Jawaban status pasangan yang masih mungkin setelah keadaan keluarga diketahui.
+ *
+ * Keadaan keluarga sudah ditanyakan lebih dulu, jadi menawarkan "Saya belum
+ * menikah" kepada orang ber-PTKP kawin — atau sebaliknya — hanya mengundang
+ * jawaban yang bertentangan. Berpisah menurut putusan hakim tetap tersedia pada
+ * keduanya karena itu satu-satunya keadaan yang membatalkan penggabungan omzet.
+ */
+/**
+ * Keadaan berpasangan yang omzetnya tidak pernah digabungkan, sehingga
+ * pertanyaan lanjutan tentang penghasilan pasangan tidak relevan.
+ */
+function tanpaPenggabungan(status: StatusPerpajakanPasangan): boolean {
+  return status === 'TIDAK_ADA_PASANGAN' || status === 'PISAH_PUTUSAN_HAKIM';
+}
+
+function pasanganMungkin(statusPtkp: StatusPtkp): StatusPerpajakanPasangan[] {
+  return statusPtkp.startsWith('TK/')
+    ? ['TIDAK_ADA_PASANGAN', 'PISAH_PUTUSAN_HAKIM']
+    : ['GABUNG', 'PISAH_HARTA', 'PISAH_KEWAJIBAN', 'PISAH_PUTUSAN_HAKIM', 'TIDAK_YAKIN'];
+}
+
 const judulLangkah = [
   'Tahun penghasilan',
   'Pekerjaan utama',
@@ -497,7 +519,29 @@ export function AlurKelayakan() {
               </span>
               <select
                 value={profil.statusPtkp}
-                onChange={(e) => { const nilai = e.target.value as StatusPtkp; if (nilai.startsWith('K/') && profil.statusPerpajakanPasangan === 'TIDAK_ADA_PASANGAN') { ubahBanyak({ statusPtkp: nilai, statusPerpajakanPasangan: 'TIDAK_YAKIN', pasanganPunyaPenghasilan: 'tidak_yakin' }); } else { ubah('statusPtkp', nilai); } }}
+                onChange={(e) => {
+                  const nilai = e.target.value as StatusPtkp;
+                  // Keadaan keluarga menentukan jawaban mana yang mungkin pada
+                  // langkah berikutnya. Jawaban lama yang menjadi mustahil
+                  // diganti di sini, supaya pengguna tidak pernah membawa dua
+                  // jawaban yang saling bertentangan ke langkah berikutnya.
+                  if (pasanganMungkin(nilai).includes(profil.statusPerpajakanPasangan)) {
+                    ubah('statusPtkp', nilai);
+                  } else if (nilai.startsWith('TK/')) {
+                    ubahBanyak({
+                      statusPtkp: nilai,
+                      statusPerpajakanPasangan: 'TIDAK_ADA_PASANGAN',
+                      pasanganPunyaPenghasilan: undefined,
+                      omzetPasanganThnSebelumnya: 0
+                    });
+                  } else {
+                    ubahBanyak({
+                      statusPtkp: nilai,
+                      statusPerpajakanPasangan: 'TIDAK_YAKIN',
+                      pasanganPunyaPenghasilan: 'tidak_yakin'
+                    });
+                  }
+                }}
                 className="w-full border border-line bg-white p-3.5 outline-none focus:border-blue"
               >
                 {pilihanPtkp.map((pilihan) => (
@@ -670,14 +714,20 @@ export function AlurKelayakan() {
             />
 
             <fieldset>
-              <legend className="text-lg font-semibold">Bagaimana Anda dan pasangan melapor pajak?</legend>
+              <legend className="text-lg font-semibold">
+                {profil.statusPtkp.startsWith('TK/')
+                  ? 'Apakah Anda pernah berpisah menurut putusan hakim?'
+                  : 'Bagaimana Anda dan pasangan melapor pajak?'}
+              </legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
-                Untuk sebagian keadaan, omzet suami dan istri digabungkan saat menguji{' '}
-                <Istilah nama="ambang">batas Rp4,8 miliar</Istilah>. Salah satu pilihannya disebut{' '}
-                <Istilah nama="pisahHarta">pisah harta</Istilah>.
+                {profil.statusPtkp.startsWith('TK/')
+                  ? 'Pada langkah sebelumnya Anda menjawab belum kawin, jadi tidak ada omzet pasangan yang perlu digabungkan. Pilihan ini hanya untuk membedakan perpisahan yang sudah diputus pengadilan.'
+                  : 'Pada langkah sebelumnya Anda menjawab sudah kawin. Untuk sebagian keadaan, omzet suami dan istri digabungkan saat menguji batas Rp4,8 miliar.'}{' '}
+                Salah satu pilihannya disebut <Istilah nama="pisahHarta">pisah harta</Istilah>, dan batas yang
+                diuji adalah <Istilah nama="ambang">batas Rp4,8 miliar</Istilah>.
               </p>
               <div className="space-y-2">
-                {pilihanPasangan.map((item) => {
+                {pilihanPasangan.filter((item) => pasanganMungkin(profil.statusPtkp).includes(item.nilai)).map((item) => {
                   const aktif = profil.statusPerpajakanPasangan === item.nilai;
                   return (
                     <label
@@ -686,11 +736,13 @@ export function AlurKelayakan() {
                     >
                       <input className="sr-only" type="radio" name="status-pasangan" checked={aktif} onChange={() => ubahBanyak({
                         statusPerpajakanPasangan: item.nilai,
-                        // Tanpa pasangan, jawaban penghasilan pasangan dan omzetnya ikut dikosongkan.
-                        pasanganPunyaPenghasilan: item.nilai === 'TIDAK_ADA_PASANGAN'
+                        // Bila omzet pasangan tidak pernah digabungkan, jawaban
+                        // penghasilan pasangan dan omzetnya ikut dikosongkan agar
+                        // tidak ada angka usang yang terbawa ke hasil dan PDF.
+                        pasanganPunyaPenghasilan: tanpaPenggabungan(item.nilai)
                           ? undefined
                           : profil.pasanganPunyaPenghasilan ?? 'tidak_yakin',
-                        omzetPasanganThnSebelumnya: item.nilai === 'TIDAK_ADA_PASANGAN' ? 0 : profil.omzetPasanganThnSebelumnya
+                        omzetPasanganThnSebelumnya: tanpaPenggabungan(item.nilai) ? 0 : profil.omzetPasanganThnSebelumnya
                       })} />
                       <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ${aktif ? 'border-blue bg-blue text-white' : 'border-line'}`} aria-hidden="true">
                         {aktif && <span className="h-2 w-2 rounded-full bg-white" />}
@@ -705,7 +757,10 @@ export function AlurKelayakan() {
               </div>
             </fieldset>
 
-            {profil.statusPerpajakanPasangan !== 'TIDAK_ADA_PASANGAN' && (
+            {/* Berpisah menurut putusan hakim adalah satu-satunya keadaan berpasangan
+                yang omzetnya tidak pernah digabungkan, jadi tidak perlu ditanyakan. */}
+            {profil.statusPerpajakanPasangan !== 'TIDAK_ADA_PASANGAN' &&
+              profil.statusPerpajakanPasangan !== 'PISAH_PUTUSAN_HAKIM' && (
               <>
                 <fieldset>
                   <legend className="text-lg font-semibold">Apakah pasangan Anda punya penghasilan sendiri?</legend>
