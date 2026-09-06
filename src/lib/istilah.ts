@@ -127,6 +127,51 @@ export const ISTILAH = {
   wajibPajak: {
     judul: 'Wajib Pajak',
     penjelasan: 'Sebutan resmi untuk orang atau badan yang punya hak dan kewajiban pajak. Dalam aplikasi ini, berarti Anda.'
+  },
+  djp: {
+    judul: 'DJP',
+    penjelasan:
+      'Direktorat Jenderal Pajak, kantor pemerintah yang mengurus pajak di Indonesia. Dialah yang menerima laporan Anda, menyimpan datanya, dan menagih bila ada kekurangan.'
+  },
+  pph21: {
+    judul: 'PPh 21',
+    penjelasan:
+      'Pajak atas penghasilan dari pekerjaan: gaji, honor, atau imbalan jasa. Biasanya sudah dipotong oleh yang membayar Anda, lalu disetorkan atas nama Anda.',
+    kenapaDitanya:
+      'Yang dipotong itu bukan pajak tambahan. Jumlahnya diperhitungkan kembali di akhir tahun, jadi masukkan bukti potongnya supaya tidak terhitung dua kali.'
+  },
+  kpp: {
+    judul: 'KPP',
+    penjelasan:
+      'Kantor Pelayanan Pajak, kantor DJP tempat Anda terdaftar. Ke sinilah Anda datang bila ada yang perlu ditanyakan atau diperbaiki secara langsung.'
+  },
+  kringPajak: {
+    judul: 'Kring Pajak',
+    penjelasan:
+      'Layanan telepon resmi DJP di nomor 1500200. Bisa dipakai untuk bertanya tanpa harus datang ke kantor.'
+  },
+  buktiPotongA1: {
+    judul: 'Bukti potong A1 dan A2',
+    penjelasan:
+      'Formulir bukti potong khusus untuk pegawai. A1 dari pemberi kerja swasta, A2 untuk pegawai negeri. Isinya penghasilan setahun dan pajak yang sudah dipotong.',
+    kenapaDitanya: 'Angka penghasilan neto yang diminta aplikasi ini disalin dari formulir tersebut, bukan dari gaji kotor.'
+  },
+  tanggungan: {
+    judul: 'Tanggungan',
+    penjelasan:
+      'Anggota keluarga sedarah atau semenda dalam garis lurus, serta anak angkat, yang hidupnya sepenuhnya Anda tanggung. Paling banyak tiga orang yang diperhitungkan.',
+    kenapaDitanya: 'Makin banyak tanggungan, makin besar PTKP Anda, sehingga pajaknya makin kecil.'
+  },
+  kelompokWilayah: {
+    judul: 'Kelompok wilayah',
+    penjelasan:
+      'Pengelompokan daerah yang dipakai pada daftar Norma. Persentase Norma untuk pekerjaan yang sama bisa berbeda antara ibukota provinsi besar, ibukota provinsi lain, dan daerah selebihnya.'
+  },
+  setoranFinal: {
+    judul: 'Setoran final',
+    penjelasan:
+      'Pajak 0,5% yang Anda bayar sendiri setiap bulan selama tahun berjalan. Karena sifatnya final, setoran itu tidak dihitung ulang di akhir tahun.',
+    kenapaDitanya: 'Angka PPh Final pada kartu hasil belum dikurangi setoran yang sudah Anda bayar, jadi cocokkan dulu sebelum melapor.'
   }
 } as const satisfies Record<string, EntriIstilah>;
 
