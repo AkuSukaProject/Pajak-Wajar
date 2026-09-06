@@ -789,6 +789,46 @@ export function AlurKelayakan() {
                     bantuan="Isi 0 jika pasangan berpenghasilan tetapi tidak punya usaha, misalnya hanya menerima gaji."
                   />
                 )}
+
+                {/* Hanya untuk pelaporan gabung: pisah harta dan pisah kewajiban
+                    membagi pajak menurut perbandingan neto, yang belum didukung. */}
+                {profil.statusPerpajakanPasangan === 'GABUNG' && profil.pasanganPunyaPenghasilan === true && (
+                  <>
+                    <fieldset>
+                      <legend className="text-lg font-semibold">
+                        Apakah penghasilan pasangan hanya berupa gaji dari satu pemberi kerja?
+                      </legend>
+                      <p className="mb-4 mt-1 text-xs leading-5 text-margin">
+                        Gaji dari satu pemberi kerja yang sudah dipotong <Istilah nama="pph21">PPh 21</Istilah>{' '}
+                        tidak digabungkan ke penghasilan Anda. Penghasilan lain — usaha, pekerjaan bebas, atau
+                        gaji dari beberapa pemberi kerja — digabungkan.
+                      </p>
+                      <PilihanTiga
+                        nama="gaji-satu-pemberi-kerja"
+                        nilai={profil.pasanganHanyaGajiSatuPemberiKerja ?? 'tidak_yakin'}
+                        onChange={(nilai) => ubah('pasanganHanyaGajiSatuPemberiKerja', nilai)}
+                        labelYa="Ya, hanya gaji itu"
+                        labelTidak="Tidak, ada penghasilan lain"
+                      />
+                    </fieldset>
+
+                    {profil.pasanganHanyaGajiSatuPemberiKerja === false && (
+                      <>
+                        <InputRupiah
+                          label="Penghasilan neto pasangan setahun"
+                          nilai={profil.penghasilanNetoPasangan}
+                          onChange={(nilai) => ubah('penghasilanNetoPasangan', nilai)}
+                          bolehKosong
+                          bantuan="Keuntungan bersih pasangan setahun sebelum PTKP, bukan uang masuk kotor. Ambil dari catatan usaha atau bukti potongnya."
+                        />
+                        <p className="-mt-4 text-xs leading-5 text-margin">
+                          Angka ini digabungkan ke <Istilah nama="penghasilanNeto">penghasilan neto</Istilah> Anda,
+                          dan <Istilah nama="ptkp">PTKP</Istilah> bertambah karena penghasilan pasangan ikut dihitung.
+                        </p>
+                      </>
+                    )}
+                  </>
+                )}
               </>
             )}
 

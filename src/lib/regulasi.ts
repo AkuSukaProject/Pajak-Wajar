@@ -108,6 +108,15 @@ export type BasisAturan = {
       nilai: Record<StatusPtkp, number>;
       statusVerifikasi: StatusVerifikasi;
       dasarHukum: DasarHukumDetail[];
+      /**
+       * Tambahan PTKP ketika penghasilan istri digabung ke penghasilan suami
+       * menurut UU PPh Pasal 8 ayat (1). PMK 101/PMK.010/2016 Pasal 1 huruf c.
+       */
+      tambahanIstriDigabung: {
+        nilai: number;
+        statusVerifikasi: StatusVerifikasi;
+        dasarHukum: DasarHukumDetail[];
+      };
     };
   };
   aturanKelayakan: {

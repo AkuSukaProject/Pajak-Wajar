@@ -160,6 +160,9 @@ function RincianSkema({ skema }: { skema: HasilSkema }) {
         : null}
       <Hitung kunci={`Penghasilan neto (${dasarNeto.label})`} nilai={dasarNeto.nilai} />
       {r.penghasilanNetoPegawai > 0 && <Hitung kunci="Neto pegawai sebelum PTKP" nilai={formatCurrency(r.penghasilanNetoPegawai)} />}
+      {r.penghasilanNetoPasangan > 0 && (
+        <Hitung kunci="Neto pasangan yang digabung (UU PPh Pasal 8 ayat (1))" nilai={formatCurrency(r.penghasilanNetoPasangan)} />
+      )}
       <Hitung kunci="Total penghasilan neto" nilai={formatCurrency(r.penghasilanNeto)} />
       <Hitung kunci="PTKP" nilai={`- ${formatCurrency(r.ptkp)}`} />
       <Hitung kunci="PKP (dibulatkan ke bawah, ribuan penuh)" nilai={formatCurrency(r.pkp)} />

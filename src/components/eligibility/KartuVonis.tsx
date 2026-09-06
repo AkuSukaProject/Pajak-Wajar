@@ -91,7 +91,13 @@ function Perhitungan({ skema }: { skema: HasilSkema }) {
               {r.skema === 'TARIF_UMUM' && (
                 <BarisHitung kunci="Penghasilan neto usaha" nilai={formatCurrency(r.penghasilanNetoUsaha)} />
               )}
-              {r.penghasilanNetoPegawai > 0 && <><BarisHitung kunci="Penghasilan neto gaji" nilai={formatCurrency(r.penghasilanNetoPegawai)} /><BarisHitung kunci="Total penghasilan neto" nilai={formatCurrency(r.penghasilanNeto)} /></>}
+              {r.penghasilanNetoPegawai > 0 && <BarisHitung kunci="Penghasilan neto gaji" nilai={formatCurrency(r.penghasilanNetoPegawai)} />}
+              {r.penghasilanNetoPasangan > 0 && (
+                <BarisHitung kunci="Penghasilan neto pasangan yang digabung" nilai={formatCurrency(r.penghasilanNetoPasangan)} />
+              )}
+              {(r.penghasilanNetoPegawai > 0 || r.penghasilanNetoPasangan > 0) && (
+                <BarisHitung kunci="Total penghasilan neto" nilai={formatCurrency(r.penghasilanNeto)} />
+              )}
               <BarisHitung kunci={<Istilah nama="ptkp">PTKP</Istilah>} nilai={`− ${formatCurrency(r.ptkp)}`} />
               <BarisHitung
                 kunci={<><Istilah nama="pkp">PKP</Istilah> (dibulatkan ke bawah ke ribuan)</>}
