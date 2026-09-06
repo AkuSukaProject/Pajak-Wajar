@@ -265,6 +265,21 @@ export function KartuVonis({ hasil }: { hasil: HasilAuditPajak }) {
           <Istilah nama="pembukuan" />
           <Istilah nama="sptTahunan" />
           <Istilah nama="coretax" />
+          <Istilah nama="djp" />
+          <Istilah nama="kpp" />
+          <Istilah nama="kringPajak" />
+          <Istilah nama="pph21" />
+          <Istilah nama="buktiPotongA1" />
+          <Istilah nama="setoranFinal" />
+          <Istilah nama="penghasilanNeto" />
+          <Istilah nama="tanggungan" />
+          <Istilah nama="kelompokWilayah" />
+          <Istilah nama="pegawaiTetap" />
+          <Istilah nama="pisahHarta" />
+          <Istilah nama="tahunPajak" />
+          <Istilah nama="klu" />
+          <Istilah nama="wajibPajak" />
+          <Istilah nama="ambang" />
         </p>
       </section>
 
@@ -274,8 +289,10 @@ export function KartuVonis({ hasil }: { hasil: HasilAuditPajak }) {
 
       <p className="mt-5 text-xs leading-5 text-margin">
         Ini alat bantu, bukan nasihat pajak. Seluruh angka berasal dari data yang Anda isi sendiri.
-        Cocokkan kembali melalui akun <Istilah nama="coretax">Coretax</Istilah> DJP, KPP tempat Anda terdaftar, atau Kring Pajak
-        1500200 sebelum mengisi <Istilah nama="sptTahunan">SPT Tahunan</Istilah>.
+        Cocokkan kembali melalui akun <Istilah nama="coretax">Coretax</Istilah>{' '}
+        <Istilah nama="djp">DJP</Istilah>, <Istilah nama="kpp">KPP</Istilah> tempat Anda terdaftar, atau{' '}
+        <Istilah nama="kringPajak">Kring Pajak 1500200</Istilah> sebelum mengisi{' '}
+        <Istilah nama="sptTahunan">SPT Tahunan</Istilah>.
       </p>
     </section>
   );

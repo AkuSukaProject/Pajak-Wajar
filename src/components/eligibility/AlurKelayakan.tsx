@@ -22,6 +22,13 @@ import type {
   TahunPajak
 } from '@/types/pajak';
 
+/** Id kolom yang divalidasi, dipakai untuk menggulir, memfokuskan, dan menandai galat. */
+const KOLOM = {
+  klu: 'kolom-klu',
+  omzetTahunIni: 'kolom-omzet-tahun-ini',
+  netoPegawai: 'kolom-neto-pegawai'
+} as const;
+
 const profilAwal: ProfilWajibPajak = {
   tahunPajak: 2026,
   kluKode: '',
@@ -155,6 +162,8 @@ export function AlurKelayakan() {
   const [hasilSiap, setHasilSiap] = useState<HasilAuditPajak | null>(null);
   const [galat, setGalat] = useState<string | null>(null);
   const [sudahMencoba, setSudahMencoba] = useState(false);
+  const [galatKolom, setGalatKolom] = useState<Record<string, string>>({});
+  const [kolomBergetar, setKolomBergetar] = useState<string | null>(null);
   const [buktiBelumDisimpan, setBuktiBelumDisimpan] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const pertama = useRef(true);
@@ -182,7 +191,58 @@ export function AlurKelayakan() {
   const ubahBanyak = (bagian: Partial<ProfilWajibPajak>) =>
     setProfil((lama) => ({ ...lama, ...bagian }));
 
-  const langkahValid = langkah !== 1 || Boolean(profil.kluKode);
+  /** Menghapus tanda galat pada satu kolom begitu pengguna memperbaikinya. */
+  const bersihkanGalat = (idKolom: string) =>
+    setGalatKolom((lama) => {
+      if (!(idKolom in lama)) return lama;
+      const baru = { ...lama };
+      delete baru[idKolom];
+      return baru;
+    });
+
+  /**
+   * Isian yang wajib diisi pada satu langkah.
+   *
+   * Hanya kolom yang benar-benar tidak dapat ditebak yang diwajibkan. Kolom
+   * rupiah lain boleh bernilai 0 karena nol memang jawaban yang sah di sana,
+   * misalnya omzet tahun sebelumnya bagi orang yang baru mulai berusaha.
+   */
+  const periksaLangkah = (nomor: number): Array<{ id: string; pesan: string }> => {
+    const daftar: Array<{ id: string; pesan: string }> = [];
+
+    if (nomor === 1 && !profil.kluKode) {
+      daftar.push({
+        id: KOLOM.klu,
+        pesan: 'Pilih satu pekerjaan agar Anda bisa melanjutkan. Bila tidak ada yang cocok, pilih “Kegiatan saya belum tersedia atau saya belum yakin”.'
+      });
+    }
+
+    if (nomor === 2) {
+      if (profil.omzetPribadiTahunPajak <= 0) {
+        daftar.push({
+          id: KOLOM.omzetTahunIni,
+          pesan: `Isi total uang masuk usaha Anda selama ${profil.tahunPajak}. Tanpa angka ini, tidak ada yang bisa dihitung.`
+        });
+      }
+      if (profil.jugaPegawaiTetap && profil.penghasilanNetoPegawai === undefined) {
+        daftar.push({
+          id: KOLOM.netoPegawai,
+          pesan: 'Anda menandai diri sebagai pegawai tetap, jadi isi penghasilan neto gaji setahun dari bukti potong A1 atau A2. Bila tidak punya, hapus centang pegawai tetap.'
+        });
+      }
+    }
+
+    return daftar;
+  };
+
+  /** Menggulir ke kolom bermasalah, memfokuskannya, lalu menggetarkannya sebentar. */
+  const sorotKolom = (idKolom: string) => {
+    const elemen = document.getElementById(idKolom);
+    elemen?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    elemen?.focus({ preventScroll: true });
+    setKolomBergetar(idKolom);
+    window.setTimeout(() => setKolomBergetar(null), 600);
+  };
 
   const lanjut = () => {
     setGalat(null);
@@ -190,8 +250,21 @@ export function AlurKelayakan() {
       setGalat('Ada bukti potong yang belum ditambahkan atau masih dibaca. Tekan “Tambahkan bukti potong” atau “Kosongkan isian” sebelum melihat hasil.');
       return;
     }
+
     setSudahMencoba(true);
-    if (!langkahValid) return;
+    const masalah = periksaLangkah(langkah);
+    if (masalah.length > 0) {
+      setGalatKolom(Object.fromEntries(masalah.map((item) => [item.id, item.pesan])));
+      setGalat(
+        masalah.length === 1
+          ? 'Ada satu isian yang belum lengkap. Kami sudah menandainya di bawah.'
+          : `Ada ${masalah.length} isian yang belum lengkap. Kami sudah menandainya di bawah.`
+      );
+      sorotKolom(masalah[0].id);
+      return;
+    }
+
+    setGalatKolom({});
     setSudahMencoba(false);
 
     if (langkah < jumlahLangkah - 1) {
@@ -299,7 +372,11 @@ export function AlurKelayakan() {
               <p className="mt-2 text-sm leading-6 text-margin">
                 Jika punya beberapa pekerjaan, pilih yang menghasilkan uang paling besar.
               </p>
-              <div className="mt-5 max-h-72 space-y-2 overflow-y-auto pr-1">
+              <div
+                id={KOLOM.klu}
+                tabIndex={-1}
+                className={`mt-5 max-h-72 space-y-2 overflow-y-auto pr-1 outline-none ${kolomBergetar === KOLOM.klu ? 'motion-shake' : ''} ${galatKolom[KOLOM.klu] ? 'border-l-2 border-stamp pl-2' : ''}`}
+              >
                 {pilihanKlu.map((item) => {
                   const aktif = profil.kluKode === item.kluKode;
                   return (
@@ -307,7 +384,7 @@ export function AlurKelayakan() {
                       key={item.kluKode}
                       className={`choice-control flex cursor-pointer items-center justify-between gap-4 border px-4 py-3.5 ${aktif ? 'border-blue bg-blue/[0.06]' : 'border-line hover:border-blue/60'}`}
                     >
-                      <input className="sr-only" type="radio" name="klu" checked={aktif} onChange={() => ubah('kluKode', item.kluKode)} />
+                      <input className="sr-only" type="radio" name="klu" checked={aktif} onChange={() => { ubah('kluKode', item.kluKode); bersihkanGalat(KOLOM.klu); }} />
                       <span>
                         <strong className="block text-sm font-semibold">{item.nama}</strong>
                         <span className="mt-1 block text-xs text-margin">
@@ -325,13 +402,13 @@ export function AlurKelayakan() {
                 })}
               </div>
               <label className={`choice-control mt-3 flex cursor-pointer items-start gap-3 border p-4 text-sm ${profil.kluKode === 'BELUM_DIDUKUNG' ? 'border-blue bg-blue/5' : 'border-line'}`}>
-                <input type="radio" name="klu" className="mt-1 accent-blue" checked={profil.kluKode === 'BELUM_DIDUKUNG'} onChange={() => ubah('kluKode', 'BELUM_DIDUKUNG')} />
+                <input type="radio" name="klu" className="mt-1 accent-blue" checked={profil.kluKode === 'BELUM_DIDUKUNG'} onChange={() => { ubah('kluKode', 'BELUM_DIDUKUNG'); bersihkanGalat(KOLOM.klu); }} />
                 <span><strong className="block">Kegiatan saya belum tersedia atau saya belum yakin</strong><span className="mt-1 block text-xs leading-5 text-margin">Tidak perlu memilih kegiatan yang hanya mirip. Kelayakan dan Norma akan ditandai perlu dipastikan.</span></span>
               </label>
               {kluTerpilih && <KlasifikasiKegiatan klu={kluTerpilih} />}
-              {sudahMencoba && !profil.kluKode && (
+              {sudahMencoba && galatKolom[KOLOM.klu] && (
                 <p role="alert" className="motion-step-next mt-4 border-l-2 border-stamp bg-red-50 px-4 py-3 text-sm font-semibold text-stamp">
-                  Pilih satu pekerjaan agar Anda bisa melanjutkan.
+                  {galatKolom[KOLOM.klu]}
                 </p>
               )}
             </fieldset>
@@ -386,6 +463,11 @@ export function AlurKelayakan() {
               </span>
             </label>
 
+            <p className="-mt-4 text-xs leading-5 text-margin">
+              Penjelasan <Istilah nama="kelompokWilayah">kelompok wilayah</Istilah> dan{' '}
+              <Istilah nama="norma">Norma</Istilah> tersedia bila diperlukan.
+            </p>
+
             <fieldset>
               <legend className="text-lg font-semibold">Apakah Anda punya lebih dari satu jenis kegiatan?</legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
@@ -423,12 +505,24 @@ export function AlurKelayakan() {
               </select>
             </label>
 
+            <p className="-mt-4 text-xs leading-5 text-margin">
+              Baca <Istilah nama="ptkp">PTKP</Istilah> dan <Istilah nama="tanggungan">tanggungan</Istilah> bila
+              belum yakin memilih yang mana.
+            </p>
+
             <InputRupiah
               label={`Total uang masuk dari usaha Anda selama ${profil.tahunPajak}`}
               nilai={profil.omzetPribadiTahunPajak}
-              onChange={(nilai) => ubah('omzetPribadiTahunPajak', nilai ?? 0)}
+              onChange={(nilai) => { ubah('omzetPribadiTahunPajak', nilai ?? 0); bersihkanGalat(KOLOM.omzetTahunIni); }}
               bantuan="Nama resminya omzet: semua uang masuk sebelum dipotong biaya usaha. Angka inilah yang dipakai menghitung pajak."
+              idKolom={KOLOM.omzetTahunIni}
+              galat={galatKolom[KOLOM.omzetTahunIni]}
+              bergetar={kolomBergetar === KOLOM.omzetTahunIni}
             />
+
+            <p className="-mt-4 text-xs leading-5 text-margin">
+              Ini yang disebut <Istilah nama="peredaranBruto">peredaran bruto</Istilah> dalam bahasa aturan pajak.
+            </p>
 
             <InputRupiah
               label="Total biaya usaha selama setahun"
@@ -452,7 +546,25 @@ export function AlurKelayakan() {
                 </span>
               </span>
             </label>
-            {profil.jugaPegawaiTetap && <InputRupiah label="Penghasilan neto gaji setahun" nilai={profil.penghasilanNetoPegawai} onChange={(nilai) => ubah('penghasilanNetoPegawai', nilai)} bolehKosong bantuan="Salin penghasilan neto dari bukti potong pegawai (A1/A2), sebelum PTKP. Jumlahkan bila ada beberapa pemberi kerja. Jangan isi gaji bruto. Kredit PPh 21 diisi pada langkah bukti potong." />}
+            {profil.jugaPegawaiTetap && (
+              <InputRupiah
+                label="Penghasilan neto gaji setahun"
+                nilai={profil.penghasilanNetoPegawai}
+                onChange={(nilai) => { ubah('penghasilanNetoPegawai', nilai); bersihkanGalat(KOLOM.netoPegawai); }}
+                bolehKosong
+                bantuan="Salin penghasilan neto dari bukti potong pegawai (A1/A2), sebelum PTKP. Jumlahkan bila ada beberapa pemberi kerja. Jangan isi gaji bruto. Kredit PPh 21 diisi pada langkah bukti potong."
+                idKolom={KOLOM.netoPegawai}
+                galat={galatKolom[KOLOM.netoPegawai]}
+                bergetar={kolomBergetar === KOLOM.netoPegawai}
+              />
+            )}
+            {profil.jugaPegawaiTetap && (
+              <p className="-mt-4 text-xs leading-5 text-margin">
+                Belum paham? Baca <Istilah nama="buktiPotongA1">bukti potong A1 dan A2</Istilah>,{' '}
+                <Istilah nama="penghasilanNeto">penghasilan neto</Istilah>, serta{' '}
+                <Istilah nama="pph21">PPh 21</Istilah>.
+              </p>
+            )}
           </div>
         )}
 
@@ -474,7 +586,9 @@ export function AlurKelayakan() {
             <fieldset>
               <legend className="text-lg font-semibold">Bagaimana Anda dan pasangan melapor pajak?</legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
-                Untuk sebagian keadaan, omzet suami dan istri digabungkan saat menguji batas Rp4,8 miliar.
+                Untuk sebagian keadaan, omzet suami dan istri digabungkan saat menguji{' '}
+                <Istilah nama="ambang">batas Rp4,8 miliar</Istilah>. Salah satu pilihannya disebut{' '}
+                <Istilah nama="pisahHarta">pisah harta</Istilah>.
               </p>
               <div className="space-y-2">
                 {pilihanPasangan.map((item) => {
@@ -565,9 +679,10 @@ export function AlurKelayakan() {
               </legend>
               <p className="mb-4 mt-1 text-xs leading-5 text-margin">
                 <Istilah nama="norma">Norma atau NPPN</Istilah> adalah cara memperkirakan penghasilan bersih memakai persentase resmi.
-                Pemberitahuannya lewat layanan {basisAturan.parameterPajak.nppn.batasWaktuPemberitahuan.layananCoretax} di
-                Coretax, paling lambat 31 Maret tahun pajak yang bersangkutan. Jika baru mendengar istilah ini,
-                pilih “Tidak yakin”.
+                Pemberitahuannya disampaikan ke <Istilah nama="djp">DJP</Istilah> lewat layanan{' '}
+                {basisAturan.parameterPajak.nppn.batasWaktuPemberitahuan.layananCoretax} di{' '}
+                <Istilah nama="coretax">Coretax</Istilah>, paling lambat 31 Maret tahun pajak yang bersangkutan.
+                Jika baru mendengar istilah ini, pilih “Tidak yakin”.
               </p>
               <PilihanTiga
                 nama="lapor-norma"

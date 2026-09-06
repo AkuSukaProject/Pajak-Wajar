@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/samythh/Pajak-Wajar)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Aplikasi_Berfungsi-2ea44f?style=for-the-badge)](#fitur-unggulan)
-[![Tes](https://img.shields.io/badge/Vitest-183_lulus-2ea44f?style=for-the-badge)](#testing)
+[![Tes](https://img.shields.io/badge/Vitest-184_lulus-2ea44f?style=for-the-badge)](#testing)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
 
@@ -189,7 +189,7 @@ OCR          : Gemini API, structured JSON, temperature 0; opsional dan butuh pe
 Package Mgmt : npm dengan package-lock.json
 Deployment   : Vercel (region sin1), https://pajak-wajar.vercel.app/
 CI/CD        : GitHub Actions (lint, tipe, tes, build, audit) dan deployment Vercel
-Testing      : Vitest; 183 tes rutin pada 12 berkas. Ajv 2020 untuk integritas data aturan
+Testing      : Vitest; 184 tes rutin pada 12 berkas. Ajv 2020 untuk integritas data aturan
 Type Check   : TypeScript (tsc --noEmit), tanpa `any`
 Monitoring   : Belum dikonfigurasi
 ```
@@ -302,7 +302,7 @@ Pajak-Wajar/
 │   │   └── format.ts             # Pembantu tampilan
 │   ├── mock/                     # Profil contoh untuk demo dan tangkapan layar
 │   └── types/                    # Kontrak tipe domain
-├── tests/                        # 183 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
+├── tests/                        # 184 tes: schema, calculator, eligibility, audit, keluarga, istilah, ocr, format
 │   └── fixtures/                 # Lembar bukti potong contoh untuk uji OCR
 ├── vitest.config.ts
 ├── vercel.json
@@ -521,7 +521,7 @@ npm run build
 
 ### Test Coverage
 
-**183 tes rutin** pada dua belas berkas, ditambah satu tes integrasi OCR opsional:
+**184 tes rutin** pada dua belas berkas, ditambah satu tes integrasi OCR opsional:
 
 | Berkas | Tes | Fokus |
 |--------|-----|-------|
@@ -530,7 +530,7 @@ npm run build
 | [tests/calculator.test.ts](./tests/calculator.test.ts) | 14 | Tarif progresif berlapis, termasuk bukti bahwa PKP Rp337 juta ≠ PKP × 25% dan kecocokan dengan contoh resmi UU HPP (PKP Rp6 miliar → Rp1.794.000.000). |
 | [tests/eligibility.test.ts](./tests/eligibility.test.ts) | 32 | Agregasi prioritas dan empat saringan kelayakan. |
 | [tests/audit-pajak.test.ts](./tests/audit-pajak.test.ts) | 17 | Konsistensi status kalkulasi dan batasan perhitungan. |
-| [tests/istilah.test.ts](./tests/istilah.test.ts) | 5 | Mutu kamus istilah sebagai teks antarmuka: tiap entri terisi, ringkas agar muat di popover, judulnya unik, dan tidak menyitasi pasal — dasar hukum hanya boleh datang dari mesin aturan. |
+| [tests/istilah.test.ts](./tests/istilah.test.ts) | 6 | Mutu kamus istilah sebagai teks antarmuka: tiap entri terisi, ringkas agar muat di popover, judulnya unik, dan tidak menyitasi pasal — dasar hukum hanya boleh datang dari mesin aturan. |
 | [tests/keluarga.test.ts](./tests/keluarga.test.ts) | 18 | Perhitungan saat pasangan tidak berpenghasilan; matriks lengkap status pelaporan keluarga × jawaban penghasilan pasangan, dengan jaminan setiap keadaan yang ditahan menyebut alasannya sendiri; kasus dokter multi-sumber. |
 | [tests/saran.test.ts](./tests/saran.test.ts) | 5 | Saran kontekstual, perbandingan sebelum kredit, nilai sama, serta data keluarga atau Norma yang belum pasti. |
 | [tests/schemas.test.ts](./tests/schemas.test.ts) | 15 | Kontrak masukan formulir dan bukti potong. |

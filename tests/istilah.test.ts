@@ -1,5 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { ISTILAH } from '../src/lib/istilah';
+
+const berkasAntarmuka = [
+  'src/components/eligibility/AlurKelayakan.tsx',
+  'src/components/eligibility/KartuVonis.tsx'
+].map((jalur) => readFileSync(jalur, 'utf8')).join('\n');
 
 /**
  * Kamus istilah adalah bahan bacaan, bukan aturan. Tes ini menjaga mutunya
@@ -37,6 +43,12 @@ describe('kamus istilah', () => {
       const teks = isi.penjelasan + ' ' + (('kenapaDitanya' in isi && isi.kenapaDitanya) || '');
       expect(teks, kunci).not.toMatch(/Pasal\s+\d/i);
       expect(teks, kunci).not.toMatch(/PP\s+No|Nomor\s+\d+\s+Tahun/i);
+    }
+  });
+
+  it('setiap istilah benar-benar dipakai di antarmuka, tidak ada yang menganggur', () => {
+    for (const kunci of Object.keys(ISTILAH)) {
+      expect(berkasAntarmuka, `istilah "${kunci}" belum dipasang di mana pun`).toContain(`nama="${kunci}"`);
     }
   });
 
